@@ -1,0 +1,51 @@
+export default {
+  async fetch(request, env) {
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': env.ALLOWED_ORIGIN,
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    };
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
+    }
+
+    if (request.method !== 'POST') {
+      return Response.json({ error: 'Method not allowed' }, { status: 405, headers: corsHeaders });
+    }
+
+    try {
+      const { email } = await request.json();
+
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return Response.json({ error: 'Invalid email' }, { status: 400, headers: corsHeaders });
+      }
+
+      const res = await fetch('https://api.notion.com/v1/pages', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${env.NOTION_API_KEY}`,
+          'Content-Type': 'application/json',
+          'Notion-Version': '2022-06-28',
+        },
+        body: JSON.stringify({
+          parent: { database_id: env.NOTION_DATABASE_ID },
+          properties: {
+            Email: { email: email },
+            'Signed Up': { date: { start: new Date().toISOString().split('T')[0] } },
+            Source: { select: { name: 'farkas.design signup' } },
+          },
+        }),
+      });
+
+      if (!res.ok) {
+        const body = await res.text();
+        return Response.json({ error: 'Notion API error', detail: body }, { status: 502, headers: corsHeaders });
+      }
+
+      return Response.json({ ok: true }, { headers: corsHeaders });
+    } catch (err) {
+      return Response.json({ error: 'Server error' }, { status: 500, headers: corsHeaders });
+    }
+  },
+};

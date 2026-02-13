@@ -1,0 +1,10 @@
+name = "farkas-design-signup"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+[vars]
+NOTION_DATABASE_ID = "2df5c58f-feff-8025-b6f4-d37899d6aea0"
+ALLOWED_ORIGIN = "https://farkas.design"
+
+# Run: npx wrangler secret put NOTION_API_KEY
+# Then paste your Notion internal integration token

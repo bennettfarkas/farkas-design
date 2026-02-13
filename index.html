@@ -39,8 +39,56 @@
             font-size: 1.05rem;
             font-style: italic;
             color: #888;
-            margin: 0;
+            margin: 0 0 2.5rem;
             letter-spacing: 0.01em;
+        }
+        .signup {
+            margin-top: 0;
+        }
+        .signup-form {
+            display: flex;
+            max-width: 280px;
+            margin: 0 auto;
+            border-bottom: 1px solid #ccc;
+        }
+        .signup-form input[type="email"] {
+            flex: 1;
+            padding: 0.5rem 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: 'EB Garamond', serif;
+            font-size: 0.9rem;
+            color: #2a2a2a;
+            min-width: 0;
+        }
+        .signup-form input[type="email"]::placeholder {
+            color: #bbb;
+        }
+        .signup-form button {
+            padding: 0.5rem 0;
+            margin-left: 0.5rem;
+            border: none;
+            background: transparent;
+            font-family: 'EB Garamond', serif;
+            font-style: italic;
+            font-size: 0.9rem;
+            color: #aaa;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: color 0.2s;
+        }
+        .signup-form button:hover {
+            color: #2a2a2a;
+        }
+        .success-msg {
+            display: none;
+            font-size: 0.9rem;
+            font-style: italic;
+            color: #888;
+        }
+        .success-msg.show {
+            display: block;
         }
     </style>
 </head>
@@ -49,6 +97,46 @@
         <p class="wolf">🐺</p>
         <h1>Farkas Design</h1>
         <p class="tagline">coming soon</p>
+
+        <div class="signup">
+            <form class="signup-form" id="signup">
+                <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
+                <button type="submit">join list</button>
+            </form>
+            <p class="success-msg" id="success">you're in.</p>
+        </div>
     </main>
+
+    <script>
+        document.getElementById('signup').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const email = form.email.value;
+            const btn = form.querySelector('button');
+
+            btn.textContent = '...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('https://farkas-design-signup.mrsandman.workers.dev', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                if (res.ok) {
+                    form.style.display = 'none';
+                    document.getElementById('success').classList.add('show');
+                } else {
+                    btn.textContent = 'try again';
+                    btn.disabled = false;
+                }
+            } catch {
+                btn.textContent = 'try again';
+                btn.disabled = false;
+            }
+        });
+    </script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "92c4fc9c9fa64f779aff3ae780074f4d"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

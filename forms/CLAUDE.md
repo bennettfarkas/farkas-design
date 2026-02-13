@@ -8,7 +8,7 @@ All forms follow the same pattern: HTML form → Cloudflare Worker → Notion da
 
 - **Frontend**: Inline `<form>` in static HTML, JS `fetch()` POSTs JSON to the worker
 - **Backend**: Cloudflare Worker validates input, writes to Notion via API, returns JSON
-- **Storage**: Notion databases (one per form or shared)
+- **Storage**: Notion databases (shared with bennettfarkas.com)
 
 The site is static (GitHub Pages), so there's no server. Cloudflare Workers handle all backend logic.
 
@@ -20,7 +20,7 @@ The site is static (GitHub Pages), so there's no server. Cloudflare Workers hand
 - **Worker URL**: `https://farkas-design-signup.mrsandman.workers.dev`
 - **Worker config**: `signup/wrangler.toml`
 - **Notion database ID**: `2df5c58f-feff-8025-b6f4-d37899d6aea0`
-- **Notion properties**: `Name` (title), `Email` (email), `Signed Up` (date), `Source` (select: "farkas.design signup", "Manual")
+- **Notion properties**: `Email` (email), `Signed Up` (date), `Source` (select: "farkas.design signup")
 - **CORS origin**: `https://farkas.design`
 - **Secret**: `NOTION_API_KEY` (set via `cd signup && npx wrangler secret put NOTION_API_KEY`)
 
@@ -33,12 +33,6 @@ The site is static (GitHub Pages), so there's no server. Cloudflare Workers hand
 5. Set secret: `npx wrangler secret put NOTION_API_KEY`
 6. Add the HTML form pointing to the new worker URL
 7. Document the form in this file under "Active Forms"
-
-## Cloudflare Account
-
-- **Workers subdomain**: `mrsandman.workers.dev` (shared across all workers on this account)
-- **Auth**: `npx wrangler login` opens browser for OAuth
-- Workers cannot be deployed from non-interactive terminals — run deploy commands manually
 
 ## Notion API
 

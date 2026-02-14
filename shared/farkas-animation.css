@@ -41,10 +41,10 @@
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
+    cursor: default;
     z-index: 10;
     margin-top: auto;
 }
-.farkas-signature .farkas-emoji,
 .farkas-signature .farkas-wrap {
     pointer-events: none;
 }
@@ -54,7 +54,7 @@
     cursor: pointer;
     transition: transform 0.15s ease;
 }
-.farkas-signature:hover .farkas-emoji {
+.farkas-signature.active .farkas-emoji {
     transform: scale(1.15);
 }
 .farkas-signature .farkas-wrap {

@@ -149,16 +149,16 @@
             }
 
             if (signature) {
-                // Signature mode: animate only on hover
-                signature.addEventListener('mouseenter', function () {
+                // Signature mode: only emoji hover triggers animation
+                emojiEl.addEventListener('mouseenter', function () {
                     sigActive = true;
                     signature.classList.add('active');
                     tick();
                 });
-                signature.addEventListener('mouseleave', function () {
+                emojiEl.addEventListener('mouseleave', function () {
                     sigActive = false;
                     signature.classList.remove('active');
-                    if (emojiEl) emojiEl.textContent = randomEmoji();
+                    emojiEl.textContent = randomEmoji();
                     spans.forEach(function (s) { s.style.fontFamily = ''; });
                     headlineEl.style.color = '';
                     headlineEl.style.transform = '';

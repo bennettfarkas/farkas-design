@@ -110,22 +110,23 @@
             function tick() {
                 if (signature && !sigActive) return;
 
-                spans.forEach(function (span, i) {
-                    var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
-                    span.style.fontFamily = '"' + wave[idx] + '", serif';
-                });
-                step++;
-                if (emojiEl) {
-                    var ei = emojiIdx++ % emojis.length;
-                    emojiEl.textContent = emojis[ei];
-                }
+                if (!paused) {
+                    spans.forEach(function (span, i) {
+                        var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
+                        span.style.fontFamily = '"' + wave[idx] + '", serif';
+                    });
+                    step++;
+                    if (emojiEl) {
+                        var ei = emojiIdx++ % emojis.length;
+                        emojiEl.textContent = emojis[ei];
+                    }
 
-                if (!signature) {
-                    // Normal mode: scale to match target width
-                    headlineEl.style.color = '#2a2a2a';
-                    headlineEl.style.transform = 'none';
-                    var actual = headlineEl.getBoundingClientRect().width;
-                    headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
+                    if (!signature) {
+                        headlineEl.style.color = '#2a2a2a';
+                        headlineEl.style.transform = 'none';
+                        var actual = headlineEl.getBoundingClientRect().width;
+                        headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
+                    }
                 }
 
                 setTimeout(tick, 150);

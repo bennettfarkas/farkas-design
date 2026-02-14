@@ -105,7 +105,7 @@
         Promise.allSettled(
             fonts.map(function (f) { return document.fonts.load('48px "' + f + '"', 'Farkas.Design'); })
         ).then(function () {
-            var targetWidth = signature ? 0 : headlineEl.getBoundingClientRect().width;
+            var targetWidth = headlineEl.getBoundingClientRect().width;
 
             function tick() {
                 if (signature && !sigActive) return;
@@ -123,10 +123,10 @@
 
                     if (!signature) {
                         headlineEl.style.color = '#2a2a2a';
-                        headlineEl.style.transform = 'none';
-                        var actual = headlineEl.getBoundingClientRect().width;
-                        headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
                     }
+                    headlineEl.style.transform = 'none';
+                    var actual = headlineEl.getBoundingClientRect().width;
+                    headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
                 }
 
                 setTimeout(tick, 150);
@@ -178,6 +178,11 @@
         sig.appendChild(wrap);
 
         document.body.appendChild(sig);
+
+        // Ensure body is a flex column so signature sticks to bottom
+        document.body.style.minHeight = '100vh';
+        document.body.style.display = 'flex';
+        document.body.style.flexDirection = 'column';
     }
 
     // Auto-init: finds .farkas-headline and optional .farkas-emoji

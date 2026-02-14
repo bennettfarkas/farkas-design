@@ -31,6 +31,11 @@
     gap: 0.5rem;
     text-decoration: none;
     z-index: 10;
+    margin-top: auto;
+}
+.farkas-signature .farkas-emoji,
+.farkas-signature .farkas-wrap {
+    pointer-events: none;
 }
 .farkas-signature .farkas-emoji {
     font-size: 1.25rem;
@@ -53,4 +58,5 @@
     font-size: 0.9rem;
     color: #888;
     cursor: pointer;
+    transform-origin: left center;
 }

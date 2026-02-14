@@ -17,11 +17,9 @@ body {
 
 /* Back link */
 .back {
-    position: absolute;
-    top: 2rem;
-    left: 2rem;
-    display: inline-flex;
+    display: flex;
     align-items: center;
+    width: fit-content;
     gap: 0.35rem;
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
@@ -29,6 +27,7 @@ body {
     text-decoration: none;
     line-height: var(--leading-small);
     transition: color 0.15s ease;
+    margin-bottom: 2rem;
 }
 
 .back:hover {
@@ -42,9 +41,8 @@ body {
 
 /* Header */
 .header {
-    position: relative;
     text-align: center;
-    padding: 5rem 2rem 3rem;
+    padding: 2rem 2rem 3rem;
     border-bottom: 1px solid var(--slate-100);
 }
 
@@ -136,7 +134,7 @@ body {
 
 /* Responsive — shared breakpoints */
 @media (max-width: 640px) {
-    .header { padding: 3rem 1.5rem 2rem; }
+    .header { padding: 2rem 1.5rem; }
     .content { padding: 0 1.5rem; }
     .guidelines-grid { grid-template-columns: 1fr; }
 }

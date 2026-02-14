@@ -6,7 +6,7 @@
 body {
     font-family: var(--font-sans);
     font-weight: var(--weight-regular);
-    color: var(--text-heading);
+    color: var(--color-heading);
     background: var(--surface-page);
     line-height: var(--leading-body);
     -webkit-font-smoothing: antialiased;
@@ -23,14 +23,14 @@ body {
     gap: 0.35rem;
     font-size: var(--text-small);
     font-weight: var(--weight-medium);
-    color: var(--text-body);
+    color: var(--color-body);
     text-decoration: none;
     line-height: var(--leading-small);
     transition: color 0.15s ease;
 }
 
 .back:hover {
-    color: var(--text-heading);
+    color: var(--color-heading);
 }
 
 .back svg {
@@ -54,7 +54,7 @@ body {
 .header-logo img {
     height: 40px;
     width: auto;
-    color: var(--text-heading);
+    color: var(--color-heading);
 }
 
 [data-theme="dark"] .header-logo img {
@@ -72,13 +72,13 @@ body {
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-body);
+    color: var(--color-body);
     padding: 0.25rem;
     transition: color 0.15s ease;
 }
 
 .theme-toggle:hover {
-    color: var(--text-heading);
+    color: var(--color-heading);
 }
 
 .theme-toggle svg {
@@ -94,7 +94,7 @@ body {
     font-family: var(--font-sans);
     font-weight: var(--weight-light);
     font-size: var(--text-subtitle);
-    color: var(--text-body);
+    color: var(--color-body);
     letter-spacing: var(--tracking-subtitle);
     line-height: var(--leading-subtitle);
 }
@@ -115,7 +115,7 @@ body {
     font-family: var(--font-sans);
     font-weight: var(--weight-semibold);
     font-size: var(--text-section);
-    color: var(--text-heading);
+    color: var(--color-heading);
     letter-spacing: var(--tracking-section);
     line-height: var(--leading-section);
     margin-bottom: 0.35rem;
@@ -123,7 +123,7 @@ body {
 
 .section-header p {
     font-size: var(--text-small);
-    color: var(--text-body);
+    color: var(--color-body);
     line-height: var(--leading-small);
     max-width: var(--measure-body);
 }
@@ -141,13 +141,13 @@ body {
     text-transform: uppercase;
     letter-spacing: var(--tracking-caption);
     line-height: var(--leading-caption);
-    color: var(--text-heading);
+    color: var(--color-heading);
     margin-bottom: 0.5rem;
 }
 
 .guideline-item p {
     font-size: var(--text-small);
-    color: var(--text-body);
+    color: var(--color-body);
     line-height: var(--leading-small);
 }
 
@@ -162,7 +162,7 @@ body {
     text-transform: uppercase;
     letter-spacing: var(--tracking-caption);
     line-height: var(--leading-caption);
-    color: var(--text-heading);
+    color: var(--color-heading);
     margin-bottom: 1.25rem;
 }
 

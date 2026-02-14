@@ -128,11 +128,11 @@
     --surface-raised: var(--slate-50);
     --surface-overlay: var(--white);
 
-    /* Semantic text tokens */
-    --text-heading: var(--slate-800);
-    --text-body: var(--slate-400);
-    --text-muted: var(--slate-300);
-    --text-subtle: var(--slate-600);
+    /* Semantic text-color tokens */
+    --color-heading: var(--slate-800);
+    --color-body: var(--slate-400);
+    --color-muted: var(--slate-300);
+    --color-subtle: var(--slate-600);
 
     /* Semantic border tokens */
     --border: var(--slate-100);
@@ -144,10 +144,10 @@
     --surface-page: var(--slate-950);
     --surface-raised: var(--slate-900);
     --surface-overlay: var(--slate-800);
-    --text-heading: var(--slate-50);
-    --text-body: var(--slate-300);
-    --text-muted: var(--slate-500);
-    --text-subtle: var(--slate-400);
+    --color-heading: var(--slate-50);
+    --color-body: var(--slate-300);
+    --color-muted: var(--slate-500);
+    --color-subtle: var(--slate-400);
     --border: var(--slate-800);
     --border-strong: var(--slate-700);
 }

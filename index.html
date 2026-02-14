@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Bodoni+Moda&family=DM+Serif+Display&family=Cormorant&family=Instrument+Serif&family=Bebas+Neue&family=Anton&family=Oswald&family=Archivo+Black&family=Space+Grotesk&family=Syne&family=Outfit&family=Bricolage+Grotesque&family=Alfa+Slab+One&family=Zilla+Slab&family=Fraunces&family=Bungee&family=Dela+Gothic+One&family=Rubik+Mono+One&family=Josefin+Sans&family=Raleway&family=Space+Mono&family=Big+Shoulders+Display&family=Fjalla+One&family=Familjen+Grotesk&family=Protest+Strike&family=Libre+Caslon+Display&text=Farkas.Design&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Bodoni+Moda&family=DM+Serif+Display&family=Cormorant&family=Instrument+Serif&family=Bebas+Neue&family=Anton&family=Oswald&family=Archivo+Black&family=Space+Grotesk&family=Syne&family=Outfit&family=Bricolage+Grotesque&family=Alfa+Slab+One&family=Zilla+Slab&family=Fraunces&family=Bungee&family=Dela+Gothic+One&family=Rubik+Mono+One&family=Josefin+Sans&family=Raleway&family=Space+Mono&family=Big+Shoulders+Display&family=Fjalla+One&family=Familjen+Grotesk&family=Protest+Strike&family=Libre+Caslon+Display&family=Ultra&family=Righteous&family=Abril+Fatface&family=Staatliches&family=Passion+One&family=Russo+One&family=Orbitron&family=Cinzel&family=Poppins&family=Lexend&family=Bitter&family=Pathway+Gothic+One&family=Crimson+Text&text=Farkas.Design&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'EB Garamond', serif;
@@ -27,7 +27,7 @@
             width: 100%;
         }
         .wolf {
-            font-size: 1.6rem;
+            font-size: 3rem;
             margin: 0 0 1.2rem;
             line-height: 1;
         }
@@ -36,7 +36,7 @@
             align-items: center;
             justify-content: center;
             height: clamp(3.5rem, 10vw, 6rem);
-            overflow: hidden;
+            overflow: visible;
             margin: 0 0 0.2rem;
         }
         h1 {
@@ -56,21 +56,20 @@
         }
         .tagline {
             font-size: 1.05rem;
-            font-style: italic;
             color: #888;
-            margin: 0 0 2.5rem;
+            margin: 1.5rem 0 2.5rem;
             letter-spacing: 0.01em;
         }
-        .signup {
+        .contact {
             margin-top: 0;
         }
-        .signup-form {
+        .contact-form {
             display: flex;
             max-width: 280px;
             margin: 0 auto;
             border-bottom: 1px solid #ccc;
         }
-        .signup-form input[type="email"] {
+        .contact-form input[type="email"] {
             flex: 1;
             padding: 0.5rem 0;
             border: none;
@@ -81,23 +80,22 @@
             color: #2a2a2a;
             min-width: 0;
         }
-        .signup-form input[type="email"]::placeholder {
+        .contact-form input[type="email"]::placeholder {
             color: #bbb;
         }
-        .signup-form button {
+        .contact-form button {
             padding: 0.5rem 0;
             margin-left: 0.5rem;
             border: none;
             background: transparent;
             font-family: 'EB Garamond', serif;
-            font-style: italic;
             font-size: 0.9rem;
             color: #aaa;
             cursor: pointer;
             white-space: nowrap;
             transition: color 0.2s;
         }
-        .signup-form button:hover {
+        .contact-form button:hover {
             color: #2a2a2a;
         }
         .success-msg {
@@ -113,31 +111,34 @@
 </head>
 <body>
     <main>
-        <p class="wolf">🐺</p>
+        <p class="wolf" id="emoji">🐺</p>
         <div class="headline-wrap">
             <h1 id="headline">Farkas.Design</h1>
         </div>
         <p class="tagline">brand consulting</p>
 
-        <div class="signup">
-            <form class="signup-form" id="signup">
+        <div class="contact">
+            <form class="contact-form" id="contact">
                 <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-                <button type="submit">join list</button>
+                <button type="submit">get in touch</button>
             </form>
-            <p class="success-msg" id="success">you're in.</p>
+            <p class="success-msg" id="success">we'll be in touch.</p>
         </div>
     </main>
 
     <script>
-        // Ordered heaviest → lightest
+        // Ordered heaviest → lightest (40 fonts)
         const fonts = [
-            'Dela Gothic One', 'Bungee', 'Rubik Mono One', 'Archivo Black',
-            'Alfa Slab One', 'Anton', 'Bebas Neue', 'Protest Strike',
-            'Big Shoulders Display', 'Oswald', 'Fjalla One', 'Zilla Slab',
-            'Syne', 'DM Serif Display', 'Bodoni Moda', 'Fraunces',
-            'Outfit', 'Space Grotesk', 'Bricolage Grotesque', 'Playfair Display',
-            'Familjen Grotesk', 'Cormorant', 'Instrument Serif', 'Space Mono',
-            'Libre Caslon Display', 'Josefin Sans', 'Raleway'
+            'Dela Gothic One', 'Ultra', 'Bungee', 'Rubik Mono One',
+            'Archivo Black', 'Alfa Slab One', 'Anton', 'Bebas Neue',
+            'Righteous', 'Protest Strike', 'Abril Fatface', 'Staatliches',
+            'Passion One', 'Big Shoulders Display', 'Oswald', 'Fjalla One',
+            'Russo One', 'Zilla Slab', 'Syne', 'Orbitron',
+            'DM Serif Display', 'Bodoni Moda', 'Cinzel', 'Fraunces',
+            'Bitter', 'Outfit', 'Poppins', 'Space Grotesk',
+            'Lexend', 'Bricolage Grotesque', 'Playfair Display', 'Familjen Grotesk',
+            'Pathway Gothic One', 'Cormorant', 'Instrument Serif', 'Crimson Text',
+            'Space Mono', 'Libre Caslon Display', 'Josefin Sans', 'Raleway'
         ];
 
         // Ping-pong: heavy → light → heavy (smooth loop, no jump)
@@ -157,8 +158,34 @@
             spans.push(span);
         }
 
-        headline.addEventListener('mouseenter', () => { paused = true; });
+        spans.forEach(span => {
+            span.addEventListener('mouseenter', () => {
+                paused = true;
+                const ei = (emojiIdx - 1 + emojis.length) % emojis.length;
+                headline.style.color = emojiColors[ei];
+            });
+        });
         headline.addEventListener('mouseleave', () => { paused = false; });
+
+        const emojis = [
+            '❤️','🌹','🍎','💯','👹','🔥','🎸','🦊','🍊','🏀','🎃',
+            '⭐','🌻','⚡','🤩','😎','👍','👋','🍋',
+            '🍀','🐸','🌿','🐊','🥑',
+            '🐳','🦋','🌊','💎','🐬','🧿',
+            '🔮','🍇','👾','😈','🦄','🧙‍♂️','🌸','🦩',
+            '🙃','🤖','👽','👨🏼‍💻','🦾','🐺','☠️','👻'
+        ];
+        const emojiColors = [
+            '#e53e3e','#e53e3e','#e53e3e','#e53e3e','#c53030','#dd6b20','#c53030',
+            '#dd6b20','#ed8936','#dd6b20','#dd6b20',
+            '#d69e2e','#d69e2e','#d69e2e','#d69e2e','#b7791f','#d69e2e','#d69e2e','#d69e2e',
+            '#38a169','#38a169','#38a169','#38a169','#38a169',
+            '#3182ce','#4299e1','#3182ce','#4299e1','#3182ce','#2b6cb0',
+            '#805ad5','#6b46c1','#805ad5','#805ad5','#b83280','#6b46c1','#ed64a6','#ed64a6',
+            '#d69e2e','#718096','#38a169','#3182ce','#718096','#718096','#2d3748','#a0aec0'
+        ];
+        const emojiEl = document.getElementById('emoji');
+        let emojiIdx = 0;
 
         // Synchronized wave: each letter offset in the weight sequence
         let step = 0;
@@ -176,17 +203,20 @@
                         span.style.fontFamily = `"${wave[idx]}", serif`;
                     });
                     step++;
-                    // Scale to consistent width
+                    const ei = emojiIdx++ % emojis.length;
+                    emojiEl.textContent = emojis[ei];
+                    headline.style.color = '#2a2a2a';
+                    // Uniform scale to match target width (height varies freely)
                     headline.style.transform = 'none';
                     const actual = headline.getBoundingClientRect().width;
                     headline.style.transform = `scale(${targetWidth / actual})`;
                 }
-                setTimeout(tick, 70);
+                setTimeout(tick, 150);
             }
             tick();
         });
 
-        document.getElementById('signup').addEventListener('submit', async function(e) {
+        document.getElementById('contact').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = e.target;
             const email = form.email.value;

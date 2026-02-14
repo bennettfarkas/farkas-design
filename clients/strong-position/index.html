@@ -4,135 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Strong Position — Farkas Design</title>
+    <meta name="description" content="Strong Position brand assets — prepared by Farkas Design.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐺</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="brand.css">
     <style>
         body {
-            font-family: 'EB Garamond', serif;
-            font-weight: 400;
+            font-family: var(--font-sans);
+            font-weight: var(--weight-regular);
             margin: 0;
             min-height: 100vh;
-            color: #2a2a2a;
-            background: #fafaf8;
+            color: var(--slate-800);
+            background: var(--white);
+            display: flex;
+            flex-direction: column;
         }
-        header {
+        .header {
             text-align: center;
-            padding: 4rem 2rem 2rem;
+            padding: 5rem 2rem 3rem;
         }
-        h1 {
-            font-weight: 400;
+        .header h1 {
+            font-weight: var(--weight-regular);
             font-size: 2rem;
             margin: 0 0 0.4rem;
             letter-spacing: 0.01em;
         }
-        .tagline {
+        .header p {
             font-size: 1.05rem;
             font-style: italic;
-            color: #888;
+            color: var(--slate-400);
             margin: 0;
         }
-        .assets {
+        .content {
             max-width: 640px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 2rem 4rem;
+            flex: 1;
         }
-        .asset-section {
-            margin-bottom: 2.5rem;
+        .asset-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
-        .asset-section h2 {
-            font-weight: 400;
-            font-size: 1.2rem;
-            margin: 0 0 1rem;
-            padding-bottom: 0.4rem;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .asset-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .asset-list li {
+        .asset-card {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        .asset-list li:last-child {
-            border-bottom: none;
-        }
-        .asset-name {
-            font-size: 0.95rem;
-        }
-        .asset-meta {
-            font-size: 0.8rem;
-            color: #aaa;
-            font-style: italic;
-        }
-        a.download {
-            font-size: 0.85rem;
-            color: #888;
+            justify-content: center;
+            padding: 2.5rem 1.5rem;
+            border-radius: 12px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-100);
             text-decoration: none;
+            color: var(--slate-800);
+            opacity: 0.5;
+        }
+        .asset-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--slate-400);
+        }
+        .asset-card h2 {
+            font-weight: var(--weight-regular);
+            font-size: var(--text-body);
+            margin: 0 0 0.25rem;
+        }
+        .asset-card p {
+            font-size: var(--text-small);
+            color: var(--slate-400);
+            margin: 0;
             font-style: italic;
-            transition: color 0.2s;
         }
-        a.download:hover {
-            color: #2a2a2a;
-        }
-        footer {
-            text-align: center;
-            padding: 3rem 2rem;
-            font-size: 0.85rem;
-            color: #bbb;
-            font-style: italic;
-        }
-        footer a {
-            color: #aaa;
-            text-decoration: none;
-        }
-        footer a:hover {
-            color: #2a2a2a;
+        @media (max-width: 480px) {
+            .asset-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <header>
+    <div class="header">
         <h1>Strong Position</h1>
-        <p class="tagline">brand assets</p>
-    </header>
+        <p>brand assets</p>
+    </div>
 
-    <div class="assets">
-        <div class="asset-section">
-            <h2>Logo</h2>
-            <ul class="asset-list">
-                <!-- <li>
-                    <span class="asset-name">Primary Logo <span class="asset-meta">SVG</span></span>
-                    <a class="download" href="logo/logo-primary.svg" download>download</a>
-                </li> -->
-            </ul>
-            <p class="tagline" style="font-size: 0.9rem; margin-top: 0.8rem;">coming soon</p>
-        </div>
-
-        <div class="asset-section">
-            <h2>Color</h2>
-            <p class="tagline" style="font-size: 0.9rem;">coming soon</p>
-        </div>
-
-        <div class="asset-section">
-            <h2>Typography</h2>
-            <p class="tagline" style="font-size: 0.9rem;">coming soon</p>
-        </div>
-
-        <div class="asset-section">
-            <h2>Guidelines</h2>
-            <p class="tagline" style="font-size: 0.9rem;">coming soon</p>
+    <div class="content">
+        <div class="asset-grid">
+            <div class="asset-card">
+                <div class="icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 14l4-4 4 4 4-6 4 4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+                </div>
+                <h2>Logo</h2>
+                <p>coming soon</p>
+            </div>
+            <div class="asset-card">
+                <div class="icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="10"/></svg>
+                </div>
+                <h2>Color</h2>
+                <p>coming soon</p>
+            </div>
+            <div class="asset-card">
+                <div class="icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg>
+                </div>
+                <h2>Typography</h2>
+                <p>coming soon</p>
+            </div>
+            <div class="asset-card">
+                <div class="icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg>
+                </div>
+                <h2>Guidelines</h2>
+                <p>coming soon</p>
+            </div>
         </div>
     </div>
 
-    <footer>
-        prepared by <a href="https://farkas.design">Farkas Design</a>
-    </footer>
+    <script data-signature src="../../shared/farkas-animation.js"></script>
 </body>
 </html>

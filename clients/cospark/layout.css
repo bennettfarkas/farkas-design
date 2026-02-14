@@ -27,7 +27,7 @@ body {
     text-decoration: none;
     line-height: var(--leading-small);
     transition: color 0.15s ease;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
 }
 
 .back:hover {

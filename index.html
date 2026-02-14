@@ -280,10 +280,8 @@
         }
         .client-corner-error {
             position: absolute;
-            bottom: calc(100% + 0.25rem);
-            left: 0;
-            font-size: 0.65rem;
-            font-style: italic;
+            bottom: 0;
+            font-size: 0.75rem;
             color: var(--color-muted);
             opacity: 0;
             transition: opacity 0.2s;
@@ -342,11 +340,11 @@
     </main>
 
     <div class="client-corner" id="client-corner">
-        <span class="client-corner-label">client corner</span>
+        <span class="client-corner-label">client <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: 0"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg></span>
         <input class="client-corner-input" type="text" placeholder=" client name" autocomplete="off" spellcheck="false">
         <span class="client-corner-sparkle">✨</span>
         <span class="client-corner-underline"></span>
-        <span class="client-corner-error">not found</span>
+        <span class="client-corner-error">client not found</span>
         <span class="client-corner-measure" aria-hidden="true"></span>
     </div>
 
@@ -448,25 +446,61 @@
                 }
             });
 
+            var isLocal = location.protocol === 'file:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+
+            function navigateToClient(name) {
+                if (isLocal) window.location.href = 'clients/' + name + '/';
+                else window.location.href = 'https://' + name + '.farkas.design';
+            }
+
+            var errorMessages = [
+                'client not found',
+                'they don\u2019t live here',
+                'never heard of them',
+                'not on the list',
+                'wrong door',
+                'who?',
+                'nope',
+                'try next door',
+                'no one by that name',
+                'nice try though'
+            ];
+
+            function showError() {
+                clearTimeout(debounceTimer);
+                measure.textContent = input.value;
+                var w = measure.offsetWidth;
+                sparkle.style.left = (w + 4) + 'px';
+                sparkle.textContent = '❌';
+                sparkle.classList.add('show');
+                error.textContent = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                error.style.left = (w + 26) + 'px';
+                error.classList.add('show');
+                input.disabled = false;
+                input.select();
+                setTimeout(function() {
+                    error.classList.remove('show');
+                    sparkle.classList.remove('show');
+                }, 2000);
+            }
+
             input.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
                     var name = normalizeClientName(input.value);
                     if (!name) return;
                     input.disabled = true;
-                    fetch('/clients/' + name + '/')
-                        .then(function(res) {
-                            if (res.ok) {
-                                window.location.href = 'https://' + name + '.farkas.design';
-                            } else {
-                                error.classList.add('show');
-                                input.disabled = false;
-                                input.select();
-                                setTimeout(function() { error.classList.remove('show'); }, 2000);
-                            }
-                        })
-                        .catch(function() {
-                            window.location.href = 'https://' + name + '.farkas.design';
-                        });
+                    if (name in knownClients) {
+                        navigateToClient(name);
+                    } else if (isLocal) {
+                        showError();
+                    } else {
+                        fetch('/clients/' + name + '/')
+                            .then(function(res) {
+                                if (res.ok) navigateToClient(name);
+                                else showError();
+                            })
+                            .catch(function() { showError(); });
+                    }
                 }
                 if (e.key === 'Escape') {
                     collapse();

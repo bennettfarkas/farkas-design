@@ -767,8 +767,7 @@
         </div>
     </main>
 
-    <!-- JSZip for ZIP downloads -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <!-- JSZip for ZIP downloads (lazy-loaded on first use) -->
 
     <script>
         const SCALE = 4; // PNG render scale for high-res output
@@ -860,12 +859,25 @@
         /**
          * Download all logos as a ZIP (SVGs + PNGs).
          */
+        async function loadJSZip() {
+            if (typeof JSZip !== 'undefined') return;
+            return new Promise(function (resolve, reject) {
+                var s = document.createElement('script');
+                s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+                s.onload = resolve;
+                s.onerror = function () { reject(new Error('Failed to load JSZip')); };
+                document.head.appendChild(s);
+            });
+        }
+
         async function downloadAll() {
-            if (typeof JSZip === 'undefined') {
+            const btn = document.querySelector('.btn-primary');
+            try {
+                await loadJSZip();
+            } catch {
                 alert('ZIP library failed to load. Please try again or download files individually.');
                 return;
             }
-            const btn = document.querySelector('.btn-primary');
             const originalHTML = btn.innerHTML;
             btn.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" style="width:16px;height:16px;animation:spin 1s linear infinite"><circle cx="8" cy="8" r="6" stroke-dasharray="28" stroke-dashoffset="8"/></svg> Packaging…';
             btn.disabled = true;

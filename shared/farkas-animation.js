@@ -85,6 +85,8 @@
         return emojis[Math.floor(Math.random() * emojis.length)];
     }
 
+    var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     function init(headlineEl, emojiEl) {
         var text = headlineEl.textContent;
         var paused = false;
@@ -95,6 +97,12 @@
         // Signature mode: only animate on hover
         var signature = headlineEl.closest('.farkas-signature');
         var sigActive = false;
+
+        // Respect prefers-reduced-motion: show static text, no animation
+        if (reducedMotion) {
+            if (!signature) headlineEl.style.color = 'var(--color-text)';
+            return;
+        }
 
         // Split into per-character spans
         headlineEl.textContent = '';
@@ -137,10 +145,14 @@
                 headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
             }
 
-            function tick() {
+            var lastTick = 0;
+            function tick(now) {
                 if (signature && !sigActive) return;
-                if (!paused) advance();
-                setTimeout(tick, 150);
+                if (!now || now - lastTick >= 150) {
+                    if (!paused) advance();
+                    lastTick = now || 0;
+                }
+                requestAnimationFrame(tick);
             }
 
             if (!signature) {

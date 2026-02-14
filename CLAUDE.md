@@ -8,12 +8,12 @@ Website for farkas.design — a static site deployed to GitHub Pages. No build s
 
 ## Architecture
 
-- **Frontend**: Single `index.html` with inline styles/JS, Inter for body text, wolf emoji favicon, progressive disclosure contact form, staggered fade-in on load, client corner input (bottom-left) for navigating to client subdomains with per-client emoji and random error messages
-- **Shared animation + theme**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation with click-to-advance on hover. Also provides `window.toggleTheme()` used by all pages via `onclick`. Used on the homepage and as a hover signature on client pages (via `data-signature` attribute). Signature hover is emoji-only (not the full row). Signature auto-injects body flex layout and pins to viewport bottom.
+- **Frontend**: Single `index.html` with inline styles/JS, Inter for body text, wolf emoji favicon, progressive disclosure contact form, staggered fade-in on load, client corner input (bottom-left) for navigating to client subdomains with per-client emoji and random error messages. The emoji map is hardcoded in `index.html` as `knownClients` — update it when adding a new client.
+- **Shared animation + theme**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation with click-to-advance on hover. Also provides `window.toggleTheme()` used by all pages via `onclick`. Used on the homepage and as a hover signature on client pages (via `data-signature` attribute on the script tag). Signature mode shows emoji-only (not the full headline row), auto-injects body flex layout, and pins to viewport bottom. The emoji is a native `<a>` linking back to farkas.design.
 - **Forms**: Cloudflare Workers handle backend logic (HTML form → Worker → Notion DB). See `forms/CLAUDE.md`
 - **Analytics**: Cloudflare Web Analytics (cookie-free). See `analytics/CLAUDE.md`
 - **Hosting**: GitHub Pages via Actions workflow
-- **DNS/CDN**: Cloudflare (DNS-only for root; wildcard `*.farkas.design` proxied for subdomain routing)
+- **DNS**: Cloudflare DNS. Root domain (`farkas.design`) uses 4 A records pointing to GitHub Pages IPs (DNS-only, not proxied). Wildcard (`*.farkas.design`) is proxied through Cloudflare to the subdomain router Worker.
 - **Clients**: `clients/` directory for client brand asset pages, served at `{name}.farkas.design` via subdomain router Worker
 - **Subdomain routing**: Cloudflare Worker proxies `*.farkas.design` → `farkas.design/clients/{subdomain}/` on GitHub Pages
 - **Figma integration**: MCP server (`thirdstrandstudio/mcp-figma`) configured in `.mcp.json` for extracting brand assets from Figma files
@@ -36,8 +36,9 @@ cd workers/subdomain-router && npx wrangler deploy          # deploy subdomain r
 2. Add `brand.css` with CSS custom properties (color tokens, typography tokens, weights)
 3. Add `index.html` linking to `brand.css` — use the CoSpark index as a template
 4. Add subpage folders as needed: `logo/`, `color/`, `typography/`, `guidelines/`
-5. Add `<script data-signature src="../../shared/farkas-animation.js"></script>` for the Farkas signature
-6. Push to `main` — the subdomain `acme.farkas.design` will automatically serve that folder
+5. (Optional) Add `<script data-signature src="../../shared/farkas-animation.js"></script>` for the Farkas signature
+6. Update the `knownClients` map in root `index.html` with the client name and emoji
+7. Push to `main` — the subdomain `acme.farkas.design` will automatically serve that folder
 
 ### Client folder structure
 
@@ -57,7 +58,7 @@ clients/{client-name}/
 └── guidelines/         # brand guidelines (coming soon for most clients)
 ```
 
-**CSS architecture for client subpages**: Subpages (logo, color, typography) share layout via `layout.css` which provides reset, body, header, back link, content container, section headers, guidelines grid, don'ts grid/cards, `.sr-only`, and responsive breakpoints (standard: 640px). Each subpage's `<style>` tag contains only page-specific styles (e.g. column counts for `.donts-grid`). `brand.css` provides the design tokens. Google Fonts are loaded via `@import` in `layout.css`.
+**CSS architecture for client subpages**: Subpages (logo, color, typography) share layout via `layout.css` which provides reset, body, header, back link, content container, section headers, guidelines grid, don'ts grid/cards, `.sr-only`, and responsive breakpoints (standard: 640px). Each subpage's `<style>` tag contains only page-specific styles (e.g. column counts for `.donts-grid`). `brand.css` provides the design tokens. Google Fonts are loaded via `<link>` tags in each page's `<head>` (not via CSS `@import`).
 
 ### Active clients
 
@@ -76,7 +77,7 @@ File key is the ID in the Figma URL: `figma.com/design/{FILE_KEY}/...`
 
 ## Deployment
 
-Auto-deploys on push to `main` via `.github/workflows/deploy.yml`. The workflow copies only site files (`index.html`, `CNAME`, `shared/`, `clients/`) into a `_site/` directory for upload — `forms/`, `workers/`, and config files are excluded from the deployed artifact.
+Auto-deploys on push to `main` via `.github/workflows/deploy.yml`. The workflow copies only site files (`index.html`, `CNAME`, `shared/`, `clients/`) into a `_site/` directory for upload — `forms/` and `workers/` are excluded because they deploy separately via `wrangler deploy`, not GitHub Pages.
 
 - **Live URL**: `https://farkas.design`
 - **HTTPS**: Enforced, TLS cert issued by GitHub

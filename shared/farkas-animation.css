@@ -29,6 +29,7 @@
     line-height: 1;
     cursor: pointer;
     transform-origin: center;
+    will-change: transform;
 }
 .farkas-headline span {
     display: inline-block;
@@ -75,4 +76,14 @@
     color: var(--color-muted, #888);
     cursor: pointer;
     transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .farkas-headline {
+        will-change: auto;
+    }
+    .farkas-signature .farkas-emoji,
+    .farkas-signature .farkas-wrap {
+        transition: none;
+    }
 }

@@ -41,11 +41,13 @@ export default {
 
       if (!res.ok) {
         const body = await res.text();
-        return Response.json({ error: 'Notion API error', detail: body }, { status: 502, headers: corsHeaders });
+        console.error('Notion API error:', res.status, body);
+        return Response.json({ error: 'Submission failed' }, { status: 502, headers: corsHeaders });
       }
 
       return Response.json({ ok: true }, { headers: corsHeaders });
     } catch (err) {
+      console.error('Signup worker error:', err.message || err);
       return Response.json({ error: 'Server error' }, { status: 500, headers: corsHeaders });
     }
   },

@@ -3,8 +3,8 @@ export default {
     const url = new URL(request.url);
     const host = url.hostname;
 
-    // Extract subdomain from host
-    const match = host.match(/^([^.]+)\.farkas\.design$/);
+    // Extract subdomain from host (restrict to alphanumeric + hyphens to prevent path traversal)
+    const match = host.match(/^([a-z0-9-]+)\.farkas\.design$/);
     if (!match || match[1] === 'www') {
       // Not a subdomain request (or www) — pass through to origin
       return fetch(request);

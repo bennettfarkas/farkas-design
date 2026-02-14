@@ -49,16 +49,25 @@
 .farkas-signature .farkas-wrap {
     pointer-events: none;
 }
-.farkas-signature .farkas-emoji {
-    font-size: 1.25rem;
-    margin: 0;
-    cursor: pointer;
-    transition: transform 0.15s ease;
+.farkas-emoji-zone {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 2rem;
     height: 2rem;
+}
+.farkas-emoji-hit {
+    position: absolute;
+    inset: -4px;
+    z-index: 1;
+    cursor: pointer;
+}
+.farkas-signature .farkas-emoji {
+    font-size: 1.25rem;
+    margin: 0;
+    pointer-events: none;
+    transition: transform 0.15s ease;
 }
 .farkas-signature.active .farkas-emoji {
     transform: scale(1.15);

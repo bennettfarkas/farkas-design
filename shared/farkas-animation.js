@@ -136,9 +136,7 @@
                     span.style.fontFamily = '"' + wave[idx] + '", serif';
                 });
                 step++;
-                // Skip emoji cycling in signature mode — changing textContent
-                // between mousedown/mouseup causes Safari to drop the click event
-                if (emojiEl && !signature) {
+                if (emojiEl) {
                     var ei = emojiIdx++ % emojis.length;
                     emojiEl.textContent = emojis[ei];
                 }
@@ -163,13 +161,16 @@
             }
 
             if (signature) {
-                // Signature mode: only emoji hover triggers animation
-                emojiEl.addEventListener('mouseenter', function () {
+                // Hover the stable hit overlay (not the emoji itself) to
+                // trigger animation — the overlay never changes DOM content,
+                // so Safari reliably fires click on the parent <a>.
+                var hitTarget = signature.querySelector('.farkas-emoji-hit') || emojiEl;
+                hitTarget.addEventListener('mouseenter', function () {
                     sigActive = true;
                     signature.classList.add('active');
                     tick();
                 });
-                emojiEl.addEventListener('mouseleave', function () {
+                hitTarget.addEventListener('mouseleave', function () {
                     sigActive = false;
                     signature.classList.remove('active');
                     emojiEl.textContent = randomEmoji();
@@ -194,10 +195,20 @@
         sig.className = 'farkas-signature';
         sig.href = 'https://farkas.design';
 
+        var emojiZone = document.createElement('span');
+        emojiZone.className = 'farkas-emoji-zone';
+
         var emoji = document.createElement('span');
         emoji.className = 'farkas-emoji';
         emoji.textContent = randomEmoji();
-        sig.appendChild(emoji);
+        emojiZone.appendChild(emoji);
+
+        // Stable hit target — never changes DOM, so Safari always fires click
+        var hit = document.createElement('span');
+        hit.className = 'farkas-emoji-hit';
+        emojiZone.appendChild(hit);
+
+        sig.appendChild(emojiZone);
 
         // Inject critical hiding rule before element exists to prevent FOUC
         var style = document.createElement('style');

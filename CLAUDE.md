@@ -8,8 +8,8 @@ Website for farkas.design — a static site deployed to GitHub Pages. No build s
 
 ## Architecture
 
-- **Frontend**: Single `index.html` with inline styles/JS, Inter for body text, wolf emoji favicon, progressive disclosure contact form
-- **Shared animation + theme**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation with click-to-advance on hover. Also provides `window.toggleTheme()` used by all pages via `onclick`. Used on the homepage and as a hover signature on client pages (via `data-signature` attribute). Signature auto-injects body flex layout and pins to viewport bottom.
+- **Frontend**: Single `index.html` with inline styles/JS, Inter for body text, wolf emoji favicon, progressive disclosure contact form, staggered fade-in on load, client corner input (bottom-left) for navigating to client subdomains with per-client emoji and random error messages
+- **Shared animation + theme**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation with click-to-advance on hover. Also provides `window.toggleTheme()` used by all pages via `onclick`. Used on the homepage and as a hover signature on client pages (via `data-signature` attribute). Signature hover is emoji-only (not the full row). Signature auto-injects body flex layout and pins to viewport bottom.
 - **Forms**: Cloudflare Workers handle backend logic (HTML form → Worker → Notion DB). See `forms/CLAUDE.md`
 - **Analytics**: Cloudflare Web Analytics (cookie-free). See `analytics/CLAUDE.md`
 - **Hosting**: GitHub Pages via Actions workflow
@@ -32,7 +32,7 @@ cd workers/subdomain-router && npx wrangler deploy          # deploy subdomain r
 
 ### Adding a client subdomain
 
-1. Create a kebab-case directory under `clients/` (e.g., `clients/acme/`)
+1. Create a lowercase directory under `clients/` (e.g., `clients/acme/`)
 2. Add `brand.css` with CSS custom properties (color tokens, typography tokens, weights)
 3. Add `index.html` linking to `brand.css` — use the CoSpark index as a template
 4. Add subpage folders as needed: `logo/`, `color/`, `typography/`, `guidelines/`

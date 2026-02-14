@@ -30,6 +30,7 @@
     cursor: pointer;
     transform-origin: center;
     will-change: transform;
+    contain: layout style;
 }
 .farkas-headline span {
     display: inline-block;

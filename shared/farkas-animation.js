@@ -100,7 +100,11 @@
 
         // Respect prefers-reduced-motion: show static text, no animation
         if (reducedMotion) {
-            if (!signature) headlineEl.style.color = 'var(--color-text)';
+            if (signature) {
+                headlineEl.style.color = 'var(--color-muted, #888)';
+            } else {
+                headlineEl.style.color = 'var(--color-text)';
+            }
             return;
         }
 
@@ -123,12 +127,20 @@
             });
         }
 
-        // Preload fonts, then start (or wait for hover in signature mode)
-        Promise.allSettled(
+        // Preload fonts with timeout, then start (or wait for hover in signature mode)
+        var fontTimeout = new Promise(function (resolve) { setTimeout(resolve, 5000); });
+        var fontLoad = Promise.allSettled(
             fonts.map(function (f) { return document.fonts.load('48px "' + f + '"', 'Farkas.Design'); })
-        ).then(function () {
+        );
+        Promise.race([fontLoad, fontTimeout]).then(function () {
             var targetWidth = headlineEl.getBoundingClientRect().width;
             if (!signature) headlineEl.style.color = 'var(--color-text)';
+
+            // Update target width on resize so scale stays correct
+            window.addEventListener('resize', function () {
+                headlineEl.style.transform = 'none';
+                targetWidth = headlineEl.getBoundingClientRect().width;
+            });
 
             function advance() {
                 spans.forEach(function (span, i) {
@@ -137,7 +149,8 @@
                 });
                 step++;
                 if (emojiEl) {
-                    var ei = emojiIdx++ % emojis.length;
+                    var ei = emojiIdx % emojis.length;
+                    emojiIdx = (emojiIdx + 1) % emojis.length;
                     emojiEl.textContent = emojis[ei];
                 }
                 headlineEl.style.transform = 'none';
@@ -145,14 +158,15 @@
                 headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
             }
 
+            var rafId = 0;
             var lastTick = 0;
             function tick(now) {
-                if (signature && !sigActive) return;
+                if (signature && !sigActive) { rafId = 0; return; }
                 if (!now || now - lastTick >= 150) {
                     if (!paused) advance();
                     lastTick = now || 0;
                 }
-                requestAnimationFrame(tick);
+                rafId = requestAnimationFrame(tick);
             }
 
             if (!signature) {
@@ -168,11 +182,12 @@
                 hitTarget.addEventListener('mouseenter', function () {
                     sigActive = true;
                     signature.classList.add('active');
-                    tick();
+                    if (!rafId) tick();
                 });
                 hitTarget.addEventListener('mouseleave', function () {
                     sigActive = false;
                     signature.classList.remove('active');
+                    if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
                     emojiEl.textContent = randomEmoji();
                     spans.forEach(function (s) { s.style.fontFamily = ''; });
                     headlineEl.style.color = '';

@@ -19,10 +19,16 @@
             border-bottom: none;
         }
 
-        .cards {
+        .variants {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 1.25rem;
+        }
+
+        .variant {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .card {
@@ -34,14 +40,14 @@
             position: relative;
         }
 
-        .card > img {
-            grid-column: 1;
-            grid-row: 1;
-        }
-
         .card-light {
             background: var(--slate-50);
             border: 1px solid var(--slate-100);
+        }
+
+        .card-copper {
+            background: var(--copper-50);
+            border: 1px solid var(--copper-100);
         }
 
         .card-dark {
@@ -52,19 +58,6 @@
             max-width: 80%;
             max-height: 100px;
             object-fit: contain;
-            transition: opacity 0.2s ease;
-        }
-
-        .card img.alt {
-            opacity: 0;
-        }
-
-        .card img.alt.active {
-            opacity: 1;
-        }
-
-        .card img.default.faded {
-            opacity: 0;
         }
 
         .card-icon img {
@@ -84,24 +77,19 @@
         }
 
         .card-light .card-label { color: var(--slate-400); }
+        .card-copper .card-label { color: var(--copper-300); }
         .card-dark .card-label { color: var(--slate-600); }
 
-        .downloads {
+        .download-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.25rem;
-            margin-top: 0.75rem;
-        }
-
-        .download-group {
-            display: flex;
             gap: 0.5rem;
-            flex-wrap: wrap;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.35rem;
             padding: 0.45rem 0.85rem;
             font-family: var(--font-sans);
@@ -250,9 +238,13 @@
         }
 
         /* Responsive */
+        @media (max-width: 900px) {
+            .download-group { grid-template-columns: 1fr; }
+        }
+
         @media (max-width: 640px) {
-            .cards { grid-template-columns: 1fr; }
-            .downloads { grid-template-columns: 1fr; }
+            .variants { grid-template-columns: 1fr; }
+            .download-group { grid-template-columns: 1fr 1fr; }
             .donts-grid { grid-template-columns: 1fr 1fr; }
         }
     </style>
@@ -274,7 +266,7 @@
         <div class="header-logo">
             <img src="../wordmark.svg" alt="CoSpark">
         </div>
-        <h1>Your logo assets</h1>
+        <h1>Logo</h1>
     </div>
 
     <div class="content">
@@ -285,45 +277,54 @@
                 <h2>Logo</h2>
                 <p>Primary horizontal lockup. Use for headers, marketing materials, and presentations.</p>
             </div>
-            <div class="cards">
-                <div class="card card-light" id="card-logo">
-                    <span class="card-label">Light background</span>
-                    <img class="default" src="logo-slate.svg" alt="CoSpark logo in slate">
-                    <img class="alt" src="logo-copper.svg" alt="CoSpark logo in copper">
+            <div class="variants">
+                <div class="variant">
+                    <div class="card card-light">
+                        <span class="card-label">Slate</span>
+                        <img src="logo-slate.svg" alt="CoSpark logo in slate">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-slate.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Slate
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-slate.svg', 'cospark-logo-slate.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Slate
+                        </button>
+                    </div>
                 </div>
-                <div class="card card-dark">
-                    <span class="card-label">Dark background</span>
-                    <img src="logo-white.svg" alt="CoSpark logo in white">
+                <div class="variant">
+                    <div class="card card-copper">
+                        <span class="card-label">Copper</span>
+                        <img src="logo-copper.svg" alt="CoSpark logo in copper">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-copper.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Copper
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-copper.svg', 'cospark-logo-copper.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Copper
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="downloads">
-                <div class="download-group">
-                    <a class="btn" href="logo-slate.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Slate
-                    </a>
-                    <a class="btn" href="logo-copper.svg" download data-preview="card-logo">
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Copper
-                    </a>
-                    <button class="btn" onclick="downloadPng('logo-slate.svg', 'cospark-logo-slate.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Slate
-                    </button>
-                    <button class="btn" onclick="downloadPng('logo-copper.svg', 'cospark-logo-copper.png')" data-preview="card-logo">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Copper
-                    </button>
-                </div>
-                <div class="download-group">
-                    <a class="btn" href="logo-white.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG White
-                    </a>
-                    <button class="btn" onclick="downloadPng('logo-white.svg', 'cospark-logo-white.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG White
-                    </button>
+                <div class="variant">
+                    <div class="card card-dark">
+                        <span class="card-label">White</span>
+                        <img src="logo-white.svg" alt="CoSpark logo in white">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-white.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG White
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-white.svg', 'cospark-logo-white.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG White
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -334,45 +335,54 @@
                 <h2>Logo Stacked</h2>
                 <p>Vertical lockup for square placements — social profiles, app icons, and compact spaces.</p>
             </div>
-            <div class="cards">
-                <div class="card card-light" id="card-logo-stacked">
-                    <span class="card-label">Light background</span>
-                    <img class="default" src="logo-stacked-slate.svg" alt="CoSpark logo stacked in slate">
-                    <img class="alt" src="logo-stacked-copper.svg" alt="CoSpark logo stacked in copper">
+            <div class="variants">
+                <div class="variant">
+                    <div class="card card-light">
+                        <span class="card-label">Slate</span>
+                        <img src="logo-stacked-slate.svg" alt="CoSpark logo stacked in slate">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-stacked-slate.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Slate
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-stacked-slate.svg', 'cospark-logo-stacked-slate.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Slate
+                        </button>
+                    </div>
                 </div>
-                <div class="card card-dark">
-                    <span class="card-label">Dark background</span>
-                    <img src="logo-stacked-white.svg" alt="CoSpark logo stacked in white">
+                <div class="variant">
+                    <div class="card card-copper">
+                        <span class="card-label">Copper</span>
+                        <img src="logo-stacked-copper.svg" alt="CoSpark logo stacked in copper">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-stacked-copper.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Copper
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-stacked-copper.svg', 'cospark-logo-stacked-copper.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Copper
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="downloads">
-                <div class="download-group">
-                    <a class="btn" href="logo-stacked-slate.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Slate
-                    </a>
-                    <a class="btn" href="logo-stacked-copper.svg" download data-preview="card-logo-stacked">
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Copper
-                    </a>
-                    <button class="btn" onclick="downloadPng('logo-stacked-slate.svg', 'cospark-logo-stacked-slate.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Slate
-                    </button>
-                    <button class="btn" onclick="downloadPng('logo-stacked-copper.svg', 'cospark-logo-stacked-copper.png')" data-preview="card-logo-stacked">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Copper
-                    </button>
-                </div>
-                <div class="download-group">
-                    <a class="btn" href="logo-stacked-white.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG White
-                    </a>
-                    <button class="btn" onclick="downloadPng('logo-stacked-white.svg', 'cospark-logo-stacked-white.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG White
-                    </button>
+                <div class="variant">
+                    <div class="card card-dark">
+                        <span class="card-label">White</span>
+                        <img src="logo-stacked-white.svg" alt="CoSpark logo stacked in white">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="logo-stacked-white.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG White
+                        </a>
+                        <button class="btn" onclick="downloadPng('logo-stacked-white.svg', 'cospark-logo-stacked-white.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG White
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -383,45 +393,54 @@
                 <h2>Wordmark</h2>
                 <p>Text-only mark for editorial contexts, footers, and co-branding where the icon isn't needed.</p>
             </div>
-            <div class="cards">
-                <div class="card card-light" id="card-wordmark">
-                    <span class="card-label">Light background</span>
-                    <img class="default" src="wordmark-slate.svg" alt="CoSpark wordmark in slate">
-                    <img class="alt" src="wordmark-copper.svg" alt="CoSpark wordmark in copper">
+            <div class="variants">
+                <div class="variant">
+                    <div class="card card-light">
+                        <span class="card-label">Slate</span>
+                        <img src="wordmark-slate.svg" alt="CoSpark wordmark in slate">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="wordmark-slate.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Slate
+                        </a>
+                        <button class="btn" onclick="downloadPng('wordmark-slate.svg', 'cospark-wordmark-slate.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Slate
+                        </button>
+                    </div>
                 </div>
-                <div class="card card-dark">
-                    <span class="card-label">Dark background</span>
-                    <img src="wordmark-white.svg" alt="CoSpark wordmark in white">
+                <div class="variant">
+                    <div class="card card-copper">
+                        <span class="card-label">Copper</span>
+                        <img src="wordmark-copper.svg" alt="CoSpark wordmark in copper">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="wordmark-copper.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Copper
+                        </a>
+                        <button class="btn" onclick="downloadPng('wordmark-copper.svg', 'cospark-wordmark-copper.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Copper
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="downloads">
-                <div class="download-group">
-                    <a class="btn" href="wordmark-slate.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Slate
-                    </a>
-                    <a class="btn" href="wordmark-copper.svg" download data-preview="card-wordmark">
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Copper
-                    </a>
-                    <button class="btn" onclick="downloadPng('wordmark-slate.svg', 'cospark-wordmark-slate.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Slate
-                    </button>
-                    <button class="btn" onclick="downloadPng('wordmark-copper.svg', 'cospark-wordmark-copper.png')" data-preview="card-wordmark">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Copper
-                    </button>
-                </div>
-                <div class="download-group">
-                    <a class="btn" href="wordmark-white.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG White
-                    </a>
-                    <button class="btn" onclick="downloadPng('wordmark-white.svg', 'cospark-wordmark-white.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG White
-                    </button>
+                <div class="variant">
+                    <div class="card card-dark">
+                        <span class="card-label">White</span>
+                        <img src="wordmark-white.svg" alt="CoSpark wordmark in white">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="wordmark-white.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG White
+                        </a>
+                        <button class="btn" onclick="downloadPng('wordmark-white.svg', 'cospark-wordmark-white.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG White
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -432,45 +451,54 @@
                 <h2>Icon</h2>
                 <p>Standalone spark mark for favicons, avatars, and small-scale applications.</p>
             </div>
-            <div class="cards">
-                <div class="card card-light card-icon" id="card-icon">
-                    <span class="card-label">Light background</span>
-                    <img class="default" src="icon-slate.svg" alt="CoSpark icon in slate">
-                    <img class="alt" src="icon-copper.svg" alt="CoSpark icon in copper">
+            <div class="variants">
+                <div class="variant">
+                    <div class="card card-light card-icon">
+                        <span class="card-label">Slate</span>
+                        <img src="icon-slate.svg" alt="CoSpark icon in slate">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="icon-slate.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Slate
+                        </a>
+                        <button class="btn" onclick="downloadPng('icon-slate.svg', 'cospark-icon-slate.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Slate
+                        </button>
+                    </div>
                 </div>
-                <div class="card card-dark card-icon">
-                    <span class="card-label">Dark background</span>
-                    <img src="icon-white.svg" alt="CoSpark icon in white">
+                <div class="variant">
+                    <div class="card card-copper card-icon">
+                        <span class="card-label">Copper</span>
+                        <img src="icon-copper.svg" alt="CoSpark icon in copper">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="icon-copper.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG Copper
+                        </a>
+                        <button class="btn" onclick="downloadPng('icon-copper.svg', 'cospark-icon-copper.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG Copper
+                        </button>
+                    </div>
                 </div>
-            </div>
-            <div class="downloads">
-                <div class="download-group">
-                    <a class="btn" href="icon-slate.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Slate
-                    </a>
-                    <a class="btn" href="icon-copper.svg" download data-preview="card-icon">
-                        <svg><use href="#icon-download"/></svg>
-                        SVG Copper
-                    </a>
-                    <button class="btn" onclick="downloadPng('icon-slate.svg', 'cospark-icon-slate.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Slate
-                    </button>
-                    <button class="btn" onclick="downloadPng('icon-copper.svg', 'cospark-icon-copper.png')" data-preview="card-icon">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG Copper
-                    </button>
-                </div>
-                <div class="download-group">
-                    <a class="btn" href="icon-white.svg" download>
-                        <svg><use href="#icon-download"/></svg>
-                        SVG White
-                    </a>
-                    <button class="btn" onclick="downloadPng('icon-white.svg', 'cospark-icon-white.png')">
-                        <svg><use href="#icon-download"/></svg>
-                        PNG White
-                    </button>
+                <div class="variant">
+                    <div class="card card-dark card-icon">
+                        <span class="card-label">White</span>
+                        <img src="icon-white.svg" alt="CoSpark icon in white">
+                    </div>
+                    <div class="download-group">
+                        <a class="btn" href="icon-white.svg" download>
+                            <svg><use href="#icon-download"/></svg>
+                            SVG White
+                        </a>
+                        <button class="btn" onclick="downloadPng('icon-white.svg', 'cospark-icon-white.png')">
+                            <svg><use href="#icon-download"/></svg>
+                            PNG White
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -561,7 +589,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
     <script>
-        const SCALE = 3; // PNG render scale for high-res output
+        const SCALE = 4; // PNG render scale for high-res output
 
         // All logo files for ZIP bundling
         const ALL_SVGS = [
@@ -674,23 +702,6 @@
                 btn.disabled = false;
             }
         }
-        // Hover-preview: crossfade light card to copper variant
-        document.querySelectorAll('[data-preview]').forEach(btn => {
-            const card = document.getElementById(btn.dataset.preview);
-            if (!card) return;
-            const defaultImg = card.querySelector('img.default');
-            const altImg = card.querySelector('img.alt');
-            if (!defaultImg || !altImg) return;
-
-            btn.addEventListener('mouseenter', () => {
-                defaultImg.classList.add('faded');
-                altImg.classList.add('active');
-            });
-            btn.addEventListener('mouseleave', () => {
-                defaultImg.classList.remove('faded');
-                altImg.classList.remove('active');
-            });
-        });
     </script>
 
     <style>

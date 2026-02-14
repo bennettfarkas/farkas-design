@@ -9,6 +9,13 @@
     align-items: center;
     justify-content: center;
     overflow: visible;
+    user-select: none;
+}
+.farkas-emoji::selection,
+.farkas-wrap::selection,
+.farkas-headline::selection,
+.farkas-headline span::selection {
+    background: transparent;
 }
 .farkas-headline {
     font-family: 'EB Garamond', serif;

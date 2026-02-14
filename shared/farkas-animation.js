@@ -136,7 +136,9 @@
                     span.style.fontFamily = '"' + wave[idx] + '", serif';
                 });
                 step++;
-                if (emojiEl) {
+                // Skip emoji cycling in signature mode — changing textContent
+                // between mousedown/mouseup causes Safari to drop the click event
+                if (emojiEl && !signature) {
                     var ei = emojiIdx++ % emojis.length;
                     emojiEl.textContent = emojis[ei];
                 }

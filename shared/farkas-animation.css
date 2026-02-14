@@ -1,6 +1,7 @@
 .farkas-emoji {
     margin: 0 0 1.2rem;
     line-height: 1;
+    cursor: pointer;
 }
 .farkas-wrap {
     display: flex;

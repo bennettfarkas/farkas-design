@@ -72,28 +72,6 @@
         '☠️','👀','♠️','🏴‍☠️'
     ];
 
-    var emojiColors = [
-        // red
-        '#e53e3e','#c53030','#e53e3e','#e53e3e','#e53e3e','#e53e3e',
-        // orange
-        '#dd6b20','#dd6b20','#dd6b20','#dd6b20','#dd6b20',
-        // gold
-        '#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e','#d69e2e',
-        // brown
-        '#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f','#b7791f',
-        // green
-        '#276749','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169','#38a169',
-        // blue
-        '#3182ce','#3182ce','#3182ce','#3182ce','#4299e1','#4299e1','#4299e1','#4299e1',
-        // purple
-        '#805ad5','#805ad5','#805ad5','#6b46c1',
-        // pink
-        '#ed64a6','#ed64a6','#ed64a6','#ed64a6','#ed64a6','#ed64a6','#b83280',
-        // gray
-        '#a0aec0','#a0aec0','#a0aec0','#a0aec0','#718096','#718096','#718096','#718096','#718096','#718096','#718096','#718096',
-        // dark
-        '#2d3748','#2d3748','#2d3748','#2d3748'
-    ];
 
     function init(headlineEl, emojiEl) {
         var text = headlineEl.textContent;
@@ -117,15 +95,12 @@
         }
 
         if (!signature) {
-            // Normal mode: hover to pause + color
-            spans.forEach(function (span) {
-                span.addEventListener('mouseenter', function () {
-                    paused = true;
-                    var ei = (emojiIdx - 1 + emojis.length) % emojis.length;
-                    headlineEl.style.color = emojiColors[ei];
-                });
+            // Normal mode: hover to pause
+            var hoverEls = emojiEl ? [headlineEl, emojiEl] : [headlineEl];
+            hoverEls.forEach(function (el) {
+                el.addEventListener('mouseenter', function () { paused = true; });
+                el.addEventListener('mouseleave', function () { paused = false; });
             });
-            headlineEl.addEventListener('mouseleave', function () { paused = false; });
         }
 
         // Preload fonts, then start (or wait for hover in signature mode)
@@ -134,29 +109,33 @@
         ).then(function () {
             var targetWidth = headlineEl.getBoundingClientRect().width;
 
+            function advance() {
+                spans.forEach(function (span, i) {
+                    var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
+                    span.style.fontFamily = '"' + wave[idx] + '", serif';
+                });
+                step++;
+                if (emojiEl) {
+                    var ei = emojiIdx++ % emojis.length;
+                    emojiEl.textContent = emojis[ei];
+                }
+                if (!signature) {
+                    headlineEl.style.color = '#2a2a2a';
+                }
+                headlineEl.style.transform = 'none';
+                var actual = headlineEl.getBoundingClientRect().width;
+                headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
+            }
+
             function tick() {
                 if (signature && !sigActive) return;
-
-                if (!paused) {
-                    spans.forEach(function (span, i) {
-                        var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
-                        span.style.fontFamily = '"' + wave[idx] + '", serif';
-                    });
-                    step++;
-                    if (emojiEl) {
-                        var ei = emojiIdx++ % emojis.length;
-                        emojiEl.textContent = emojis[ei];
-                    }
-
-                    if (!signature) {
-                        headlineEl.style.color = '#2a2a2a';
-                    }
-                    headlineEl.style.transform = 'none';
-                    var actual = headlineEl.getBoundingClientRect().width;
-                    headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
-                }
-
+                if (!paused) advance();
                 setTimeout(tick, 150);
+            }
+
+            if (!signature) {
+                headlineEl.addEventListener('click', function () { advance(); });
+                if (emojiEl) emojiEl.addEventListener('click', function () { advance(); });
             }
 
             if (signature) {

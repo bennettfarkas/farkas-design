@@ -29,22 +29,22 @@
             justify-content: center;
             padding: 2.5rem 1.5rem;
             border-radius: 12px;
-            background: var(--slate-50);
-            border: 1px solid var(--slate-100);
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
             text-decoration: none;
-            color: var(--slate-800);
+            color: var(--text-heading);
             transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
         .asset-card:hover {
-            border-color: var(--slate-200);
+            border-color: var(--border-strong);
             box-shadow: 0 2px 8px rgba(40, 56, 69, 0.06);
         }
 
         .asset-card .icon {
             font-size: var(--text-h2);
             margin-bottom: 0.75rem;
-            color: var(--slate-400);
+            color: var(--text-body);
         }
 
         .asset-card h2 {
@@ -56,8 +56,12 @@
 
         .asset-card p {
             font-size: var(--text-small);
-            color: var(--slate-400);
+            color: var(--text-body);
             line-height: var(--leading-small);
+        }
+
+        [data-theme="dark"] .asset-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .asset-card.coming-soon {
@@ -81,9 +85,14 @@
             border: 0;
         }
     </style>
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
 </head>
 <body>
     <header class="header">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
         <div class="header-logo">
             <img src="wordmark.svg" alt="CoSpark">
         </div>
@@ -123,6 +132,13 @@
         </div>
     </main>
 
+    <script>
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+        }
+    </script>
     <script data-signature src="../../shared/farkas-animation.js"></script>
 </body>
 </html>

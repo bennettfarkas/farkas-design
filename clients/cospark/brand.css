@@ -16,7 +16,6 @@
     --weight-black: 900;
 
     /* Type scale — sizes */
-    --text-hero: clamp(3.5rem, 10vw, 7rem);
     --text-display: clamp(2.5rem, 6vw, 4rem);
     --text-h1: clamp(2rem, 3.5vw, 2.5rem);
     --text-h2: 1.5rem;
@@ -30,7 +29,6 @@
     --text-meta: 0.65rem;
 
     /* Type scale — line heights */
-    --leading-hero: 0.9;
     --leading-display: 0.95;
     --leading-h1: 1.0;
     --leading-h2: 1.1;
@@ -44,7 +42,6 @@
     --leading-meta: 1.4;
 
     /* Type scale — tracking */
-    --tracking-hero: 0.05em;
     --tracking-display: -0.03em;
     --tracking-h1: -0.02em;
     --tracking-h2: 0.04em;
@@ -125,4 +122,32 @@
     /* Semantic */
     --white: #FFFFFF;
     --error: #E05252;
+
+    /* Semantic surface tokens */
+    --surface-page: var(--white);
+    --surface-raised: var(--slate-50);
+    --surface-overlay: var(--white);
+
+    /* Semantic text tokens */
+    --text-heading: var(--slate-800);
+    --text-body: var(--slate-400);
+    --text-muted: var(--slate-300);
+    --text-subtle: var(--slate-600);
+
+    /* Semantic border tokens */
+    --border: var(--slate-100);
+    --border-strong: var(--slate-200);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-page: var(--slate-950);
+    --surface-raised: var(--slate-900);
+    --surface-overlay: var(--slate-800);
+    --text-heading: var(--slate-50);
+    --text-body: var(--slate-300);
+    --text-muted: var(--slate-500);
+    --text-subtle: var(--slate-400);
+    --border: var(--slate-800);
+    --border-strong: var(--slate-700);
 }

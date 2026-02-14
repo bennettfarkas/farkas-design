@@ -15,7 +15,7 @@
         /* Logo sections */
         .logo-section {
             padding: 4rem 0;
-            border-bottom: 1px solid var(--slate-100);
+            border-bottom: 1px solid var(--border);
         }
 
         .logo-section:last-of-type {
@@ -79,7 +79,7 @@
             line-height: var(--leading-label);
         }
 
-        .card-light .card-label { color: var(--slate-400); }
+        .card-light .card-label { color: var(--text-body); }
         .card-copper .card-label { color: var(--copper-300); }
         .card-dark .card-label { color: var(--slate-600); }
 
@@ -100,16 +100,16 @@
             font-weight: var(--weight-medium);
             text-decoration: none;
             border-radius: 6px;
-            border: 1px solid var(--slate-200);
-            color: var(--slate-600);
-            background: var(--white);
+            border: 1px solid var(--border-strong);
+            color: var(--text-subtle);
+            background: var(--surface-overlay);
             cursor: pointer;
             transition: all 0.15s ease;
         }
 
         .btn:hover {
-            border-color: var(--slate-400);
-            color: var(--slate-800);
+            border-color: var(--text-body);
+            color: var(--text-heading);
         }
 
         .btn svg {
@@ -118,10 +118,181 @@
             flex-shrink: 0;
         }
 
+        /* Guideline visuals */
+        .guideline-visuals {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .guideline-visual {
+            display: flex;
+            flex-direction: column;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-100);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .visual-demo {
+            flex: 1;
+            padding: 3rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .visual-caption {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--slate-100);
+            background: var(--white);
+        }
+
+        .visual-caption h3 {
+            font-size: var(--text-caption);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-caption);
+            line-height: var(--leading-caption);
+            color: var(--slate-800);
+            margin-bottom: 0.35rem;
+        }
+
+        .visual-caption p {
+            font-size: var(--text-small);
+            color: var(--slate-400);
+            line-height: var(--leading-small);
+        }
+
+        /* Clear space */
+        .clearspace-zone {
+            position: relative;
+            padding: 28px;
+            border: 1.5px dashed var(--copper-300);
+            border-radius: 4px;
+        }
+
+        .clearspace-zone img {
+            display: block;
+            height: 32px;
+            width: auto;
+        }
+
+        .dim {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: rgba(212, 121, 47, 0.08);
+            border: 1px solid rgba(212, 121, 47, 0.15);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sans);
+            font-size: 9px;
+            font-weight: var(--weight-semibold);
+            color: var(--copper-500);
+            letter-spacing: 0.05em;
+        }
+
+        .dim-h {
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .dim-v {
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Clear space key */
+        .clearspace-key {
+            position: absolute;
+            right: 5px;
+            top: 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .clearspace-key-ruler {
+            position: relative;
+            border-left: 1px solid var(--copper-300);
+        }
+
+        .clearspace-key-ruler::before,
+        .clearspace-key-ruler::after {
+            content: '';
+            position: absolute;
+            left: -3px;
+            width: 5px;
+            height: 1px;
+            background: var(--copper-300);
+        }
+
+        .clearspace-key-ruler::before { top: 0; }
+        .clearspace-key-ruler::after { bottom: 0; }
+
+        .clearspace-key-label {
+            font-family: var(--font-sans);
+            font-size: 9px;
+            font-weight: var(--weight-semibold);
+            color: var(--copper-500);
+            letter-spacing: 0.05em;
+        }
+
+        /* Minimum size */
+        .minsize-demo {
+            display: flex;
+            align-items: flex-end;
+            gap: 3rem;
+        }
+
+        .minsize-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .minsize-item img {
+            display: block;
+        }
+
+        .minsize-ruler {
+            position: relative;
+            border-top: 1px solid var(--copper-300);
+        }
+
+        .minsize-ruler::before,
+        .minsize-ruler::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            width: 1px;
+            height: 5px;
+            background: var(--copper-300);
+        }
+
+        .minsize-ruler::before { left: 0; }
+        .minsize-ruler::after { right: 0; }
+
+        .minsize-label {
+            font-family: var(--font-sans);
+            font-size: 9px;
+            font-weight: var(--weight-medium);
+            color: var(--copper-500);
+            letter-spacing: 0.05em;
+        }
+
         /* Guidelines */
         .guidelines {
             padding: 4rem 0;
-            border-top: 1px solid var(--slate-100);
+            border-top: 1px solid var(--border);
         }
 
         .donts-grid {
@@ -131,14 +302,14 @@
         }
 
         .dont-card {
-            background: var(--slate-50);
+            background: var(--surface-raised);
             border-radius: 10px;
             padding: 1.5rem 1rem 1rem;
             text-align: center;
         }
 
         .dont-card .dont-icon {
-            width: 48px;
+            width: 100%;
             height: 48px;
             margin: 0 auto 0.75rem;
             display: flex;
@@ -147,8 +318,8 @@
             position: relative;
         }
 
-        .dont-card .dont-icon svg {
-            height: 36px;
+        .dont-card .dont-icon img {
+            height: 20px;
             width: auto;
         }
 
@@ -158,8 +329,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: 2px solid var(--error);
             border-radius: 50%;
         }
@@ -168,7 +339,7 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 40px;
+            width: 44px;
             height: 2px;
             background: var(--error);
             transform: translate(-50%, -50%) rotate(-45deg);
@@ -176,7 +347,7 @@
 
         .dont-card p {
             font-size: var(--text-caption);
-            color: var(--slate-400);
+            color: var(--text-body);
             line-height: var(--leading-caption);
         }
 
@@ -184,7 +355,7 @@
         .download-all {
             padding: 3rem 0 4rem;
             text-align: center;
-            border-top: 1px solid var(--slate-100);
+            border-top: 1px solid var(--border);
         }
 
         .btn-primary {
@@ -207,6 +378,14 @@
             background: var(--slate-900);
         }
 
+        [data-theme="dark"] .btn-primary {
+            color: var(--slate-950);
+            background: var(--slate-50);
+        }
+        [data-theme="dark"] .btn-primary:hover {
+            background: var(--slate-200);
+        }
+
         .btn-primary svg {
             width: 16px;
             height: 16px;
@@ -215,8 +394,13 @@
         .download-all p {
             margin-top: 0.75rem;
             font-size: var(--text-small);
-            color: var(--slate-400);
+            color: var(--text-body);
             line-height: var(--leading-small);
+        }
+
+        [data-theme="dark"] .swatch-card:hover,
+        [data-theme="dark"] .swatch-card:active {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
 
         /* Responsive */
@@ -227,6 +411,7 @@
         @media (max-width: 640px) {
             .variants { grid-template-columns: 1fr; }
             .download-group { grid-template-columns: 1fr 1fr; }
+            .guideline-visuals { grid-template-columns: 1fr; }
             .donts-grid { grid-template-columns: 1fr 1fr; }
         }
 
@@ -234,6 +419,7 @@
             to { transform: rotate(360deg); }
         }
     </style>
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark')</script>
 </head>
 <body>
 
@@ -249,6 +435,10 @@
             <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
             All assets
         </a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
         <div class="header-logo">
             <img src="../wordmark.svg" alt="CoSpark">
         </div>
@@ -496,22 +686,43 @@
                 <p>Follow these rules to keep the CoSpark brand consistent across all touchpoints.</p>
             </div>
 
-            <div class="guidelines-grid">
-                <div class="guideline-item">
-                    <h3>Clear Space</h3>
-                    <p>Maintain a minimum clear space around the logo equal to the height of the spark icon. No other elements should intrude into this area.</p>
+            <div class="guideline-visuals">
+                <div class="guideline-visual">
+                    <div class="visual-demo">
+                        <div class="clearspace-zone">
+                            <span class="dim dim-h">H</span>
+                            <span class="dim dim-v">H</span>
+                            <img src="logo-slate.svg" alt="">
+                            <div class="clearspace-key">
+                                <div class="clearspace-key-ruler" style="height: 28px;"></div>
+                                <span class="clearspace-key-label">= H</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="visual-caption">
+                        <h3>Clear Space</h3>
+                        <p>Maintain clear space equal to the spark icon height (H) on all sides. No other elements should intrude into this area.</p>
+                    </div>
                 </div>
-                <div class="guideline-item">
-                    <h3>Minimum Size</h3>
-                    <p>The horizontal logo should not be used smaller than 120px wide on screen or 30mm in print. The icon alone can go as small as 24px.</p>
-                </div>
-                <div class="guideline-item">
-                    <h3>Color Usage</h3>
-                    <p>Use Slate on light backgrounds and White on dark backgrounds. Copper is reserved for accent or emphasis — never as the primary logo color on body text.</p>
-                </div>
-                <div class="guideline-item">
-                    <h3>Background Contrast</h3>
-                    <p>Always ensure sufficient contrast between the logo and its background. Avoid placing the logo on busy images or patterns without a solid backing.</p>
+                <div class="guideline-visual">
+                    <div class="visual-demo">
+                        <div class="minsize-demo">
+                            <div class="minsize-item">
+                                <img src="logo-slate.svg" alt="" style="width: 120px; height: auto;">
+                                <div class="minsize-ruler" style="width: 120px;"></div>
+                                <span class="minsize-label">120px min</span>
+                            </div>
+                            <div class="minsize-item">
+                                <img src="icon-slate.svg" alt="" style="width: 24px; height: 24px;">
+                                <div class="minsize-ruler" style="width: 24px;"></div>
+                                <span class="minsize-label">24px min</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="visual-caption">
+                        <h3>Minimum Size</h3>
+                        <p>Horizontal logo: 120px / 30mm. Icon alone can go as small as 24px.</p>
+                    </div>
                 </div>
             </div>
 
@@ -520,36 +731,28 @@
                 <div class="donts-grid">
                     <div class="dont-card">
                         <div class="dont-icon">
-                            <svg aria-hidden="true" viewBox="0 0 202 168" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(15deg); opacity: 0.5;">
-                                <path d="M201.625 99.2099L198.981 101.847C185.601 88.5037 168.082 81.8469 150.553 81.8469C133.023 81.8469 115.514 88.5136 102.135 101.847C93.3303 110.617 88.953 122.094 88.9431 133.6C88.953 145.096 93.3402 156.583 102.135 165.363L99.5002 168C90.696 159.22 79.1882 154.844 67.6506 154.844C56.1131 154.844 44.5953 159.22 35.8011 168L33.1568 165.363C41.961 156.583 46.3483 145.106 46.3483 133.6C46.3483 122.094 41.961 110.617 33.1667 101.847C28.9479 97.6395 23.4316 95.5457 17.9055 95.5457C12.3793 95.5457 6.8532 97.6395 2.64423 101.847L0 99.2099C4.21888 95.0025 6.31841 89.5013 6.31841 83.9901C6.31841 78.479 4.21888 72.9778 0 68.7803L2.64423 66.1432C6.86311 70.3506 12.3793 72.4445 17.9055 72.4445C23.4316 72.4445 28.9479 70.3506 33.1568 66.1432L35.8011 68.7803C31.5822 72.9778 29.4826 78.4692 29.4826 83.9901C29.4826 89.5111 31.5822 95.0025 35.8011 99.2099C44.5953 107.99 56.1131 112.365 67.6506 112.365C79.1882 112.365 90.6861 107.99 99.4903 99.2198C112.87 85.8667 119.545 68.3951 119.545 50.9136C119.545 33.4321 112.87 15.9704 99.5002 2.63704L102.135 0C115.524 13.3432 133.033 20 150.553 20C168.072 20 185.591 13.3333 198.971 0L200.288 1.31358L201.595 2.62716C188.235 15.9605 181.551 33.4222 181.551 50.9037C181.551 68.3852 188.235 85.8667 201.615 99.2L201.625 99.2099Z" fill="currentColor"/>
-                            </svg>
+                            <img src="logo-slate.svg" alt="" style="transform: rotate(15deg); opacity: 0.5;">
                             <span class="slash"></span>
                         </div>
                         <p>Don't rotate or skew the logo</p>
                     </div>
                     <div class="dont-card">
                         <div class="dont-icon">
-                            <svg aria-hidden="true" viewBox="0 0 202 168" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.25;">
-                                <path d="M201.625 99.2099L198.981 101.847C185.601 88.5037 168.082 81.8469 150.553 81.8469C133.023 81.8469 115.514 88.5136 102.135 101.847C93.3303 110.617 88.953 122.094 88.9431 133.6C88.953 145.096 93.3402 156.583 102.135 165.363L99.5002 168C90.696 159.22 79.1882 154.844 67.6506 154.844C56.1131 154.844 44.5953 159.22 35.8011 168L33.1568 165.363C41.961 156.583 46.3483 145.106 46.3483 133.6C46.3483 122.094 41.961 110.617 33.1667 101.847C28.9479 97.6395 23.4316 95.5457 17.9055 95.5457C12.3793 95.5457 6.8532 97.6395 2.64423 101.847L0 99.2099C4.21888 95.0025 6.31841 89.5013 6.31841 83.9901C6.31841 78.479 4.21888 72.9778 0 68.7803L2.64423 66.1432C6.86311 70.3506 12.3793 72.4445 17.9055 72.4445C23.4316 72.4445 28.9479 70.3506 33.1568 66.1432L35.8011 68.7803C31.5822 72.9778 29.4826 78.4692 29.4826 83.9901C29.4826 89.5111 31.5822 95.0025 35.8011 99.2099C44.5953 107.99 56.1131 112.365 67.6506 112.365C79.1882 112.365 90.6861 107.99 99.4903 99.2198C112.87 85.8667 119.545 68.3951 119.545 50.9136C119.545 33.4321 112.87 15.9704 99.5002 2.63704L102.135 0C115.524 13.3432 133.033 20 150.553 20C168.072 20 185.591 13.3333 198.971 0L200.288 1.31358L201.595 2.62716C188.235 15.9605 181.551 33.4222 181.551 50.9037C181.551 68.3852 188.235 85.8667 201.615 99.2L201.625 99.2099Z" fill="currentColor"/>
-                            </svg>
+                            <img src="logo-slate.svg" alt="" style="opacity: 0.25;">
                             <span class="slash"></span>
                         </div>
                         <p>Don't reduce opacity or make it transparent</p>
                     </div>
                     <div class="dont-card">
-                        <div class="dont-icon" style="color: var(--ember);">
-                            <svg aria-hidden="true" viewBox="0 0 202 168" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity: 0.5;">
-                                <path d="M201.625 99.2099L198.981 101.847C185.601 88.5037 168.082 81.8469 150.553 81.8469C133.023 81.8469 115.514 88.5136 102.135 101.847C93.3303 110.617 88.953 122.094 88.9431 133.6C88.953 145.096 93.3402 156.583 102.135 165.363L99.5002 168C90.696 159.22 79.1882 154.844 67.6506 154.844C56.1131 154.844 44.5953 159.22 35.8011 168L33.1568 165.363C41.961 156.583 46.3483 145.106 46.3483 133.6C46.3483 122.094 41.961 110.617 33.1667 101.847C28.9479 97.6395 23.4316 95.5457 17.9055 95.5457C12.3793 95.5457 6.8532 97.6395 2.64423 101.847L0 99.2099C4.21888 95.0025 6.31841 89.5013 6.31841 83.9901C6.31841 78.479 4.21888 72.9778 0 68.7803L2.64423 66.1432C6.86311 70.3506 12.3793 72.4445 17.9055 72.4445C23.4316 72.4445 28.9479 70.3506 33.1568 66.1432L35.8011 68.7803C31.5822 72.9778 29.4826 78.4692 29.4826 83.9901C29.4826 89.5111 31.5822 95.0025 35.8011 99.2099C44.5953 107.99 56.1131 112.365 67.6506 112.365C79.1882 112.365 90.6861 107.99 99.4903 99.2198C112.87 85.8667 119.545 68.3951 119.545 50.9136C119.545 33.4321 112.87 15.9704 99.5002 2.63704L102.135 0C115.524 13.3432 133.033 20 150.553 20C168.072 20 185.591 13.3333 198.971 0L200.288 1.31358L201.595 2.62716C188.235 15.9605 181.551 33.4222 181.551 50.9037C181.551 68.3852 188.235 85.8667 201.615 99.2L201.625 99.2099Z" fill="currentColor"/>
-                            </svg>
+                        <div class="dont-icon">
+                            <img src="logo-slate.svg" alt="" style="opacity: 0.5; filter: hue-rotate(140deg) saturate(2);">
                             <span class="slash"></span>
                         </div>
                         <p>Don't change the logo colors outside the palette</p>
                     </div>
                     <div class="dont-card">
                         <div class="dont-icon">
-                            <svg aria-hidden="true" viewBox="0 0 202 168" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: scaleX(1.4); opacity: 0.5;">
-                                <path d="M201.625 99.2099L198.981 101.847C185.601 88.5037 168.082 81.8469 150.553 81.8469C133.023 81.8469 115.514 88.5136 102.135 101.847C93.3303 110.617 88.953 122.094 88.9431 133.6C88.953 145.096 93.3402 156.583 102.135 165.363L99.5002 168C90.696 159.22 79.1882 154.844 67.6506 154.844C56.1131 154.844 44.5953 159.22 35.8011 168L33.1568 165.363C41.961 156.583 46.3483 145.106 46.3483 133.6C46.3483 122.094 41.961 110.617 33.1667 101.847C28.9479 97.6395 23.4316 95.5457 17.9055 95.5457C12.3793 95.5457 6.8532 97.6395 2.64423 101.847L0 99.2099C4.21888 95.0025 6.31841 89.5013 6.31841 83.9901C6.31841 78.479 4.21888 72.9778 0 68.7803L2.64423 66.1432C6.86311 70.3506 12.3793 72.4445 17.9055 72.4445C23.4316 72.4445 28.9479 70.3506 33.1568 66.1432L35.8011 68.7803C31.5822 72.9778 29.4826 78.4692 29.4826 83.9901C29.4826 89.5111 31.5822 95.0025 35.8011 99.2099C44.5953 107.99 56.1131 112.365 67.6506 112.365C79.1882 112.365 90.6861 107.99 99.4903 99.2198C112.87 85.8667 119.545 68.3951 119.545 50.9136C119.545 33.4321 112.87 15.9704 99.5002 2.63704L102.135 0C115.524 13.3432 133.033 20 150.553 20C168.072 20 185.591 13.3333 198.971 0L200.288 1.31358L201.595 2.62716C188.235 15.9605 181.551 33.4222 181.551 50.9037C181.551 68.3852 188.235 85.8667 201.615 99.2L201.625 99.2099Z" fill="currentColor"/>
-                            </svg>
+                            <img src="logo-slate.svg" alt="" style="transform: scaleX(1.4); opacity: 0.5;">
                             <span class="slash"></span>
                         </div>
                         <p>Don't stretch or distort the proportions</p>
@@ -706,6 +909,14 @@
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
             }
+        }
+    </script>
+
+    <script>
+        function toggleTheme() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
         }
     </script>
 

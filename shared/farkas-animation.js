@@ -72,7 +72,6 @@
         '☠️','👀','♠️','🏴‍☠️'
     ];
 
-
     function init(headlineEl, emojiEl) {
         var text = headlineEl.textContent;
         var paused = false;

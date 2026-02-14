@@ -119,7 +119,7 @@
                     emojiEl.textContent = emojis[ei];
                 }
                 if (!signature) {
-                    headlineEl.style.color = '#2a2a2a';
+                    headlineEl.style.color = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim();
                 }
                 headlineEl.style.transform = 'none';
                 var actual = headlineEl.getBoundingClientRect().width;

@@ -51,14 +51,13 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.header-logo img {
-    height: 40px;
-    width: auto;
+.header-logo {
     color: var(--color-heading);
 }
 
-[data-theme="dark"] .header-logo img {
-    filter: brightness(0) invert(1);
+.header-logo svg {
+    height: 40px;
+    width: auto;
 }
 
 /* Theme toggle */

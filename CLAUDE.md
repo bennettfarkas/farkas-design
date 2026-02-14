@@ -62,7 +62,7 @@ clients/{client-name}/
 ### Active clients
 
 - **CoSpark** (`clients/cospark/`): Fully built — logo, color, typography pages with DM Sans + Source Serif 4, copper/slate palette
-- **Strong Position** (`clients/strong-position/`): Placeholder — all sections "coming soon", uses EB Garamond
+- **Strong Position** (`clients/strongposition/`): Placeholder — all sections "coming soon", uses EB Garamond
 
 ### Extracting assets from Figma
 

@@ -1,0 +1,7 @@
+name = "farkas-design-subdomain-router"
+main = "index.js"
+compatibility_date = "2024-12-01"
+
+routes = [
+  { pattern = "*.farkas.design/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" }
+]

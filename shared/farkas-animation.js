@@ -174,6 +174,11 @@
         emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
         sig.appendChild(emoji);
 
+        // Inject critical hiding rule before element exists to prevent FOUC
+        var style = document.createElement('style');
+        style.textContent = '.farkas-signature .farkas-wrap{opacity:0;transition:opacity .25s ease}';
+        document.head.appendChild(style);
+
         var wrap = document.createElement('span');
         wrap.className = 'farkas-wrap';
         var headline = document.createElement('span');
@@ -183,6 +188,15 @@
         sig.appendChild(wrap);
 
         document.body.appendChild(sig);
+
+        // Click background to randomize emoji
+        document.addEventListener('click', function (e) {
+            if (!e.target.closest('a, button, input, select, textarea, [onclick]')) {
+                var next;
+                do { next = emojis[Math.floor(Math.random() * emojis.length)]; } while (next === emoji.textContent);
+                emoji.textContent = next;
+            }
+        });
 
         // Ensure body is a flex column so signature sticks to bottom
         document.body.style.minHeight = '100vh';

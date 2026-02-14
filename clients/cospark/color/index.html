@@ -289,6 +289,13 @@
 
         /* Responsive */
         @media (max-width: 640px) {
+            .story-progression {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+                justify-items: center;
+            }
+            .story-arrow { display: none; }
             .swatch-grid { grid-template-columns: 1fr; }
             .swatch-fill { height: 120px; }
             .scale-step { height: 48px; }

@@ -323,15 +323,7 @@
         }
 
         .donts-grid {
-            display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .dont-card {
-            background: var(--surface-raised);
-            border-radius: 10px;
-            padding: 1.5rem 1rem;
         }
 
         .dont-card .dont-example {
@@ -353,11 +345,11 @@
             background: var(--error);
         }
 
-        .dont-card p {
-            font-size: var(--text-caption);
-            color: var(--color-body);
-            line-height: var(--leading-caption);
-        }
+        /* Don't demo effects */
+        .dont-mixed-faces { font-family: var(--font-sans); font-size: 0.9rem; font-weight: 700; }
+        .dont-mixed-faces span { font-family: var(--font-serif); font-weight: 400; }
+        .dont-tiny-text { font-family: var(--font-serif); font-size: 0.65rem; font-weight: 400; line-height: 1.2; }
+        .dont-wide-tracking { font-family: var(--font-serif); font-size: 0.85rem; font-weight: 400; letter-spacing: 0.15em; }
 
         /* Responsive */
         @media (max-width: 640px) {
@@ -636,19 +628,19 @@
                 <div class="donts-grid">
                     <div class="dont-card">
                         <div class="dont-example">
-                            <span style="font-family: var(--font-sans); font-size: 0.9rem; font-weight: 700;">Heading with <span style="font-family: var(--font-serif); font-weight: 400;">mixed faces</span></span>
+                            <span class="dont-mixed-faces">Heading with <span>mixed faces</span></span>
                         </div>
                         <p>Don't mix typefaces within the same line</p>
                     </div>
                     <div class="dont-card">
                         <div class="dont-example">
-                            <span style="font-family: var(--font-serif); font-size: 0.65rem; font-weight: 400; line-height: 1.2;">Body text set far too small to read comfortably on any screen</span>
+                            <span class="dont-tiny-text">Body text set far too small to read comfortably on any screen</span>
                         </div>
                         <p>Don't set body text below 16px on screen</p>
                     </div>
                     <div class="dont-card">
                         <div class="dont-example">
-                            <span style="font-family: var(--font-serif); font-size: 0.85rem; font-weight: 400; letter-spacing: 0.15em;">W i d e l y&ensp;s p a c e d</span>
+                            <span class="dont-wide-tracking">W i d e l y&ensp;s p a c e d</span>
                         </div>
                         <p>Don't add excessive tracking to body text</p>
                     </div>
@@ -656,14 +648,6 @@
             </div>
         </div>
     </main>
-
-    <script>
-        function toggleTheme() {
-            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            localStorage.setItem('theme', isDark ? 'light' : 'dark');
-        }
-    </script>
 
     <script data-signature src="../../../shared/farkas-animation.js"></script>
 

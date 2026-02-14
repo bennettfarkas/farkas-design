@@ -1,4 +1,13 @@
 (function () {
+    // Shared theme toggle — used by onclick="toggleTheme()" across all pages
+    window.toggleTheme = function () {
+        var current = document.documentElement.getAttribute('data-theme');
+        var isDark = current === 'dark' || (!current && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        var next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+    };
+
     // Inject Google Fonts for display fonts (subset to headline characters)
     var fontsUrl = 'https://fonts.googleapis.com/css2?' +
         'family=Playfair+Display&family=Bodoni+Moda&family=DM+Serif+Display&family=Cormorant' +
@@ -72,6 +81,10 @@
         '☠️','👀','♠️','🏴‍☠️'
     ];
 
+    function randomEmoji() {
+        return emojis[Math.floor(Math.random() * emojis.length)];
+    }
+
     function init(headlineEl, emojiEl) {
         var text = headlineEl.textContent;
         var paused = false;
@@ -107,6 +120,7 @@
             fonts.map(function (f) { return document.fonts.load('48px "' + f + '"', 'Farkas.Design'); })
         ).then(function () {
             var targetWidth = headlineEl.getBoundingClientRect().width;
+            if (!signature) headlineEl.style.color = 'var(--color-text)';
 
             function advance() {
                 spans.forEach(function (span, i) {
@@ -117,9 +131,6 @@
                 if (emojiEl) {
                     var ei = emojiIdx++ % emojis.length;
                     emojiEl.textContent = emojis[ei];
-                }
-                if (!signature) {
-                    headlineEl.style.color = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim();
                 }
                 headlineEl.style.transform = 'none';
                 var actual = headlineEl.getBoundingClientRect().width;
@@ -147,7 +158,7 @@
                 signature.addEventListener('mouseleave', function () {
                     sigActive = false;
                     signature.classList.remove('active');
-                    if (emojiEl) emojiEl.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                    if (emojiEl) emojiEl.textContent = randomEmoji();
                     spans.forEach(function (s) { s.style.fontFamily = ''; });
                     headlineEl.style.color = '';
                     headlineEl.style.transform = '';
@@ -171,7 +182,7 @@
 
         var emoji = document.createElement('span');
         emoji.className = 'farkas-emoji';
-        emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        emoji.textContent = randomEmoji();
         sig.appendChild(emoji);
 
         // Inject critical hiding rule before element exists to prevent FOUC
@@ -193,7 +204,7 @@
         document.addEventListener('click', function (e) {
             if (!e.target.closest('a, button, input, select, textarea, [onclick]')) {
                 var next;
-                do { next = emojis[Math.floor(Math.random() * emojis.length)]; } while (next === emoji.textContent);
+                do { next = randomEmoji(); } while (next === emoji.textContent);
                 emoji.textContent = next;
             }
         });

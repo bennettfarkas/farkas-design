@@ -1,14 +1,6 @@
-.farkas-emoji {
-    margin: 0 0 1.2rem;
-    line-height: 1;
-    cursor: pointer;
-    user-select: none;
-}
-.farkas-wrap {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
+.farkas-emoji,
+.farkas-wrap,
+.farkas-headline {
     user-select: none;
 }
 .farkas-emoji::selection,
@@ -16,6 +8,17 @@
 .farkas-headline::selection,
 .farkas-headline span::selection {
     background: transparent;
+}
+.farkas-emoji {
+    margin: 0 0 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.farkas-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
 }
 .farkas-headline {
     font-family: 'EB Garamond', serif;
@@ -25,7 +28,6 @@
     white-space: nowrap;
     line-height: 1;
     cursor: pointer;
-    user-select: none;
     transform-origin: center;
 }
 .farkas-headline span {
@@ -65,7 +67,7 @@
 }
 .farkas-signature .farkas-headline {
     font-size: 0.9rem;
-    color: #888;
+    color: var(--color-muted, #888);
     cursor: pointer;
     transform-origin: left center;
 }

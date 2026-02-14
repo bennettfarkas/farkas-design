@@ -49,9 +49,6 @@ body {
 .header-logo {
     display: inline-block;
     margin-bottom: 1.5rem;
-}
-
-.header-logo {
     color: var(--color-heading);
 }
 
@@ -163,6 +160,36 @@ body {
     line-height: var(--leading-caption);
     color: var(--color-heading);
     margin-bottom: 1.25rem;
+}
+
+.donts-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.dont-card {
+    background: var(--surface-raised);
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+}
+
+.dont-card p {
+    font-size: var(--text-caption);
+    color: var(--color-body);
+    line-height: var(--leading-caption);
+}
+
+/* Screen-only utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 
 /* Responsive — shared breakpoints */

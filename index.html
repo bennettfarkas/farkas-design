@@ -8,19 +8,28 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐺</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="shared/farkas-animation.css">
     <style>
+        :root {
+            --color-text: #2a2a2a;
+            --color-muted: #888;
+            --color-subtle: #aaa;
+            --color-placeholder: #bbb;
+            --color-border: #ccc;
+            --color-bg: #fafaf8;
+            --font-body: 'Inter', sans-serif;
+        }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             font-weight: 400;
             margin: 0;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #2a2a2a;
-            background: #fafaf8;
+            color: var(--color-text);
+            background: var(--color-bg);
         }
         main {
             text-align: center;
@@ -39,7 +48,7 @@
         }
         .tagline {
             font-size: 1.05rem;
-            color: #888;
+            color: var(--color-muted);
             margin: 1.5rem 0 2.5rem;
             letter-spacing: 0.01em;
         }
@@ -52,7 +61,7 @@
         }
         .contact-row {
             display: flex;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--color-border);
         }
         .contact-row.hidden {
             max-height: 0;
@@ -65,7 +74,7 @@
             max-height: 3rem;
             opacity: 1;
             margin-top: 0.5rem;
-            border-bottom: 1px solid #ccc;
+            border-bottom: 1px solid var(--color-border);
             transition: max-height 0.3s ease, opacity 0.3s ease, border-bottom 0.3s ease, margin-top 0.3s ease;
         }
         .contact-form textarea {
@@ -74,9 +83,9 @@
             border: none;
             outline: none;
             background: transparent;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             font-size: 0.9rem;
-            color: #2a2a2a;
+            color: var(--color-text);
             min-width: 0;
             resize: none;
             overflow: hidden;
@@ -84,7 +93,7 @@
             field-sizing: content;
         }
         .contact-form textarea::placeholder {
-            color: #bbb;
+            color: var(--color-placeholder);
         }
         .contact-form input[type="email"] {
             flex: 1;
@@ -92,13 +101,13 @@
             border: none;
             outline: none;
             background: transparent;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             font-size: 0.9rem;
-            color: #2a2a2a;
+            color: var(--color-text);
             min-width: 0;
         }
         .contact-form input[type="email"]::placeholder {
-            color: #bbb;
+            color: var(--color-placeholder);
         }
 
         .contact-form button {
@@ -106,38 +115,43 @@
             margin-left: 0.5rem;
             border: none;
             background: transparent;
-            font-family: 'Inter', sans-serif;
+            font-family: var(--font-body);
             font-size: 0.9rem;
-            color: #aaa;
+            color: var(--color-subtle);
             cursor: pointer;
             white-space: nowrap;
             transition: color 0.2s;
         }
-        .contact-form button .btn-arrow,
-        .contact-form button .btn-emoji {
+        .contact-form button .btn-icon {
             display: inline-block;
             width: 1.2em;
-            text-align: center;
+            position: relative;
             vertical-align: middle;
             line-height: 1;
         }
+        .contact-form button .btn-arrow,
         .contact-form button .btn-emoji {
-            display: none;
+            transition: opacity 0.2s ease;
+        }
+        .contact-form button .btn-emoji {
+            position: absolute;
+            left: 0;
+            opacity: 0;
         }
         .contact-form button:hover .btn-arrow {
-            display: none;
+            opacity: 0;
         }
         .contact-form button:hover .btn-emoji {
-            display: inline-block;
+            opacity: 1;
         }
         .contact-form button:hover {
-            color: #2a2a2a;
+            color: var(--color-text);
         }
         .success-msg {
             display: none;
             font-size: 0.9rem;
             font-style: italic;
-            color: #888;
+            color: var(--color-muted);
         }
         .success-msg.show {
             display: block;
@@ -149,13 +163,13 @@
             justify-content: center;
         }
         .links a {
-            color: #bbb;
+            color: var(--color-placeholder);
             text-decoration: none;
             transition: color 0.2s;
             display: flex;
         }
         .links a:hover {
-            color: #2a2a2a;
+            color: var(--color-text);
         }
     </style>
 </head>
@@ -174,7 +188,7 @@
                 </div>
                 <div class="contact-row hidden" id="email-row">
                     <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-                    <button type="submit">send it <span class="btn-arrow">↗</span><span class="btn-emoji">🤘🏼</span></button>
+                    <button type="submit">send it <span class="btn-icon"><span class="btn-arrow">↗</span><span class="btn-emoji">🤘🏼</span></span></button>
                 </div>
             </form>
             <p class="success-msg" id="success">i'll be in touch.</p>

@@ -13,8 +13,11 @@ export default {
     const subdomain = match[1];
     const path = url.pathname === '/' ? '/index.html' : url.pathname;
 
-    // Fetch from GitHub Pages origin
-    const originUrl = `https://farkas.design/clients/${subdomain}${path}`;
+    // Shared assets resolve to site root, not the client folder
+    const isShared = path.startsWith('/shared/');
+    const originUrl = isShared
+      ? `https://farkas.design${path}`
+      : `https://farkas.design/clients/${subdomain}${path}`;
     const originResponse = await fetch(originUrl, {
       headers: {
         'User-Agent': 'farkas-design-subdomain-router',

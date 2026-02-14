@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Bodoni+Moda&family=DM+Serif+Display&family=Cormorant&family=Instrument+Serif&family=Bebas+Neue&family=Anton&family=Oswald&family=Archivo+Black&family=Space+Grotesk&family=Syne&family=Outfit&family=Bricolage+Grotesque&family=Alfa+Slab+One&family=Zilla+Slab&family=Fraunces&family=Bungee&family=Dela+Gothic+One&family=Rubik+Mono+One&family=Josefin+Sans&family=Raleway&family=Space+Mono&family=Big+Shoulders+Display&family=Fjalla+One&family=Familjen+Grotesk&family=Protest+Strike&family=Libre+Caslon+Display&family=Ultra&family=Righteous&family=Abril+Fatface&family=Staatliches&family=Passion+One&family=Russo+One&family=Orbitron&family=Cinzel&family=Poppins&family=Lexend&family=Bitter&family=Pathway+Gothic+One&family=Crimson+Text&text=Farkas.Design&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared/farkas-animation.css">
     <style>
         body {
             font-family: 'EB Garamond', serif;
@@ -26,33 +26,15 @@
             padding: 2rem;
             width: 100%;
         }
-        .wolf {
+        .farkas-emoji {
             font-size: 3rem;
-            margin: 0 0 1.2rem;
-            line-height: 1;
         }
-        .headline-wrap {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .farkas-wrap {
             height: clamp(3.5rem, 10vw, 6rem);
-            overflow: visible;
             margin: 0 0 0.2rem;
         }
-        h1 {
-            font-family: 'EB Garamond', serif;
-            font-weight: 400;
+        .farkas-headline {
             font-size: clamp(2.5rem, 8vw, 4.5rem);
-            margin: 0;
-            letter-spacing: 0.01em;
-            white-space: nowrap;
-            line-height: 1;
-            cursor: pointer;
-            user-select: none;
-            transform-origin: center;
-        }
-        h1 span {
-            display: inline-block;
         }
         .tagline {
             font-size: 1.05rem;
@@ -64,12 +46,15 @@
             margin-top: 0;
         }
         .contact-form {
-            display: flex;
             max-width: 280px;
             margin: 0 auto;
+        }
+        .contact-row {
+            display: flex;
             border-bottom: 1px solid #ccc;
         }
-        .contact-form input[type="email"] {
+        .contact-form input[type="email"],
+        .contact-form input[type="text"] {
             flex: 1;
             padding: 0.5rem 0;
             border: none;
@@ -107,119 +92,58 @@
         .success-msg.show {
             display: block;
         }
+        .links {
+            margin-top: 2.5rem;
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+        .links a {
+            font-family: 'EB Garamond', serif;
+            font-size: 0.85rem;
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .links a:hover {
+            color: #2a2a2a;
+        }
     </style>
 </head>
 <body>
     <main>
-        <p class="wolf" id="emoji">🐺</p>
-        <div class="headline-wrap">
-            <h1 id="headline">Farkas.Design</h1>
+        <p class="farkas-emoji">🐺</p>
+        <div class="farkas-wrap">
+            <h1 class="farkas-headline">Farkas.Design</h1>
         </div>
         <p class="tagline">brand consulting</p>
 
         <div class="contact">
             <form class="contact-form" id="contact">
-                <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
-                <button type="submit">get in touch</button>
+                <div class="contact-row">
+                    <input type="email" name="email" placeholder="your@email.com" required autocomplete="email">
+                </div>
+                <div class="contact-row">
+                    <input type="text" name="message" placeholder="how can I help?">
+                    <button type="submit">send</button>
+                </div>
             </form>
-            <p class="success-msg" id="success">we'll be in touch.</p>
+            <p class="success-msg" id="success">i'll be in touch.</p>
         </div>
+
+        <nav class="links">
+            <a href="https://bennettfarkas.com">bennettfarkas.com</a>
+            <a href="https://linkedin.com/in/bennettfarkas">linkedin</a>
+        </nav>
     </main>
 
+    <script src="shared/farkas-animation.js"></script>
     <script>
-        // Ordered heaviest → lightest (40 fonts)
-        const fonts = [
-            'Dela Gothic One', 'Ultra', 'Bungee', 'Rubik Mono One',
-            'Archivo Black', 'Alfa Slab One', 'Anton', 'Bebas Neue',
-            'Righteous', 'Protest Strike', 'Abril Fatface', 'Staatliches',
-            'Passion One', 'Big Shoulders Display', 'Oswald', 'Fjalla One',
-            'Russo One', 'Zilla Slab', 'Syne', 'Orbitron',
-            'DM Serif Display', 'Bodoni Moda', 'Cinzel', 'Fraunces',
-            'Bitter', 'Outfit', 'Poppins', 'Space Grotesk',
-            'Lexend', 'Bricolage Grotesque', 'Playfair Display', 'Familjen Grotesk',
-            'Pathway Gothic One', 'Cormorant', 'Instrument Serif', 'Crimson Text',
-            'Space Mono', 'Libre Caslon Display', 'Josefin Sans', 'Raleway'
-        ];
-
-        // Ping-pong: heavy → light → heavy (smooth loop, no jump)
-        const wave = [...fonts, ...fonts.slice(1, -1).reverse()];
-
-        const headline = document.getElementById('headline');
-        const text = headline.textContent;
-        let paused = false;
-
-        // Split into per-character spans
-        headline.textContent = '';
-        const spans = [];
-        for (const char of text) {
-            const span = document.createElement('span');
-            span.textContent = char;
-            headline.appendChild(span);
-            spans.push(span);
-        }
-
-        spans.forEach(span => {
-            span.addEventListener('mouseenter', () => {
-                paused = true;
-                const ei = (emojiIdx - 1 + emojis.length) % emojis.length;
-                headline.style.color = emojiColors[ei];
-            });
-        });
-        headline.addEventListener('mouseleave', () => { paused = false; });
-
-        const emojis = [
-            '❤️','🌹','🍎','💯','👹','🔥','🎸','🦊','🍊','🏀','🎃',
-            '⭐','🌻','⚡','🤩','😎','👍','👋','🍋',
-            '🍀','🐸','🌿','🐊','🥑',
-            '🐳','🦋','🌊','💎','🐬','🧿',
-            '🔮','🍇','👾','😈','🦄','🧙‍♂️','🌸','🦩',
-            '🙃','🤖','👽','👨🏼‍💻','🦾','🐺','☠️','👻'
-        ];
-        const emojiColors = [
-            '#e53e3e','#e53e3e','#e53e3e','#e53e3e','#c53030','#dd6b20','#c53030',
-            '#dd6b20','#ed8936','#dd6b20','#dd6b20',
-            '#d69e2e','#d69e2e','#d69e2e','#d69e2e','#b7791f','#d69e2e','#d69e2e','#d69e2e',
-            '#38a169','#38a169','#38a169','#38a169','#38a169',
-            '#3182ce','#4299e1','#3182ce','#4299e1','#3182ce','#2b6cb0',
-            '#805ad5','#6b46c1','#805ad5','#805ad5','#b83280','#6b46c1','#ed64a6','#ed64a6',
-            '#d69e2e','#718096','#38a169','#3182ce','#718096','#718096','#2d3748','#a0aec0'
-        ];
-        const emojiEl = document.getElementById('emoji');
-        let emojiIdx = 0;
-
-        // Synchronized wave: each letter offset in the weight sequence
-        let step = 0;
-        const offset = 3;
-
-        Promise.allSettled(
-            fonts.map(f => document.fonts.load(`48px "${f}"`, 'Farkas.Design'))
-        ).then(() => {
-            const targetWidth = headline.getBoundingClientRect().width;
-
-            function tick() {
-                if (!paused) {
-                    spans.forEach((span, i) => {
-                        const idx = (step + (spans.length - 1 - i) * offset) % wave.length;
-                        span.style.fontFamily = `"${wave[idx]}", serif`;
-                    });
-                    step++;
-                    const ei = emojiIdx++ % emojis.length;
-                    emojiEl.textContent = emojis[ei];
-                    headline.style.color = '#2a2a2a';
-                    // Uniform scale to match target width (height varies freely)
-                    headline.style.transform = 'none';
-                    const actual = headline.getBoundingClientRect().width;
-                    headline.style.transform = `scale(${targetWidth / actual})`;
-                }
-                setTimeout(tick, 150);
-            }
-            tick();
-        });
-
         document.getElementById('contact').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = e.target;
             const email = form.email.value;
+            const message = form.message.value;
             const btn = form.querySelector('button');
 
             btn.textContent = '...';
@@ -229,7 +153,7 @@
                 const res = await fetch('https://farkas-design-signup.mrsandman.workers.dev', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ email, message })
                 });
 
                 if (res.ok) {

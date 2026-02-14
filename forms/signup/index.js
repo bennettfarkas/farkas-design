@@ -15,7 +15,7 @@ export default {
     }
 
     try {
-      const { email } = await request.json();
+      const { email, message } = await request.json();
 
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
         return Response.json({ error: 'Invalid email' }, { status: 400, headers: corsHeaders });
@@ -33,7 +33,8 @@ export default {
           properties: {
             Email: { email: email },
             'Signed Up': { date: { start: new Date().toISOString().split('T')[0] } },
-            Source: { select: { name: 'farkas.design signup' } },
+            Source: { select: { name: 'farkas.design' } },
+            ...(message ? { Message: { rich_text: [{ text: { content: message } }] } } : {}),
           },
         }),
       });

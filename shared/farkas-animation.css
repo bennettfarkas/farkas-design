@@ -1,0 +1,57 @@
+.farkas-emoji {
+    margin: 0 0 1.2rem;
+    line-height: 1;
+}
+.farkas-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+.farkas-headline {
+    font-family: 'EB Garamond', serif;
+    font-weight: 400;
+    margin: 0;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    line-height: 1;
+    cursor: pointer;
+    user-select: none;
+    transform-origin: center;
+}
+.farkas-headline span {
+    display: inline-block;
+}
+
+/* Signature mode — hover-activated compact animation */
+.farkas-signature {
+    display: flex;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    z-index: 10;
+}
+.farkas-signature .farkas-emoji {
+    font-size: 1.25rem;
+    margin: 0;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+.farkas-signature:hover .farkas-emoji {
+    transform: scale(1.15);
+}
+.farkas-signature .farkas-wrap {
+    height: 1.1rem;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+.farkas-signature.active .farkas-wrap {
+    opacity: 1;
+}
+.farkas-signature .farkas-headline {
+    font-size: 0.9rem;
+    color: #888;
+    cursor: pointer;
+}

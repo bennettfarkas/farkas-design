@@ -6,6 +6,9 @@
     <title>CoSpark — Color</title>
     <meta name="description" content="CoSpark color system — primary and secondary palette, 11-step scales, and usage guidelines.">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&display=swap">
     <link rel="stylesheet" href="../layout.css">
     <link rel="stylesheet" href="../brand.css">
     <style>
@@ -22,6 +25,7 @@
         /* Story progression */
         .story-progression {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: center;
             gap: 1.25rem;
@@ -287,7 +291,6 @@
         @media (max-width: 640px) {
             .swatch-grid { grid-template-columns: 1fr; }
             .swatch-fill { height: 120px; }
-            .scale-strip { grid-template-columns: repeat(11, 1fr); }
             .scale-step { height: 48px; }
             .functional-grid { grid-template-columns: 1fr 1fr; }
         }
@@ -296,18 +299,18 @@
 <body>
 
     <!-- Header -->
-    <div class="header">
+    <header class="header">
         <a class="back" href="../index.html">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
             All assets
         </a>
         <div class="header-logo">
             <img src="../wordmark.svg" alt="CoSpark">
         </div>
         <h1>Color</h1>
-    </div>
+    </header>
 
-    <div class="content">
+    <main class="content">
 
         <!-- Philosophy -->
         <div class="color-section">
@@ -323,7 +326,7 @@
                     <span class="story-color">Slate</span>
                 </div>
                 <div class="story-arrow">
-                    <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
+                    <svg aria-hidden="true" width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
                 </div>
                 <div class="story-step">
                     <div class="story-swatch" style="background: var(--copper-500);"></div>
@@ -331,7 +334,7 @@
                     <span class="story-color">Copper</span>
                 </div>
                 <div class="story-arrow">
-                    <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
+                    <svg aria-hidden="true" width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
                 </div>
                 <div class="story-step">
                     <div class="story-swatch" style="background: var(--ember-600);"></div>
@@ -339,7 +342,7 @@
                     <span class="story-color">Ember</span>
                 </div>
                 <div class="story-arrow">
-                    <svg width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
+                    <svg aria-hidden="true" width="24" height="12" viewBox="0 0 24 12" fill="none" stroke="currentColor" stroke-width="1.25"><path d="M0 6h22M17 1l5 5-5 5"/></svg>
                 </div>
                 <div class="story-step">
                     <div class="story-swatch" style="background: var(--patina-500);"></div>
@@ -357,14 +360,14 @@
             </div>
 
             <div class="swatch-grid">
-                <div class="swatch-card" data-hex="#283845" onclick="copyHex(this)">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#283845" onclick="copyHex(this)">
                     <div class="swatch-fill" style="background: var(--slate-800);"></div>
                     <div class="swatch-info">
                         <div class="swatch-name">Slate 800</div>
                         <div class="swatch-hex">#283845</div>
                     </div>
                 </div>
-                <div class="swatch-card" data-hex="#D4792F" onclick="copyHex(this)">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#D4792F" onclick="copyHex(this)">
                     <div class="swatch-fill" style="background: var(--copper-500);"></div>
                     <div class="swatch-info">
                         <div class="swatch-name">Copper 500</div>
@@ -382,14 +385,14 @@
             </div>
 
             <div class="swatch-grid">
-                <div class="swatch-card" data-hex="#008C76" onclick="copyHex(this)">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#008C76" onclick="copyHex(this)">
                     <div class="swatch-fill" style="background: var(--patina-500);"></div>
                     <div class="swatch-info">
                         <div class="swatch-name">Patina 500</div>
                         <div class="swatch-hex">#008C76</div>
                     </div>
                 </div>
-                <div class="swatch-card" data-hex="#A5383E" onclick="copyHex(this)">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#A5383E" onclick="copyHex(this)">
                     <div class="swatch-fill" style="background: var(--ember-600);"></div>
                     <div class="swatch-info">
                         <div class="swatch-name">Ember 600</div>
@@ -413,17 +416,17 @@
                     <span class="scale-desc">Darks shift toward red-orange to stay warm and avoid muddy browns</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" style="background: var(--copper-50);" data-hex="#FFF1E4" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FFF1E4</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--copper-100);" data-hex="#FFE3C2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FFE3C2</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--copper-200);" data-hex="#FFC58F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#FFC58F</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--copper-300);" data-hex="#F8A96B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#F8A96B</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--copper-400);" data-hex="#E79145" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#E79145</span></div></div>
-                    <div class="scale-step anchor light-text" style="background: var(--copper-500);" data-hex="#D4792F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#D4792F</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--copper-600);" data-hex="#AF5D20" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#AF5D20</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--copper-700);" data-hex="#8A4215" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#8A4215</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--copper-800);" data-hex="#68280C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#68280C</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--copper-900);" data-hex="#470E00" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#470E00</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--copper-950);" data-hex="#310A03" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#310A03</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--copper-50);" data-hex="#FFF1E4" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FFF1E4</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--copper-100);" data-hex="#FFE3C2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FFE3C2</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--copper-200);" data-hex="#FFC58F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#FFC58F</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--copper-300);" data-hex="#F8A96B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#F8A96B</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--copper-400);" data-hex="#E79145" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#E79145</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--copper-500);" data-hex="#D4792F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#D4792F</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--copper-600);" data-hex="#AF5D20" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#AF5D20</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--copper-700);" data-hex="#8A4215" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#8A4215</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--copper-800);" data-hex="#68280C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#68280C</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--copper-900);" data-hex="#470E00" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#470E00</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--copper-950);" data-hex="#310A03" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#310A03</span></div></div>
                 </div>
             </div>
 
@@ -434,17 +437,17 @@
                     <span class="scale-desc">Lights carry a faint blue warmth; darks shift deeper without going muddy</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" style="background: var(--slate-50);" data-hex="#EDF2F7" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EDF2F7</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--slate-100);" data-hex="#DCE4ED" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#DCE4ED</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--slate-200);" data-hex="#BDC9D5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#BDC9D5</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--slate-300);" data-hex="#9FAFBE" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#9FAFBE</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--slate-400);" data-hex="#8395A5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#8395A5</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--slate-500);" data-hex="#697B8C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#697B8C</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--slate-600);" data-hex="#526372" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#526372</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--slate-700);" data-hex="#394B5A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#394B5A</span></div></div>
-                    <div class="scale-step anchor light-text" style="background: var(--slate-800);" data-hex="#283845" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#283845</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--slate-900);" data-hex="#11202A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#11202A</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--slate-950);" data-hex="#0B1520" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#0B1520</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--slate-50);" data-hex="#EDF2F7" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EDF2F7</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--slate-100);" data-hex="#DCE4ED" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#DCE4ED</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--slate-200);" data-hex="#BDC9D5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#BDC9D5</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--slate-300);" data-hex="#9FAFBE" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#9FAFBE</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--slate-400);" data-hex="#8395A5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#8395A5</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--slate-500);" data-hex="#697B8C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#697B8C</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--slate-600);" data-hex="#526372" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#526372</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--slate-700);" data-hex="#394B5A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#394B5A</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--slate-800);" data-hex="#283845" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#283845</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--slate-900);" data-hex="#11202A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#11202A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--slate-950);" data-hex="#0B1520" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#0B1520</span></div></div>
                 </div>
             </div>
 
@@ -455,17 +458,17 @@
                     <span class="scale-desc">The verdigris spectrum — darks shift greener to stay alive</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" style="background: var(--patina-50);" data-hex="#EBFAF5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EBFAF5</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--patina-100);" data-hex="#C1E4DA" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#C1E4DA</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--patina-200);" data-hex="#93D0C0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#93D0C0</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--patina-300);" data-hex="#60BBA6" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#60BBA6</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--patina-400);" data-hex="#47A28E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#47A28E</span></div></div>
-                    <div class="scale-step anchor light-text" style="background: var(--patina-500);" data-hex="#008C76" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#008C76</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--patina-600);" data-hex="#00715D" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#00715D</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--patina-700);" data-hex="#005645" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#005645</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--patina-800);" data-hex="#063C30" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#063C30</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--patina-900);" data-hex="#08241C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#08241C</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--patina-950);" data-hex="#001508" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#001508</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--patina-50);" data-hex="#EBFAF5" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EBFAF5</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--patina-100);" data-hex="#C1E4DA" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#C1E4DA</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--patina-200);" data-hex="#93D0C0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#93D0C0</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--patina-300);" data-hex="#60BBA6" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#60BBA6</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--patina-400);" data-hex="#47A28E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#47A28E</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--patina-500);" data-hex="#008C76" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#008C76</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--patina-600);" data-hex="#00715D" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#00715D</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--patina-700);" data-hex="#005645" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#005645</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--patina-800);" data-hex="#063C30" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#063C30</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--patina-900);" data-hex="#08241C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#08241C</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--patina-950);" data-hex="#001508" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#001508</span></div></div>
                 </div>
             </div>
 
@@ -476,17 +479,17 @@
                     <span class="scale-desc">The cinnabar spectrum — darks shift warmer to avoid dead maroon</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" style="background: var(--ember-50);" data-hex="#FFF3F2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FFF3F2</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--ember-100);" data-hex="#FAD2D0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FAD2D0</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--ember-200);" data-hex="#F5AFAC" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#F5AFAC</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--ember-300);" data-hex="#ED8C8A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#ED8C8A</span></div></div>
-                    <div class="scale-step dark-text" style="background: var(--ember-400);" data-hex="#DB6D6D" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#DB6D6D</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--ember-500);" data-hex="#C25154" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#C25154</span></div></div>
-                    <div class="scale-step anchor light-text" style="background: var(--ember-600);" data-hex="#A5383E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#A5383E</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--ember-700);" data-hex="#812A2C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#812A2C</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--ember-800);" data-hex="#5D1E1E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#5D1E1E</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--ember-900);" data-hex="#331816" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#331816</span></div></div>
-                    <div class="scale-step light-text" style="background: var(--ember-950);" data-hex="#240400" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#240400</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ember-50);" data-hex="#FFF3F2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FFF3F2</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ember-100);" data-hex="#FAD2D0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FAD2D0</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ember-200);" data-hex="#F5AFAC" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#F5AFAC</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ember-300);" data-hex="#ED8C8A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#ED8C8A</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ember-400);" data-hex="#DB6D6D" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#DB6D6D</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ember-500);" data-hex="#C25154" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#C25154</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--ember-600);" data-hex="#A5383E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#A5383E</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ember-700);" data-hex="#812A2C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#812A2C</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ember-800);" data-hex="#5D1E1E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#5D1E1E</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ember-900);" data-hex="#331816" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#331816</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ember-950);" data-hex="#240400" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#240400</span></div></div>
                 </div>
             </div>
         </div>
@@ -499,28 +502,28 @@
             </div>
 
             <div class="functional-grid">
-                <div class="functional-card" data-hex="#008C76" onclick="copyHex(this)">
+                <div class="functional-card" tabindex="0" role="button" data-hex="#008C76" onclick="copyHex(this)">
                     <div class="functional-fill" style="background: var(--patina-500);"></div>
                     <div class="functional-info">
                         <div class="functional-role">Success</div>
                         <div class="functional-source">Patina 500</div>
                     </div>
                 </div>
-                <div class="functional-card" data-hex="#A5383E" onclick="copyHex(this)">
+                <div class="functional-card" tabindex="0" role="button" data-hex="#A5383E" onclick="copyHex(this)">
                     <div class="functional-fill" style="background: var(--ember-600);"></div>
                     <div class="functional-info">
                         <div class="functional-role">Error</div>
                         <div class="functional-source">Ember 600</div>
                     </div>
                 </div>
-                <div class="functional-card" data-hex="#F8A96B" onclick="copyHex(this)">
+                <div class="functional-card" tabindex="0" role="button" data-hex="#F8A96B" onclick="copyHex(this)">
                     <div class="functional-fill" style="background: var(--copper-300);"></div>
                     <div class="functional-info">
                         <div class="functional-role">Warning</div>
                         <div class="functional-source">Copper 300</div>
                     </div>
                 </div>
-                <div class="functional-card" data-hex="#697B8C" onclick="copyHex(this)">
+                <div class="functional-card" tabindex="0" role="button" data-hex="#697B8C" onclick="copyHex(this)">
                     <div class="functional-fill" style="background: var(--slate-500);"></div>
                     <div class="functional-info">
                         <div class="functional-role">Info</div>
@@ -565,7 +568,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <!-- Toast -->
     <div class="toast" id="toast"></div>
@@ -584,8 +587,27 @@
                 toastTimeout = setTimeout(() => {
                     toast.classList.remove('show');
                 }, 1800);
+            }).catch(() => {
+                // Fallback: select text for manual copy
+                const toast = document.getElementById('toast');
+                toast.textContent = hex;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 1800);
             });
         }
+
+        // Keyboard support for clickable elements
+        document.querySelectorAll('[role="button"]').forEach(el => {
+            el.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    el.click();
+                }
+            });
+        });
     </script>
     <script data-signature src="../../../shared/farkas-animation.js"></script>
 

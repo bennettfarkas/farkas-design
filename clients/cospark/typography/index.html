@@ -6,6 +6,9 @@
     <title>CoSpark — Typography</title>
     <meta name="description" content="CoSpark typography system — typeface specimens, type scale, text color hierarchy, and usage guidelines.">
     <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&display=swap">
     <link rel="stylesheet" href="../layout.css">
     <link rel="stylesheet" href="../brand.css">
     <style>
@@ -377,18 +380,18 @@
 <body>
 
     <!-- Header -->
-    <div class="header">
+    <header class="header">
         <a class="back" href="../index.html">
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
             All assets
         </a>
         <div class="header-logo">
             <img src="../wordmark.svg" alt="CoSpark">
         </div>
         <h1>Typography</h1>
-    </div>
+    </header>
 
-    <div class="content">
+    <main class="content">
 
         <!-- Typeface Specimens -->
         <div class="type-section">
@@ -419,6 +422,10 @@
                         <span>500 Medium</span>
                     </div>
                     <div class="weight-sample">
+                        <span class="sans" style="font-weight: 600;">Aa</span>
+                        <span>600 Semibold</span>
+                    </div>
+                    <div class="weight-sample">
                         <span class="sans" style="font-weight: 700;">Aa</span>
                         <span>700 Bold</span>
                     </div>
@@ -427,9 +434,9 @@
                         <span>900 Black</span>
                     </div>
                 </div>
-                <a class="specimen-link" href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noopener">
+                <a class="specimen-link" href="https://fonts.google.com/specimen/DM+Sans" target="_blank" rel="noopener noreferrer">
                     Google Fonts
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
                 </a>
             </div>
 
@@ -459,9 +466,9 @@
                         <span>700 Bold</span>
                     </div>
                 </div>
-                <a class="specimen-link" href="https://fonts.google.com/specimen/Source+Serif+4" target="_blank" rel="noopener">
+                <a class="specimen-link" href="https://fonts.google.com/specimen/Source+Serif+4" target="_blank" rel="noopener noreferrer">
                     Google Fonts
-                    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
+                    <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
                 </a>
             </div>
         </div>
@@ -603,10 +610,8 @@
             </div>
         </div>
 
-    </div>
 
-    <!-- Usage Guidelines -->
-    <div class="content">
+        <!-- Usage Guidelines -->
         <div class="type-section">
             <div class="section-header">
                 <h2>Usage Guidelines</h2>
@@ -664,7 +669,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
     <script data-signature src="../../../shared/farkas-animation.js"></script>
 

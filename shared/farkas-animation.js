@@ -155,6 +155,10 @@
                     signature.classList.add('active');
                     tick();
                 });
+                emojiEl.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    window.location.href = signature.href;
+                });
                 emojiEl.addEventListener('mouseleave', function () {
                     sigActive = false;
                     signature.classList.remove('active');

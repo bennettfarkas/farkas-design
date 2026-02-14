@@ -8,8 +8,8 @@ Website for farkas.design — a static site deployed to GitHub Pages. No build s
 
 ## Architecture
 
-- **Frontend**: Single `index.html` with inline styles/JS, EB Garamond font via Google Fonts, wolf emoji favicon
-- **Shared animation**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation used on the homepage and as a hover signature on client pages (via `data-signature` attribute)
+- **Frontend**: Single `index.html` with inline styles/JS, Inter for body text, wolf emoji favicon, progressive disclosure contact form
+- **Shared animation**: `shared/farkas-animation.js` + `shared/farkas-animation.css` — font-cycling headline animation with click-to-advance on hover. Used on the homepage and as a hover signature on client pages (via `data-signature` attribute). Signature auto-injects body flex layout and pins to viewport bottom.
 - **Forms**: Cloudflare Workers handle backend logic (HTML form → Worker → Notion DB). See `forms/CLAUDE.md`
 - **Analytics**: Cloudflare Web Analytics (cookie-free). See `analytics/CLAUDE.md`
 - **Hosting**: GitHub Pages via Actions workflow
@@ -57,7 +57,7 @@ clients/{client-name}/
 └── guidelines/         # brand guidelines (coming soon for most clients)
 ```
 
-**CSS architecture for client subpages**: Subpages (logo, color, typography) share layout via `layout.css` which provides reset, body, header, back link, content container, section headers, guidelines grid, and responsive breakpoints. Each subpage's `<style>` tag contains only page-specific styles. `brand.css` provides the design tokens. Google Fonts are loaded via `@import` in `layout.css`.
+**CSS architecture for client subpages**: Subpages (logo, color, typography) share layout via `layout.css` which provides reset, body, header, back link, content container, section headers, guidelines grid, and responsive breakpoints (standard: 640px). Each subpage's `<style>` tag contains only page-specific styles. `brand.css` provides the design tokens. Google Fonts are loaded via `@import` in `layout.css`.
 
 ### Active clients
 

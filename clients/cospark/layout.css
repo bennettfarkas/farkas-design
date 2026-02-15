@@ -170,14 +170,14 @@ body {
 }
 
 .dont-card {
-    background: var(--surface-raised);
+    background: var(--slate-50);
     border-radius: 10px;
     padding: 1.5rem 1rem;
 }
 
 .dont-card p {
     font-size: var(--text-caption);
-    color: var(--color-body);
+    color: var(--slate-400);
     line-height: var(--leading-caption);
 }
 

@@ -217,19 +217,20 @@
             text-decoration: none;
             transition: color 0.2s;
             display: flex;
+            padding: 0.85rem;
         }
         .links a:hover {
             color: var(--color-text);
         }
         .corner-controls {
             position: fixed;
-            bottom: 1.5rem;
+            bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
             right: 1.5rem;
             z-index: 10;
         }
         .client-corner {
             position: fixed;
-            bottom: 1.5rem;
+            bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
             left: 1.5rem;
             display: flex;
             align-items: center;
@@ -321,6 +322,9 @@
             transition: opacity 0.2s;
             white-space: nowrap;
             pointer-events: none;
+            max-width: calc(100vw - 5rem);
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .client-corner-error.show {
             opacity: 1;
@@ -328,7 +332,12 @@
         .theme-toggle {
             background: none;
             border: none;
-            padding: 0.5rem;
+            padding: 0.75rem;
+            min-width: 44px;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             color: var(--color-placeholder);
             transition: color 0.2s;
@@ -343,6 +352,16 @@
         @media (prefers-color-scheme: dark) {
             :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
             :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+        }
+        @media (max-width: 480px) {
+            .client-corner {
+                left: 1rem;
+                bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            }
+            .corner-controls {
+                right: 1rem;
+                bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+            }
         }
         .sr-only {
             position: absolute;
@@ -369,7 +388,7 @@
             <form class="contact-form" id="contact">
                 <div class="contact-row">
                     <label for="message" class="sr-only">Your message</label>
-                    <textarea id="message" name="message" placeholder="  how can I help?" autofocus rows="1"></textarea>
+                    <textarea id="message" name="message" placeholder="  how can I help?" rows="1"></textarea>
                 </div>
                 <div class="contact-row hidden" id="email-row">
                     <label for="email" class="sr-only">Your email</label>
@@ -405,16 +424,26 @@
 
     <script src="shared/farkas-animation.js"></script>
     <script>
-        document.querySelector('textarea[name="message"]').addEventListener('input', function() {
-            var row = document.getElementById('email-row');
-            if (this.value.length > 0) {
-                row.classList.remove('hidden');
-                row.classList.add('revealed');
-            } else {
-                row.classList.remove('revealed');
-                row.classList.add('hidden');
+        (function() {
+            var ta = document.querySelector('textarea[name="message"]');
+            ta.addEventListener('input', function() {
+                var row = document.getElementById('email-row');
+                if (this.value.length > 0) {
+                    row.classList.remove('hidden');
+                    row.classList.add('revealed');
+                } else {
+                    row.classList.remove('revealed');
+                    row.classList.add('hidden');
+                }
+            });
+            // Auto-resize fallback for browsers without field-sizing: content (Firefox)
+            if (typeof CSS === 'undefined' || !CSS.supports || !CSS.supports('field-sizing', 'content')) {
+                ta.addEventListener('input', function() {
+                    this.style.height = '';
+                    this.style.height = this.scrollHeight + 'px';
+                });
             }
-        });
+        })();
 
         (function() {
             var corner = document.getElementById('client-corner');

@@ -27,5 +27,15 @@
     --slate-100: #e0e0e0;
     --slate-400: #888888;
     --slate-800: #2a2a2a;
+    --slate-900: #1a1a1a;
+    --slate-950: #111111;
     --white: #fafaf8;
+}
+
+:root[data-theme="dark"] {
+    --slate-50: #e0e0e0;
+    --slate-100: #333333;
+    --slate-400: #999999;
+    --slate-800: #e0e0e0;
+    --white: #1a1a1a;
 }

@@ -69,7 +69,9 @@ body {
     border: none;
     cursor: pointer;
     color: var(--color-body);
-    padding: 0.25rem;
+    padding: 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
     transition: color 0.15s ease;
 }
 

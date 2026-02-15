@@ -29,7 +29,6 @@
     line-height: 1;
     cursor: pointer;
     transform-origin: center;
-    will-change: transform;
     contain: layout style;
 }
 .farkas-headline span {
@@ -89,9 +88,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .farkas-headline {
-        will-change: auto;
-    }
     .farkas-signature .farkas-emoji,
     .farkas-signature .farkas-wrap {
         transition: none;

@@ -56,6 +56,15 @@
             from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes snapClick {
+            0% { transform: scale(1); }
+            40% { transform: scale(0.97); }
+            100% { transform: scale(1); }
+        }
+        .snap-click {
+            animation: snapClick 0.15s ease-out !important;
+            opacity: 1 !important;
+        }
         body {
             font-family: var(--font-body);
             font-weight: 400;
@@ -90,7 +99,7 @@
             width: 100%;
         }
         .farkas-emoji {
-            font-size: 3rem;
+            font-size: 4rem;
         }
         .farkas-wrap {
             height: clamp(3.5rem, 10vw, 6rem);

@@ -212,23 +212,56 @@
                 }
 
                 function buildCycle() {
-                    var font = randomFont();
+                    var targetFont = randomFont();
                     var order = shuffle(indices);
 
-                    // Snap to unified font + emoji
-                    steps.push({ fn: function () {
-                        setAll(font);
-                        if (emojiEl) emojiEl.textContent = randomEmoji();
-                    }, delay: 2000 });
-
-                    // Dissolve each character
-                    order.forEach(function (idx, k) {
+                    // ── Phase 1: Scatter (fast burst into chaos) ──
+                    order.forEach(function (idx) {
                         steps.push({ fn: function () {
                             setFont(spans[idx], randomFont());
                             if (emojiEl) emojiEl.textContent = randomEmoji();
                             compensate();
-                        }, delay: k === order.length - 1 ? 1200 : 100 });
+                        }, delay: 60 });
                     });
+
+                    // ── Phase 2: Converge (decelerate into target font) ──
+                    var convergeOrder = shuffle(indices);
+                    var earlyCount = Math.ceil(convergeOrder.length * 0.5);
+                    var earlyLetters = convergeOrder.slice(0, earlyCount);
+                    var snapLetters = convergeOrder.slice(earlyCount);
+
+                    for (var i = 0; i < earlyCount; i++) {
+                        var t = i / (earlyCount - 1);
+                        var d = Math.round(100 + 550 * t * t * t); // cubic: 100ms → 650ms
+                        (function(idx, delay) {
+                            steps.push({ fn: function () {
+                                setFont(spans[idx], targetFont);
+                                compensate();
+                                if (emojiEl) emojiEl.textContent = randomEmoji();
+                            }, delay: delay });
+                        })(earlyLetters[i], d);
+                    }
+
+                    // ── Phase 3: Resolution ──
+                    steps.push({ fn: function () {
+                        for (var j = 0; j < snapLetters.length; j++) {
+                            setFont(spans[snapLetters[j]], targetFont);
+                        }
+                        compensate();
+                        if (emojiEl) emojiEl.textContent = randomEmoji();
+                        headlineEl.dispatchEvent(new CustomEvent('farkas-snap'));
+                        var wrap = headlineEl.closest('.farkas-wrap');
+                        if (wrap) {
+                            wrap.classList.remove('snap-click');
+                            void wrap.offsetWidth;
+                            wrap.classList.add('snap-click');
+                        }
+                        if (emojiEl) {
+                            emojiEl.classList.remove('snap-click');
+                            void emojiEl.offsetWidth;
+                            emojiEl.classList.add('snap-click');
+                        }
+                    }, delay: 2000 });
                 }
 
                 function advance() {
@@ -273,16 +306,8 @@
                             }
                             compensate();
                             hoveredFont = null;
-                            // Skip unify snap — build dissolve-only steps
+                            // Clear queue and start a fresh cycle
                             steps.length = 0;
-                            var order = shuffle(indices);
-                            order.forEach(function (idx, k) {
-                                steps.push({ fn: function () {
-                                    setFont(spans[idx], randomFont());
-                                    if (emojiEl) emojiEl.textContent = randomEmoji();
-                                    compensate();
-                                }, delay: k === order.length - 1 ? 1200 : 100 });
-                            });
                             autoTimer = setTimeout(autoRun, 2000);
                         } else {
                             autoRun();

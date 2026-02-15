@@ -254,13 +254,18 @@
 
                 // Hover to pause, click to advance, mouseleave snaps to hovered font
                 var hoverEls = emojiEl ? [headlineEl, emojiEl] : [headlineEl];
+                var touchPause = false;
                 hoverEls.forEach(function (el) {
+                    el.addEventListener('touchstart', function () {
+                        touchPause = true;
+                    }, { passive: true });
                     el.addEventListener('mouseenter', function () {
                         paused = true;
                         clearTimeout(autoTimer);
                     });
                     el.addEventListener('mouseleave', function () {
                         paused = false;
+                        touchPause = false;
                         clearTimeout(autoTimer);
                         if (hoveredFont) {
                             for (var i = 0; i < spans.length; i++) {
@@ -284,7 +289,23 @@
                         }
                     });
                     el.addEventListener('click', function () {
-                        if (paused) advance();
+                        if (touchPause) {
+                            // Mobile: pause, advance, auto-resume after 2s
+                            touchPause = false;
+                            if (!paused) {
+                                paused = true;
+                                clearTimeout(autoTimer);
+                            }
+                            advance();
+                            clearTimeout(autoTimer);
+                            autoTimer = setTimeout(function () {
+                                paused = false;
+                                autoRun();
+                            }, 2000);
+                        } else if (paused) {
+                            // Desktop: advance one step while hovering
+                            advance();
+                        }
                     });
                 });
 

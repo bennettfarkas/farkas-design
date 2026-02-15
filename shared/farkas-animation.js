@@ -118,15 +118,6 @@
             spans.push(span);
         }
 
-        if (!signature) {
-            // Normal mode: hover to pause
-            var hoverEls = emojiEl ? [headlineEl, emojiEl] : [headlineEl];
-            hoverEls.forEach(function (el) {
-                el.addEventListener('mouseenter', function () { paused = true; });
-                el.addEventListener('mouseleave', function () { paused = false; });
-            });
-        }
-
         // Preload fonts with timeout, then start (or wait for hover in signature mode)
         var fontTimeout = new Promise(function (resolve) { setTimeout(resolve, 5000); });
         var fontLoad = Promise.allSettled(
@@ -142,42 +133,39 @@
                 targetWidth = headlineEl.getBoundingClientRect().width;
             });
 
-            function advance() {
-                spans.forEach(function (span, i) {
-                    var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
-                    span.style.fontFamily = '"' + wave[idx] + '", serif';
-                });
-                step++;
-                if (emojiEl) {
-                    var ei = emojiIdx % emojis.length;
-                    emojiIdx = (emojiIdx + 1) % emojis.length;
-                    emojiEl.textContent = emojis[ei];
-                }
+            function compensate() {
                 headlineEl.style.transform = 'none';
                 var actual = headlineEl.getBoundingClientRect().width;
                 headlineEl.style.transform = 'scale(' + (targetWidth / actual) + ')';
             }
 
-            var rafId = 0;
-            var lastTick = 0;
-            function tick(now) {
-                if (signature && !sigActive) { rafId = 0; return; }
-                if (!now || now - lastTick >= 150) {
-                    if (!paused) advance();
-                    lastTick = now || 0;
-                }
-                rafId = requestAnimationFrame(tick);
-            }
-
-            if (!signature) {
-                headlineEl.addEventListener('click', function () { advance(); });
-                if (emojiEl) emojiEl.addEventListener('click', function () { advance(); });
-            }
-
             if (signature) {
-                // Hover the stable hit overlay (not the emoji itself) to
-                // trigger animation — the overlay never changes DOM content,
-                // so Safari reliably fires click on the parent <a>.
+                // ── Signature mode: ping-pong wave on hover ──
+                function sigAdvance() {
+                    spans.forEach(function (span, i) {
+                        var idx = (step + (spans.length - 1 - i) * offset) % wave.length;
+                        span.style.fontFamily = '"' + wave[idx] + '", serif';
+                    });
+                    step++;
+                    if (emojiEl) {
+                        var ei = emojiIdx % emojis.length;
+                        emojiIdx = (emojiIdx + 1) % emojis.length;
+                        emojiEl.textContent = emojis[ei];
+                    }
+                    compensate();
+                }
+
+                var rafId = 0;
+                var lastTick = 0;
+                function tick(now) {
+                    if (!sigActive) { rafId = 0; return; }
+                    if (!now || now - lastTick >= 150) {
+                        sigAdvance();
+                        lastTick = now || 0;
+                    }
+                    rafId = requestAnimationFrame(tick);
+                }
+
                 var hitTarget = signature.querySelector('.farkas-emoji-hit') || emojiEl;
                 hitTarget.addEventListener('mouseenter', function () {
                     sigActive = true;
@@ -196,7 +184,111 @@
                     emojiIdx = 0;
                 });
             } else {
-                tick();
+                // ── Normal mode: Dissolve & Reconverge ──
+                var indices = Array.from({length: spans.length}, function (_, i) { return i; });
+                var steps = [];
+                var autoTimer = null;
+
+                function shuffle(arr) {
+                    var a = arr.slice();
+                    for (var i = a.length - 1; i > 0; i--) {
+                        var j = Math.floor(Math.random() * (i + 1));
+                        var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+                    }
+                    return a;
+                }
+
+                function randomFont() {
+                    return fonts[Math.floor(Math.random() * fonts.length)];
+                }
+
+                function setFont(span, font) {
+                    span.style.fontFamily = '"' + font + '", serif';
+                }
+
+                function setAll(font) {
+                    for (var i = 0; i < spans.length; i++) setFont(spans[i], font);
+                    compensate();
+                }
+
+                function buildCycle() {
+                    var font = randomFont();
+                    var order = shuffle(indices);
+
+                    // Snap to unified font + emoji
+                    steps.push({ fn: function () {
+                        setAll(font);
+                        if (emojiEl) emojiEl.textContent = randomEmoji();
+                    }, delay: 2000 });
+
+                    // Dissolve each character
+                    order.forEach(function (idx, k) {
+                        steps.push({ fn: function () {
+                            setFont(spans[idx], randomFont());
+                            if (emojiEl) emojiEl.textContent = randomEmoji();
+                            compensate();
+                        }, delay: k === order.length - 1 ? 1200 : 100 });
+                    });
+                }
+
+                function advance() {
+                    if (steps.length === 0) buildCycle();
+                    var s = steps.shift();
+                    s.fn();
+                    return s.delay;
+                }
+
+                function autoRun() {
+                    if (paused) return;
+                    var delay = advance();
+                    autoTimer = setTimeout(autoRun, delay);
+                }
+
+                // Track which letter's font the cursor is over
+                var hoveredFont = null;
+                spans.forEach(function (span) {
+                    span.addEventListener('mouseenter', function () {
+                        hoveredFont = span.style.fontFamily;
+                    });
+                });
+
+                // Hover to pause, click to advance, mouseleave snaps to hovered font
+                var hoverEls = emojiEl ? [headlineEl, emojiEl] : [headlineEl];
+                hoverEls.forEach(function (el) {
+                    el.addEventListener('mouseenter', function () {
+                        paused = true;
+                        clearTimeout(autoTimer);
+                    });
+                    el.addEventListener('mouseleave', function () {
+                        paused = false;
+                        clearTimeout(autoTimer);
+                        if (hoveredFont) {
+                            for (var i = 0; i < spans.length; i++) {
+                                spans[i].style.fontFamily = hoveredFont;
+                            }
+                            compensate();
+                            hoveredFont = null;
+                            // Skip unify snap — build dissolve-only steps
+                            steps.length = 0;
+                            var order = shuffle(indices);
+                            order.forEach(function (idx, k) {
+                                steps.push({ fn: function () {
+                                    setFont(spans[idx], randomFont());
+                                    if (emojiEl) emojiEl.textContent = randomEmoji();
+                                    compensate();
+                                }, delay: k === order.length - 1 ? 1200 : 100 });
+                            });
+                            autoTimer = setTimeout(autoRun, 2000);
+                        } else {
+                            autoRun();
+                        }
+                    });
+                    el.addEventListener('click', function () {
+                        if (paused) advance();
+                    });
+                });
+
+                autoRun();
             }
         });
     }

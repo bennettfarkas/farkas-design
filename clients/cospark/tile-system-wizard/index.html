@@ -620,7 +620,7 @@ body.app-body { display: block !important; min-height: unset !important; }
         <div class="toolbar-sep"></div>
         <div class="toolbar-group">
             <label>Grid
-                <input type="number" id="inp-cols" value="8" min="1" max="32">
+                <input type="number" id="inp-cols" value="6" min="1" max="32">
                 <span>&times;</span>
                 <input type="number" id="inp-rows" value="6" min="1" max="32">
             </label>
@@ -630,7 +630,7 @@ body.app-body { display: block !important; min-height: unset !important; }
                 <option value="">Custom</option>
                 <option value="1:1">1 : 1</option>
                 <option value="16:9">16 : 9</option>
-                <option value="4:3" selected>4 : 3</option>
+                <option value="4:3">4 : 3</option>
                 <option value="3:2">3 : 2</option>
                 <option value="9:16">9 : 16</option>
             </select>
@@ -638,7 +638,7 @@ body.app-body { display: block !important; min-height: unset !important; }
         <div class="toolbar-sep"></div>
         <div class="toolbar-group">
             <label>BG</label>
-            <button class="shape-color-btn" id="btn-bg" title="Canvas background color" style="background:#FFFFFF;"></button>
+            <button class="shape-color-btn" id="btn-bg" title="Canvas background color" style="background:#283845;"></button>
         </div>
         <div class="toolbar-spacer"></div>
         <div class="toolbar-actions">
@@ -668,6 +668,9 @@ body.app-body { display: block !important; min-height: unset !important; }
             <div class="toolbar-sep"></div>
             <button class="toolbar-btn" id="btn-new" title="New composition">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-restore" title="Restore example mural">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 9 9"/><path d="M3 21v-6h6"/><polyline points="12 7 12 12 15 15"/></svg>
             </button>
             <button class="btn-export" id="btn-export" title="Download SVG">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -784,7 +787,7 @@ TILE_DEFS.forEach(function(d) { TILE_DEFS_MAP[d.id] = d; });
 var SPARK_OFFSET = 0.0706787;
 
 var PRESETS = {
-    '1:1':  { cols: 8,  rows: 8 },
+    '1:1':  { cols: 6,  rows: 6 },
     '16:9': { cols: 16, rows: 9 },
     '4:3':  { cols: 8,  rows: 6 },
     '3:2':  { cols: 9,  rows: 6 },
@@ -836,9 +839,9 @@ var PALETTE_FAMILIES = [
 // =====================================================================
 
 var state = {
-    cols: 8,
+    cols: 6,
     rows: 6,
-    bgColor: '#FFFFFF',
+    bgColor: '#283845',
     templates: {},
     tiles: [],
     nextId: 1,
@@ -937,6 +940,44 @@ function loadTiles() {
             state.templates[r.def.id] = { shapes: shapes, viewBox: vb };
         });
     });
+}
+
+
+// Default mural composition — recreated from tile-system/example/mural-example.svg
+function getDefaultComposition() {
+    return {
+        cols: 6,
+        rows: 6,
+        bgColor: '#283845',
+        nextId: 26,
+        tiles: [
+            { id: 1,  tileType: 'solid',          col: 0, row: 0, scale: 1, rotation: 0,   shapeColors: ['#11202A'] },
+            { id: 2,  tileType: 'spark-small',     col: 1, row: 0, scale: 1, rotation: 0,   shapeColors: ['#812A2C', '#A5383E'] },
+            { id: 3,  tileType: 'solid',           col: 2, row: 0, scale: 1, rotation: 0,   shapeColors: ['#5D1E1E'] },
+            { id: 4,  tileType: 'spark',           col: 3, row: 0, scale: 3, rotation: 0,   shapeColors: ['#A5383E', '#008C76', '#00715D', '#00715D', '#D4792F'] },
+            { id: 5,  tileType: 'circle',          col: 0, row: 1, scale: 1, rotation: 0,   shapeColors: ['#11202A', '#11202A', '#11202A', '#283845', '#283845', '#11202A'] },
+            { id: 6,  tileType: 'solid',           col: 1, row: 1, scale: 1, rotation: 0,   shapeColors: ['#812A2C'] },
+            { id: 7,  tileType: 'half-circle',     col: 2, row: 1, scale: 1, rotation: 180, shapeColors: ['#812A2C', '#5D1E1E'] },
+            { id: 8,  tileType: 'spark',           col: 0, row: 2, scale: 1, rotation: 0,   shapeColors: ['#283845', '#283845', '#283845', '#283845', '#D4792F'] },
+            { id: 9,  tileType: 'quarter-circle',  col: 1, row: 2, scale: 1, rotation: 90,  shapeColors: ['none', '#812A2C', '#A5383E'] },
+            { id: 10, tileType: 'quarter-circle',  col: 2, row: 2, scale: 1, rotation: 0,   shapeColors: ['none', '#812A2C', '#A5383E'] },
+            { id: 11, tileType: 'circle',          col: 0, row: 3, scale: 1, rotation: 0,   shapeColors: ['#0B1520', '#283845', '#283845', '#0B1520', '#0B1520', '#0B1520'] },
+            { id: 12, tileType: 'spark',           col: 1, row: 3, scale: 2, rotation: 0,   shapeColors: ['#A5383E', '#00715D', '#A5383E', '#A5383E', '#D4792F'] },
+            { id: 13, tileType: 'spark-small',     col: 3, row: 3, scale: 1, rotation: 0,   shapeColors: ['#00715D', '#008C76'] },
+            { id: 14, tileType: 'half-circle',     col: 4, row: 3, scale: 1, rotation: 0,   shapeColors: ['#00715D', '#008C76'] },
+            { id: 15, tileType: 'circle',          col: 5, row: 3, scale: 1, rotation: 0,   shapeColors: ['#47A28E', '#00715D', '#00715D', '#47A28E', '#47A28E', '#47A28E'] },
+            { id: 16, tileType: 'spark-small',     col: 0, row: 4, scale: 1, rotation: 0,   shapeColors: ['#0B1520', '#283845'] },
+            { id: 17, tileType: 'circle',          col: 3, row: 4, scale: 1, rotation: 0,   shapeColors: ['#005645', '#00715D', '#00715D', '#005645', '#005645', '#005645'] },
+            { id: 18, tileType: 'half-circle',     col: 4, row: 4, scale: 1, rotation: 0,   shapeColors: ['#008C76', '#47A28E'] },
+            { id: 19, tileType: 'circle',          col: 5, row: 4, scale: 1, rotation: 0,   shapeColors: ['#00715D', '#47A28E', '#47A28E', '#00715D', '#00715D', '#00715D'] },
+            { id: 20, tileType: 'spark',           col: 0, row: 5, scale: 1, rotation: 0,   shapeColors: ['#0B1520', '#0B1520', '#0B1520', '#0B1520', '#D4792F'] },
+            { id: 21, tileType: 'quarter-circle',  col: 1, row: 5, scale: 1, rotation: 180, shapeColors: ['none', '#812A2C', '#A5383E'] },
+            { id: 22, tileType: 'quarter-circle',  col: 2, row: 5, scale: 1, rotation: 270, shapeColors: ['none', '#812A2C', '#A5383E'] },
+            { id: 23, tileType: 'half-circle',     col: 3, row: 5, scale: 1, rotation: 0,   shapeColors: ['#005645', '#063C30'] },
+            { id: 24, tileType: 'solid',           col: 4, row: 5, scale: 1, rotation: 0,   shapeColors: ['#47A28E'] },
+            { id: 25, tileType: 'circle',          col: 5, row: 5, scale: 1, rotation: 0,   shapeColors: ['#008C76', '#00715D', '#00715D', '#008C76', '#008C76', '#008C76'] },
+        ],
+    };
 }
 
 
@@ -1947,7 +1988,7 @@ $viewport.addEventListener('mouseleave', function() {
 // =====================================================================
 
 function applyGridSize(c, r) {
-    c = Math.max(1, Math.min(32, parseInt(c) || 8));
+    c = Math.max(1, Math.min(32, parseInt(c) || 6));
     r = Math.max(1, Math.min(32, parseInt(r) || 6));
 
     var removed = state.tiles.filter(function(t) {
@@ -2051,13 +2092,43 @@ $btnNew.addEventListener('click', function() {
     state.selectedId = null;
     state.undoStack = [];
     state.redoStack = [];
-    state.bgColor = '#FFFFFF';
-    $btnBg.style.background = '#FFFFFF';
+    state.bgColor = '#283845';
+    state.cols = 6;
+    state.rows = 6;
+    $btnBg.style.background = '#283845';
+    $inpCols.value = 6;
+    $inpRows.value = 6;
+    $inpPreset.value = '1:1';
     closePropsPanel();
     updateUndoButtons();
     renderCanvas();
+    fitToViewport();
     saveState();
     showToast('Cleared');
+});
+
+// Restore example mural
+document.getElementById('btn-restore').addEventListener('click', function() {
+    if (state.tiles.length > 0 && !confirm('Restore the example mural? Your current composition will be replaced.')) return;
+    var comp = getDefaultComposition();
+    state.tiles = comp.tiles;
+    state.nextId = comp.nextId;
+    state.selectedId = null;
+    state.undoStack = [];
+    state.redoStack = [];
+    state.bgColor = comp.bgColor;
+    state.cols = comp.cols;
+    state.rows = comp.rows;
+    $btnBg.style.background = comp.bgColor;
+    $inpCols.value = comp.cols;
+    $inpRows.value = comp.rows;
+    $inpPreset.value = '1:1';
+    closePropsPanel();
+    updateUndoButtons();
+    renderCanvas();
+    fitToViewport();
+    saveState();
+    showToast('Example mural restored');
 });
 
 $btnRecenter.addEventListener('click', fitToViewport);
@@ -2136,7 +2207,7 @@ function saveState() {
     saveTimeout = setTimeout(function() {
         try {
             var data = {
-                v: 1,
+                v: 2,
                 cols: state.cols,
                 rows: state.rows,
                 bgColor: state.bgColor,
@@ -2151,17 +2222,24 @@ function saveState() {
 function loadState() {
     try {
         var raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return false;
-        var data = JSON.parse(raw);
-        if (data.v !== 1) return false;
-        state.cols = data.cols || 8;
+        var data;
+        if (raw) {
+            data = JSON.parse(raw);
+            if (data.v !== 2) data = null;
+        }
+        if (!data) {
+            // No saved state — load default mural composition
+            data = getDefaultComposition();
+        }
+        state.cols = data.cols || 6;
         state.rows = data.rows || 6;
-        state.bgColor = data.bgColor || '#FFFFFF';
+        state.bgColor = data.bgColor || '#283845';
         state.nextId = data.nextId || 1;
         state.tiles = data.tiles || [];
         $inpCols.value = state.cols;
         $inpRows.value = state.rows;
         $btnBg.style.background = state.bgColor;
+        if (state.bgColor === 'none') { $btnBg.classList.add('checkerboard'); $btnBg.style.background = ''; }
         $inpPreset.value = '';
         Object.keys(PRESETS).forEach(function(key) {
             if (PRESETS[key].cols === state.cols && PRESETS[key].rows === state.rows) {

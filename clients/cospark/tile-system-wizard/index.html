@@ -1,0 +1,2213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoSpark — Tile Wizard</title>
+    <meta name="description" content="CoSpark tile composition tool — arrange, recolor, and export geometric tile patterns.">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+/* ── Reset & Shell ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; }
+body {
+    font-family: var(--font-sans);
+    background: var(--surface-page);
+    color: var(--color-heading);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select { font-family: inherit; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+
+/* ── Toolbar ── */
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 48px;
+    padding: 0 0.75rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-page);
+    flex-shrink: 0;
+    z-index: 10;
+    overflow: hidden;
+}
+.toolbar-back {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-muted);
+    text-decoration: none;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-caption);
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: color 0.15s;
+}
+.toolbar-back:hover { color: var(--color-heading); }
+.toolbar-back svg { width: 14px; height: 14px; flex-shrink: 0; }
+.toolbar-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+    margin: 0 0.25rem;
+    flex-shrink: 0;
+}
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-caption);
+    color: var(--color-body);
+    white-space: nowrap;
+}
+.toolbar-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: var(--weight-medium);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    font-size: var(--text-meta);
+    color: var(--color-muted);
+}
+.toolbar-group input[type="number"] {
+    width: 42px;
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-raised);
+    color: var(--color-heading);
+    text-align: center;
+    font-size: var(--text-caption);
+    padding: 0 4px;
+}
+.toolbar-group input[type="number"]:focus {
+    outline: none;
+    border-color: var(--copper);
+}
+.toolbar-group select {
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-raised);
+    color: var(--color-heading);
+    font-size: var(--text-caption);
+    padding: 0 6px;
+    cursor: pointer;
+}
+.toolbar-group select:focus { outline: none; border-color: var(--copper); }
+.toolbar-spacer { flex: 1; min-width: 0; }
+.toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex-shrink: 0;
+}
+.toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    color: var(--color-body);
+    transition: background 0.12s, color 0.12s;
+}
+.toolbar-btn:hover { background: var(--surface-raised); color: var(--color-heading); }
+.toolbar-btn:disabled { opacity: 0.3; pointer-events: none; }
+.toolbar-btn svg { width: 16px; height: 16px; }
+.btn-export {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 6px;
+    background: var(--copper);
+    color: #fff;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caption);
+    transition: background 0.15s;
+}
+.btn-export:hover { background: var(--copper-600); }
+.btn-export svg { width: 14px; height: 14px; }
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    color: var(--color-muted);
+    transition: color 0.15s;
+}
+.theme-toggle:hover { color: var(--color-heading); }
+.theme-toggle svg { width: 16px; height: 16px; }
+:root[data-theme="dark"] .icon-moon { display: none; }
+:root:not([data-theme="dark"]) .icon-sun { display: none; }
+
+/* ── Panels ── */
+.panels {
+    display: grid;
+    grid-template-columns: 200px 1fr 0px;
+    flex: 1;
+    overflow: hidden;
+    transition: grid-template-columns 0.2s;
+}
+.panels.props-open {
+    grid-template-columns: 200px 1fr 240px;
+}
+.panel {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.75rem;
+    background: var(--surface-page);
+}
+.panel-left {
+    border-right: 1px solid var(--border);
+}
+.panel-right {
+    border-left: 1px solid var(--border);
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+.panels.props-open .panel-right {
+    overflow-y: auto;
+    opacity: 1;
+}
+.panel-header {
+    font-size: var(--text-meta);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.6rem;
+}
+.panel-section {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+}
+
+/* ── Tile Palette (left) ── */
+.tile-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+}
+.tile-thumb {
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    background: var(--surface-raised);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    transition: border-color 0.12s, background 0.12s;
+    position: relative;
+}
+.tile-thumb:hover { background: var(--border); }
+.tile-thumb.active { border-color: var(--copper); background: var(--copper-50); }
+:root[data-theme="dark"] .tile-thumb.active { background: var(--copper-900); }
+.tile-thumb svg { width: 100%; height: 100%; display: block; }
+.tile-thumb-label {
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 8px;
+    font-weight: var(--weight-medium);
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.12s;
+}
+.tile-thumb:hover .tile-thumb-label { opacity: 1; }
+
+/* Scale buttons */
+.scale-btns {
+    display: flex;
+    gap: 4px;
+}
+.scale-btn {
+    flex: 1;
+    height: 28px;
+    border-radius: 4px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-semibold);
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    color: var(--color-body);
+    transition: all 0.12s;
+}
+.scale-btn:hover { border-color: var(--border-strong); color: var(--color-heading); }
+.scale-btn.active {
+    background: var(--copper);
+    border-color: var(--copper);
+    color: #fff;
+}
+
+/* ── Canvas Viewport ── */
+.canvas-viewport {
+    position: relative;
+    overflow: hidden;
+    background: var(--slate-100);
+}
+:root[data-theme="dark"] .canvas-viewport { background: var(--slate-950); }
+.canvas-container {
+    transform-origin: 0 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#canvas {
+    display: block;
+    filter: drop-shadow(0 2px 12px rgba(0,0,0,0.08));
+}
+:root[data-theme="dark"] #canvas {
+    filter: drop-shadow(0 2px 12px rgba(0,0,0,0.3));
+}
+
+/* ── Properties Panel (right) ── */
+.prop-group {
+    margin-bottom: 0.75rem;
+}
+.prop-label {
+    font-size: var(--text-meta);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 0.4rem;
+}
+.rotation-btns {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+}
+.rot-btn {
+    height: 28px;
+    border-radius: 4px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    border: 1px solid var(--border);
+    background: var(--surface-raised);
+    color: var(--color-body);
+    transition: all 0.12s;
+}
+.rot-btn:hover { border-color: var(--border-strong); color: var(--color-heading); }
+.rot-btn.active {
+    background: var(--copper);
+    border-color: var(--copper);
+    color: #fff;
+}
+
+/* Shape color rows */
+.shape-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 4px 0;
+}
+.shape-check {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--copper);
+    cursor: pointer;
+    flex-shrink: 0;
+    margin: 0;
+}
+.shape-preview {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+}
+.shape-color-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: border-color 0.12s, transform 0.1s;
+    flex-shrink: 0;
+}
+.shape-color-btn:hover { border-color: var(--color-heading); transform: scale(1.1); }
+.shape-name {
+    font-size: var(--text-caption);
+    color: var(--color-body);
+    flex: 1;
+    min-width: 0;
+}
+.batch-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+}
+.batch-bar.hidden { display: none; }
+.batch-count {
+    font-size: var(--text-caption);
+    color: var(--color-body);
+    flex: 1;
+}
+.batch-color-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    height: 26px;
+    padding: 0 10px;
+    border-radius: 5px;
+    background: var(--copper);
+    color: #fff;
+    font-size: 10px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-caption);
+    transition: background 0.15s;
+}
+.batch-color-btn:hover { background: var(--copper-600); }
+.btn-delete {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    height: 32px;
+    border-radius: 6px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--ember);
+    border: 1px solid var(--ember-100);
+    background: var(--ember-50);
+    transition: all 0.12s;
+    margin-top: 0.5rem;
+}
+:root[data-theme="dark"] .btn-delete { background: var(--ember-950); border-color: var(--ember-800); }
+.btn-delete:hover { background: var(--ember-100); border-color: var(--ember); }
+:root[data-theme="dark"] .btn-delete:hover { background: var(--ember-900); }
+.btn-delete svg { width: 14px; height: 14px; }
+
+/* ── Color Picker Popover ── */
+.color-picker-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+}
+.color-picker {
+    position: fixed;
+    z-index: 100;
+    background: var(--surface-overlay);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.6rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    width: 220px;
+}
+:root[data-theme="dark"] .color-picker { box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.cp-family {
+    margin-bottom: 0.5rem;
+}
+.cp-family:last-child { margin-bottom: 0; }
+.cp-family-name {
+    font-size: 9px;
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-muted);
+    margin-bottom: 3px;
+}
+.cp-swatches {
+    display: flex;
+    gap: 2px;
+    flex-wrap: wrap;
+}
+.cp-swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.08);
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+.cp-swatch:hover { transform: scale(1.3); box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 1; }
+.cp-swatch.active { box-shadow: 0 0 0 2px var(--copper); }
+.checkerboard {
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+    background-color: #fff;
+}
+
+/* ── Toast ── */
+.toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--slate-900);
+    color: var(--slate-50);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    z-index: 200;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* ── Mobile Notice ── */
+#mobile-notice {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: var(--surface-page);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+#mobile-notice h2 {
+    font-size: var(--text-h2);
+    font-weight: var(--weight-semibold);
+    color: var(--color-heading);
+}
+#mobile-notice p {
+    font-size: var(--text-body);
+    color: var(--color-body);
+    max-width: 320px;
+    line-height: var(--leading-body);
+}
+#mobile-notice a {
+    color: var(--copper);
+    text-decoration: none;
+    font-weight: var(--weight-medium);
+}
+@media (max-width: 768px) {
+    #mobile-notice { display: flex; }
+    .app { display: none; }
+}
+
+/* ── Zoom controls ── */
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+.zoom-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 72px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border);
+    outline: none;
+    cursor: pointer;
+}
+.zoom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-body);
+    cursor: pointer;
+    transition: background 0.12s;
+}
+.zoom-slider::-webkit-slider-thumb:hover { background: var(--color-heading); }
+.zoom-slider::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--color-body);
+    border: none;
+    cursor: pointer;
+}
+.zoom-label {
+    font-size: 10px;
+    font-weight: var(--weight-medium);
+    color: var(--color-muted);
+    min-width: 32px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Signature override — shrink to emoji, pass through clicks ── */
+body.app-body { display: block !important; min-height: unset !important; }
+.farkas-signature {
+    position: fixed !important;
+    bottom: 0;
+    left: 0;
+    width: auto !important;
+    pointer-events: none;
+    z-index: 20;
+}
+.farkas-signature .farkas-emoji-zone {
+    pointer-events: auto;
+}
+
+/* ── Canvas cursor states ── */
+.canvas-viewport { cursor: grab; }
+.canvas-viewport.mode-place { cursor: crosshair; }
+.canvas-viewport.mode-pan { cursor: grab; }
+.canvas-viewport.mode-panning { cursor: grabbing; }
+.canvas-viewport.mode-drag { cursor: grabbing; }
+.canvas-viewport.mode-hover-canvas { cursor: default; }
+.canvas-viewport.mode-resize { cursor: nwse-resize; }
+    </style>
+    <script>
+    (function(){
+        var t = localStorage.getItem('theme');
+        if (t === 'dark' || (t !== 'light' && window.matchMedia('(prefers-color-scheme:dark)').matches))
+            document.documentElement.setAttribute('data-theme', 'dark');
+    })();
+    </script>
+</head>
+<body class="app-body">
+
+<div id="mobile-notice">
+    <h2>Tile Wizard</h2>
+    <p>This composition tool works best on a desktop browser with a mouse or trackpad.</p>
+    <a href="../index.html">Back to CoSpark</a>
+</div>
+
+<div class="app" id="app">
+
+    <!-- Toolbar -->
+    <header class="toolbar">
+        <a class="toolbar-back" href="../index.html">
+            <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+            All assets
+        </a>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+            <label>Grid
+                <input type="number" id="inp-cols" value="8" min="1" max="32">
+                <span>&times;</span>
+                <input type="number" id="inp-rows" value="6" min="1" max="32">
+            </label>
+        </div>
+        <div class="toolbar-group">
+            <select id="inp-preset">
+                <option value="">Custom</option>
+                <option value="1:1">1 : 1</option>
+                <option value="16:9">16 : 9</option>
+                <option value="4:3" selected>4 : 3</option>
+                <option value="3:2">3 : 2</option>
+                <option value="9:16">9 : 16</option>
+            </select>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+            <label>BG</label>
+            <button class="shape-color-btn" id="btn-bg" title="Canvas background color" style="background:#FFFFFF;"></button>
+        </div>
+        <div class="toolbar-spacer"></div>
+        <div class="toolbar-actions">
+            <div class="zoom-controls">
+                <button class="toolbar-btn" id="btn-zoom-out" title="Zoom out">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                </button>
+                <input type="range" class="zoom-slider" id="zoom-slider" min="20" max="500" value="100">
+                <button class="toolbar-btn" id="btn-zoom-in" title="Zoom in">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                </button>
+                <span class="zoom-label" id="zoom-label">100%</span>
+            </div>
+            <button class="toolbar-btn" id="btn-recenter" title="Recenter canvas">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M9 21H3v-6"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+            </button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="btn-undo" title="Undo (Ctrl+Z)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7v6h6"/><path d="M3 13a9 9 0 0 1 3-7.7A9 9 0 0 1 21 12a9 9 0 0 1-9 9 9 9 0 0 1-6.7-3"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-redo" title="Redo (Ctrl+Shift+Z)" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 7v6h-6"/><path d="M21 13a9 9 0 0 0-3-7.7A9 9 0 0 0 3 12a9 9 0 0 0 9 9 9 9 0 0 0 6.7-3"/></svg>
+            </button>
+            <button class="toolbar-btn" id="btn-delete-sel" title="Delete selected (Del)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+            <div class="toolbar-sep"></div>
+            <button class="toolbar-btn" id="btn-new" title="New composition">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            </button>
+            <button class="btn-export" id="btn-export" title="Download SVG">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+            </button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
+    </header>
+
+    <!-- Three-panel body -->
+    <div class="panels" id="panels">
+
+        <!-- Left: Tile Palette -->
+        <aside class="panel panel-left">
+            <div class="panel-header">Tiles</div>
+            <div class="tile-list" id="tile-list"></div>
+        </aside>
+
+        <!-- Center: Canvas -->
+        <main class="canvas-viewport mode-place" id="viewport">
+            <div class="canvas-container" id="canvas-container">
+                <svg id="canvas" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
+        </main>
+
+        <!-- Right: Properties -->
+        <aside class="panel panel-right" id="props-panel">
+            <div class="panel-header">Properties</div>
+            <div class="prop-group">
+                <div class="prop-label">Rotation</div>
+                <div class="rotation-btns" id="rot-btns">
+                    <button class="rot-btn active" data-rot="0">0&deg;</button>
+                    <button class="rot-btn" data-rot="90">90&deg;</button>
+                    <button class="rot-btn" data-rot="180">180&deg;</button>
+                    <button class="rot-btn" data-rot="270">270&deg;</button>
+                </div>
+            </div>
+            <div class="prop-group">
+                <div class="prop-label">Scale</div>
+                <div class="scale-btns" id="sel-scale">
+                    <button class="scale-btn" data-scale="1">1x</button>
+                    <button class="scale-btn" data-scale="2">2x</button>
+                    <button class="scale-btn" data-scale="3">3x</button>
+                </div>
+            </div>
+            <div class="prop-group" id="shape-colors-group">
+                <div class="prop-label">Colors</div>
+                <div id="shape-colors"></div>
+                <div class="batch-bar hidden" id="batch-bar">
+                    <span class="batch-count" id="batch-count">0 selected</span>
+                    <button class="batch-color-btn" id="btn-batch-color">Recolor</button>
+                </div>
+            </div>
+            <button class="btn-delete" id="btn-delete-tile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                Delete tile
+            </button>
+        </aside>
+    </div>
+</div>
+
+<!-- Color picker popover (hidden) -->
+<div class="color-picker-overlay" id="cp-overlay" style="display:none;" aria-hidden="true"></div>
+<div class="color-picker" id="color-picker" style="display:none;" aria-hidden="true"></div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// =====================================================================
+// Constants
+// =====================================================================
+
+var SVG_NS = 'http://www.w3.org/2000/svg';
+var TILE_UNIT = 48;
+var TILE_BASE = '../tile-system/tiles/';
+var STORAGE_KEY = 'cospark-tile-wizard';
+
+var TILE_DEFS = [
+    { id: 'spark', file: 'spark.svg', name: 'Spark',
+      variants: { 2: 'spark-2x', 3: 'spark-3x' }, overflow: true,
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+    { id: 'spark-2x', file: 'spark-2x.svg', hidden: true, overflow: true,
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+    { id: 'spark-3x', file: 'spark-3x.svg', hidden: true, overflow: true,
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+    { id: 'quarter-circle', file: 'quarter-circle.svg', name: 'Quarter',
+      shapeNames: ['Background', 'Arc', 'Inner'] },
+    { id: 'diamond', file: 'diamond.svg', name: 'Diamond',
+      shapeNames: ['Background', 'Diamond', 'Top-left', 'Bottom-left', 'Bottom-right', 'Top-right'] },
+    { id: 'circle', file: 'circle.svg', name: 'Circle',
+      shapeNames: ['Background', 'Top-left', 'Top-right', 'Bottom-right', 'Bottom-left', 'Circle'] },
+    { id: 'diagonal', file: 'diagonal.svg', name: 'Diagonal',
+      shapeNames: ['Background', 'Lower', 'Upper'] },
+    { id: 'leaf', file: 'leaf.svg', name: 'Leaf',
+      shapeNames: ['Background', 'Corner 1', 'Corner 2', 'Leaf'] },
+    { id: 'solid', file: 'solid.svg', name: 'Solid',
+      shapeNames: ['Fill'] },
+    { id: 'half-circle', file: 'half-circle.svg', name: 'Half',
+      shapeNames: ['Background', 'Half circle'] },
+    { id: 'spark-small', file: 'spark-small.svg', name: 'Spark Sm',
+      shapeNames: ['Background', 'Star'] },
+];
+
+// Quick lookup map
+var TILE_DEFS_MAP = {};
+TILE_DEFS.forEach(function(d) { TILE_DEFS_MAP[d.id] = d; });
+
+// Spark content offset: background shapes start at 0.0706787 in SVG coords
+var SPARK_OFFSET = 0.0706787;
+
+var PRESETS = {
+    '1:1':  { cols: 8,  rows: 8 },
+    '16:9': { cols: 16, rows: 9 },
+    '4:3':  { cols: 8,  rows: 6 },
+    '3:2':  { cols: 9,  rows: 6 },
+    '9:16': { cols: 9,  rows: 16 },
+};
+
+var PALETTE_FAMILIES = [
+    { name: 'Slate', colors: [
+        { label: '50', hex: '#EDF2F7' }, { label: '100', hex: '#DCE4ED' },
+        { label: '200', hex: '#BDC9D5' }, { label: '300', hex: '#9FAFBE' },
+        { label: '400', hex: '#8395A5' }, { label: '500', hex: '#697B8C' },
+        { label: '600', hex: '#526372' }, { label: '700', hex: '#394B5A' },
+        { label: '800', hex: '#283845' }, { label: '900', hex: '#11202A' },
+        { label: '950', hex: '#0B1520' },
+    ]},
+    { name: 'Copper', colors: [
+        { label: '50', hex: '#FFF1E4' }, { label: '100', hex: '#FFE3C2' },
+        { label: '200', hex: '#FFC58F' }, { label: '300', hex: '#F8A96B' },
+        { label: '400', hex: '#E79145' }, { label: '500', hex: '#D4792F' },
+        { label: '600', hex: '#AF5D20' }, { label: '700', hex: '#8A4215' },
+        { label: '800', hex: '#68280C' }, { label: '900', hex: '#470E00' },
+        { label: '950', hex: '#310A03' },
+    ]},
+    { name: 'Patina', colors: [
+        { label: '50', hex: '#EBFAF5' }, { label: '100', hex: '#C1E4DA' },
+        { label: '200', hex: '#93D0C0' }, { label: '300', hex: '#60BBA6' },
+        { label: '400', hex: '#47A28E' }, { label: '500', hex: '#008C76' },
+        { label: '600', hex: '#00715D' }, { label: '700', hex: '#005645' },
+        { label: '800', hex: '#063C30' }, { label: '900', hex: '#08241C' },
+        { label: '950', hex: '#001508' },
+    ]},
+    { name: 'Ember', colors: [
+        { label: '50', hex: '#FFF3F2' }, { label: '100', hex: '#FAD2D0' },
+        { label: '200', hex: '#F5AFAC' }, { label: '300', hex: '#ED8C8A' },
+        { label: '400', hex: '#DB6D6D' }, { label: '500', hex: '#C25154' },
+        { label: '600', hex: '#A5383E' }, { label: '700', hex: '#812A2C' },
+        { label: '800', hex: '#5D1E1E' }, { label: '900', hex: '#331816' },
+        { label: '950', hex: '#240400' },
+    ]},
+    { name: 'Neutral', colors: [
+        { label: 'White', hex: '#FFFFFF' },
+        { label: 'None', hex: 'none' },
+    ]},
+];
+
+
+// =====================================================================
+// State
+// =====================================================================
+
+var state = {
+    cols: 8,
+    rows: 6,
+    bgColor: '#FFFFFF',
+    templates: {},
+    tiles: [],
+    nextId: 1,
+    selectedId: null,
+    activeTool: null,
+    activeScale: 1,
+    ghost: null,
+    zoom: 1,
+    panX: 0,
+    panY: 0,
+    undoStack: [],
+    redoStack: [],
+};
+
+
+// =====================================================================
+// DOM References
+// =====================================================================
+
+var $panels = document.getElementById('panels');
+var $tileList = document.getElementById('tile-list');
+var $viewport = document.getElementById('viewport');
+var $container = document.getElementById('canvas-container');
+var $canvas = document.getElementById('canvas');
+var $shapeColors = document.getElementById('shape-colors');
+var $batchBar = document.getElementById('batch-bar');
+var $batchCount = document.getElementById('batch-count');
+var $btnBatchColor = document.getElementById('btn-batch-color');
+var $rotBtns = document.getElementById('rot-btns');
+var $selScale = document.getElementById('sel-scale');
+var $inpCols = document.getElementById('inp-cols');
+var $inpRows = document.getElementById('inp-rows');
+var $inpPreset = document.getElementById('inp-preset');
+var $btnBg = document.getElementById('btn-bg');
+var $btnUndo = document.getElementById('btn-undo');
+var $btnRedo = document.getElementById('btn-redo');
+var $btnExport = document.getElementById('btn-export');
+var $btnNew = document.getElementById('btn-new');
+var $btnRecenter = document.getElementById('btn-recenter');
+var $btnZoomIn = document.getElementById('btn-zoom-in');
+var $btnZoomOut = document.getElementById('btn-zoom-out');
+var $zoomSlider = document.getElementById('zoom-slider');
+var $zoomLabel = document.getElementById('zoom-label');
+var $btnDeleteSel = document.getElementById('btn-delete-sel');
+var $btnDeleteTile = document.getElementById('btn-delete-tile');
+var $colorPicker = document.getElementById('color-picker');
+var $cpOverlay = document.getElementById('cp-overlay');
+var $toast = document.getElementById('toast');
+
+
+// =====================================================================
+// SVG Tile Loading
+// =====================================================================
+
+function extractShapes(svgEl) {
+    var shapes = [];
+    var skipEls = new Set();
+    svgEl.querySelectorAll('defs *, clipPath *').forEach(function(el) { skipEls.add(el); });
+
+    var tags = ['rect', 'path', 'circle', 'ellipse', 'polygon', 'line'];
+    tags.forEach(function(tag) {
+        svgEl.querySelectorAll(tag).forEach(function(el) {
+            if (skipEls.has(el)) return;
+            var fill = el.getAttribute('fill');
+            var stroke = el.getAttribute('stroke');
+            if (!fill && !stroke) return;
+            if (fill === 'none' && !stroke) return;
+            shapes.push({
+                svg: el.cloneNode(true),
+                defaultFill: fill && fill !== 'none' ? fill : null,
+                hasStroke: !!stroke && stroke !== 'none',
+                defaultStroke: stroke && stroke !== 'none' ? stroke : null,
+            });
+        });
+    });
+    return shapes;
+}
+
+function loadTiles() {
+    return Promise.all(TILE_DEFS.map(function(def) {
+        return fetch(TILE_BASE + def.file)
+            .then(function(r) { return r.text(); })
+            .then(function(text) {
+                var doc = new DOMParser().parseFromString(text, 'image/svg+xml');
+                var svg = doc.querySelector('svg');
+                return { def: def, svg: svg };
+            });
+    })).then(function(results) {
+        results.forEach(function(r) {
+            var shapes = extractShapes(r.svg);
+            var vb = r.svg.getAttribute('viewBox') || '0 0 4 4';
+            // Mark overflow shapes on spark tiles (star = last shape with stroke)
+            if (r.def.overflow && shapes.length > 0) {
+                shapes[shapes.length - 1].overflow = true;
+            }
+            state.templates[r.def.id] = { shapes: shapes, viewBox: vb };
+        });
+    });
+}
+
+
+// Default shape colors for a tile type — backgrounds are transparent
+function getDefaultColors(tileType, scale) {
+    var def = TILE_DEFS_MAP[tileType];
+    var templateId = tileType;
+    if (def && def.variants && def.variants[scale]) templateId = def.variants[scale];
+    var tmpl = state.templates[templateId];
+    if (!tmpl) return [];
+    return tmpl.shapes.map(function(s, i) {
+        if (def && def.shapeNames && def.shapeNames[i] === 'Background') return 'none';
+        return s.defaultFill || s.defaultStroke || '#000';
+    });
+}
+
+// Resolve the correct template ID for a tile (handles spark scale variants)
+function resolveTemplateId(tile) {
+    var def = TILE_DEFS_MAP[tile.tileType];
+    if (def && def.variants && def.variants[tile.scale]) {
+        return def.variants[tile.scale];
+    }
+    return tile.tileType;
+}
+
+
+// =====================================================================
+// Grid / Occupancy
+// =====================================================================
+
+function buildOccupancy(excludeId) {
+    var grid = [];
+    for (var i = 0; i < state.rows; i++) {
+        grid.push(new Array(state.cols).fill(null));
+    }
+    state.tiles.forEach(function(t) {
+        if (t.id === excludeId) return;
+        for (var r = 0; r < t.scale; r++) {
+            for (var c = 0; c < t.scale; c++) {
+                var gr = t.row + r;
+                var gc = t.col + c;
+                if (gr >= 0 && gr < state.rows && gc >= 0 && gc < state.cols) {
+                    grid[gr][gc] = t.id;
+                }
+            }
+        }
+    });
+    return grid;
+}
+
+function canPlace(col, row, scale, excludeId) {
+    if (col < 0 || row < 0 || col + scale > state.cols || row + scale > state.rows) return false;
+    var grid = buildOccupancy(excludeId);
+    for (var r = 0; r < scale; r++) {
+        for (var c = 0; c < scale; c++) {
+            if (grid[row + r][col + c] !== null) return false;
+        }
+    }
+    return true;
+}
+
+function tileAt(col, row) {
+    for (var i = state.tiles.length - 1; i >= 0; i--) {
+        var t = state.tiles[i];
+        if (col >= t.col && col < t.col + t.scale && row >= t.row && row < t.row + t.scale) {
+            return t;
+        }
+    }
+    return null;
+}
+
+
+// =====================================================================
+// Undo / Redo
+// =====================================================================
+
+function snapshotTiles() {
+    return JSON.parse(JSON.stringify(state.tiles));
+}
+
+function pushUndo() {
+    state.undoStack.push({ tiles: snapshotTiles(), nextId: state.nextId });
+    state.redoStack = [];
+    if (state.undoStack.length > 50) state.undoStack.shift();
+    updateUndoButtons();
+}
+
+function undo() {
+    if (!state.undoStack.length) return;
+    state.redoStack.push({ tiles: snapshotTiles(), nextId: state.nextId });
+    var snap = state.undoStack.pop();
+    state.tiles = snap.tiles;
+    state.nextId = snap.nextId;
+    state.selectedId = null;
+    closePropsPanel();
+    updateUndoButtons();
+    renderCanvas();
+    saveState();
+}
+
+function redo() {
+    if (!state.redoStack.length) return;
+    state.undoStack.push({ tiles: snapshotTiles(), nextId: state.nextId });
+    var snap = state.redoStack.pop();
+    state.tiles = snap.tiles;
+    state.nextId = snap.nextId;
+    state.selectedId = null;
+    closePropsPanel();
+    updateUndoButtons();
+    renderCanvas();
+    saveState();
+}
+
+function updateUndoButtons() {
+    $btnUndo.disabled = state.undoStack.length === 0;
+    $btnRedo.disabled = state.redoStack.length === 0;
+}
+
+
+// =====================================================================
+// Canvas Rendering
+// =====================================================================
+
+function renderCanvas() {
+    var w = state.cols * TILE_UNIT;
+    var h = state.rows * TILE_UNIT;
+    $canvas.setAttribute('width', w);
+    $canvas.setAttribute('height', h);
+    $canvas.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+    // Clear all children
+    while ($canvas.firstChild) $canvas.removeChild($canvas.firstChild);
+
+    // Defs for clip paths
+    var defs = document.createElementNS(SVG_NS, 'defs');
+    $canvas.appendChild(defs);
+
+    // Background
+    var bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('width', w);
+    bg.setAttribute('height', h);
+    bg.setAttribute('fill', state.bgColor);
+    $canvas.appendChild(bg);
+
+    // Grid lines
+    var gridG = document.createElementNS(SVG_NS, 'g');
+    var c, r, line;
+    for (c = 1; c < state.cols; c++) {
+        line = document.createElementNS(SVG_NS, 'line');
+        line.setAttribute('x1', c * TILE_UNIT);
+        line.setAttribute('y1', 0);
+        line.setAttribute('x2', c * TILE_UNIT);
+        line.setAttribute('y2', h);
+        line.setAttribute('stroke', 'rgba(0,0,0,0.06)');
+        line.setAttribute('stroke-width', '1');
+        gridG.appendChild(line);
+    }
+    for (r = 1; r < state.rows; r++) {
+        line = document.createElementNS(SVG_NS, 'line');
+        line.setAttribute('x1', 0);
+        line.setAttribute('y1', r * TILE_UNIT);
+        line.setAttribute('x2', w);
+        line.setAttribute('y2', r * TILE_UNIT);
+        line.setAttribute('stroke', 'rgba(0,0,0,0.06)');
+        line.setAttribute('stroke-width', '1');
+        gridG.appendChild(line);
+    }
+    $canvas.appendChild(gridG);
+
+    // Placed tiles — pass 1: clipped backgrounds (all tiles)
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        var mode = (def && def.overflow) ? 'clipped' : 'full';
+        var g = buildTileGroup(tile, defs, mode);
+        $canvas.appendChild(g);
+    });
+
+    // Placed tiles — pass 2: overflow shapes (spark stars on top of everything)
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        if (def && def.overflow) {
+            var g = buildTileGroup(tile, defs, 'overflow');
+            $canvas.appendChild(g);
+        }
+    });
+
+    // Ghost preview
+    if (state.ghost && state.activeTool && state.templates[state.activeTool]) {
+        var ghostTile = {
+            id: 'ghost',
+            tileType: state.activeTool,
+            col: state.ghost.col,
+            row: state.ghost.row,
+            scale: state.activeScale,
+            rotation: 0,
+            shapeColors: [],
+        };
+        ghostTile.shapeColors = getDefaultColors(state.activeTool, state.activeScale);
+        var valid = canPlace(ghostTile.col, ghostTile.row, ghostTile.scale);
+        var gg = buildTileGroup(ghostTile, defs, 'full');
+        gg.setAttribute('opacity', valid ? '0.4' : '0.15');
+        gg.style.pointerEvents = 'none';
+        $canvas.appendChild(gg);
+    }
+
+    // Selection highlight
+    if (state.selectedId !== null) {
+        var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
+        if (sel) {
+            var rect = document.createElementNS(SVG_NS, 'rect');
+            rect.setAttribute('x', sel.col * TILE_UNIT - 1);
+            rect.setAttribute('y', sel.row * TILE_UNIT - 1);
+            rect.setAttribute('width', sel.scale * TILE_UNIT + 2);
+            rect.setAttribute('height', sel.scale * TILE_UNIT + 2);
+            rect.setAttribute('fill', 'none');
+            rect.setAttribute('stroke', '#D4792F');
+            rect.setAttribute('stroke-width', '2');
+            rect.setAttribute('stroke-dasharray', '4 3');
+            rect.setAttribute('rx', '2');
+            rect.style.pointerEvents = 'none';
+            $canvas.appendChild(rect);
+
+            // Resize handle — bottom-right corner triangle
+            var hx = (sel.col + sel.scale) * TILE_UNIT;
+            var hy = (sel.row + sel.scale) * TILE_UNIT;
+            var hs = 10; // handle size in SVG units
+            var handle = document.createElementNS(SVG_NS, 'polygon');
+            handle.setAttribute('points',
+                hx + ',' + (hy - hs) + ' ' +
+                hx + ',' + hy + ' ' +
+                (hx - hs) + ',' + hy
+            );
+            handle.setAttribute('fill', '#D4792F');
+            handle.style.cursor = 'nwse-resize';
+            handle.style.pointerEvents = 'auto';
+            handle.dataset.resizeHandle = 'true';
+            $canvas.appendChild(handle);
+        }
+    }
+}
+
+// mode: 'full' (default) | 'clipped' (backgrounds only) | 'overflow' (star only)
+function buildTileGroup(tile, defs, mode) {
+    mode = mode || 'full';
+    var templateId = resolveTemplateId(tile);
+    var template = state.templates[templateId];
+    if (!template) return document.createElementNS(SVG_NS, 'g');
+
+    var def = TILE_DEFS_MAP[tile.tileType];
+    var isOverflow = def && def.overflow;
+    var g = document.createElementNS(SVG_NS, 'g');
+    var px = tile.col * TILE_UNIT;
+    var py = tile.row * TILE_UNIT;
+
+    if (isOverflow) {
+        // Spark tiles: variant SVGs have pre-scaled coordinates.
+        // Content spans offset to (offset + 4*scale), so scaleFactor is always TILE_UNIT/4.
+        var scaleFactor = TILE_UNIT / 4;
+        var contentSize = 4 * tile.scale;
+        var rotCenter = contentSize / 2 + SPARK_OFFSET; // center in original coords
+        var rotTransform = tile.rotation ? ' rotate(' + tile.rotation + ',' + rotCenter + ',' + rotCenter + ')' : '';
+        var innerTransform = 'translate(' + (-SPARK_OFFSET) + ',' + (-SPARK_OFFSET) + ')' + rotTransform;
+
+        g.setAttribute('transform', 'translate(' + px + ',' + py + ') scale(' + scaleFactor + ')');
+
+        // Clipped background shapes (pass 1 or full)
+        if (mode !== 'overflow') {
+            var clipId = 'clip-' + tile.id + (mode === 'clipped' ? '-bg' : '');
+            var clipPathEl = document.createElementNS(SVG_NS, 'clipPath');
+            clipPathEl.setAttribute('id', clipId);
+            var clipRect = document.createElementNS(SVG_NS, 'rect');
+            clipRect.setAttribute('x', '0');
+            clipRect.setAttribute('y', '0');
+            clipRect.setAttribute('width', contentSize);
+            clipRect.setAttribute('height', contentSize);
+            clipPathEl.appendChild(clipRect);
+            if (defs) defs.appendChild(clipPathEl);
+
+            var clippedG = document.createElementNS(SVG_NS, 'g');
+            clippedG.setAttribute('clip-path', 'url(#' + clipId + ')');
+            var offsetG = document.createElementNS(SVG_NS, 'g');
+            offsetG.setAttribute('transform', innerTransform);
+
+            template.shapes.forEach(function(shape, i) {
+                if (shape.overflow) return; // skip star in clipped pass
+                var clone = shape.svg.cloneNode(true);
+                var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+                if (color === 'none') {
+                    clone.setAttribute('fill', 'none');
+                    clone.setAttribute('stroke', 'none');
+                } else {
+                    if (shape.defaultFill) clone.setAttribute('fill', color);
+                    if (shape.hasStroke) clone.setAttribute('stroke', color);
+                }
+                offsetG.appendChild(clone);
+            });
+
+            clippedG.appendChild(offsetG);
+            g.appendChild(clippedG);
+        }
+
+        // Overflow star shape (pass 2 or full) — NOT clipped
+        if (mode !== 'clipped') {
+            var overflowG = document.createElementNS(SVG_NS, 'g');
+            overflowG.setAttribute('transform', innerTransform);
+
+            template.shapes.forEach(function(shape, i) {
+                if (!shape.overflow) return; // only star in overflow pass
+                var clone = shape.svg.cloneNode(true);
+                var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+                if (color === 'none') {
+                    clone.setAttribute('fill', 'none');
+                    clone.setAttribute('stroke', 'none');
+                } else {
+                    if (shape.defaultFill) clone.setAttribute('fill', color);
+                    if (shape.hasStroke) clone.setAttribute('stroke', color);
+                }
+                overflowG.appendChild(clone);
+            });
+
+            g.appendChild(overflowG);
+        }
+
+    } else {
+        // Regular tiles: original behavior
+        var scaleFactor = (tile.scale * TILE_UNIT) / 4;
+
+        var clipId = 'clip-' + tile.id;
+        var clipPathEl = document.createElementNS(SVG_NS, 'clipPath');
+        clipPathEl.setAttribute('id', clipId);
+        var clipRect = document.createElementNS(SVG_NS, 'rect');
+        clipRect.setAttribute('x', '0');
+        clipRect.setAttribute('y', '0');
+        clipRect.setAttribute('width', '4');
+        clipRect.setAttribute('height', '4');
+        clipPathEl.appendChild(clipRect);
+        if (defs) defs.appendChild(clipPathEl);
+
+        var inner = document.createElementNS(SVG_NS, 'g');
+        inner.setAttribute('clip-path', 'url(#' + clipId + ')');
+        if (tile.rotation) {
+            inner.setAttribute('transform', 'rotate(' + tile.rotation + ', 2, 2)');
+        }
+
+        template.shapes.forEach(function(shape, i) {
+            var clone = shape.svg.cloneNode(true);
+            var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+            if (color === 'none') {
+                clone.setAttribute('fill', 'none');
+                clone.setAttribute('stroke', 'none');
+            } else {
+                if (shape.defaultFill) clone.setAttribute('fill', color);
+                if (shape.hasStroke) clone.setAttribute('stroke', color);
+            }
+            inner.appendChild(clone);
+        });
+
+        g.setAttribute('transform', 'translate(' + px + ',' + py + ') scale(' + scaleFactor + ')');
+        g.appendChild(inner);
+    }
+
+    g.dataset.tileId = tile.id;
+    g.style.cursor = 'pointer';
+    return g;
+}
+
+
+// =====================================================================
+// Tile Palette (left panel)
+// =====================================================================
+
+function renderPalette() {
+    // Clear existing
+    while ($tileList.firstChild) $tileList.removeChild($tileList.firstChild);
+
+    TILE_DEFS.forEach(function(def) {
+        if (def.hidden) return; // skip spark-2x, spark-3x variants
+        var tmpl = state.templates[def.id];
+        if (!tmpl) return;
+
+        var btn = document.createElement('button');
+        btn.className = 'tile-thumb' + (state.activeTool === def.id ? ' active' : '');
+        btn.title = def.name;
+        btn.dataset.tile = def.id;
+
+        // SVG preview — use the template's actual viewBox
+        var svg = document.createElementNS(SVG_NS, 'svg');
+        svg.setAttribute('viewBox', tmpl.viewBox);
+        svg.setAttribute('fill', 'none');
+        tmpl.shapes.forEach(function(s) {
+            svg.appendChild(s.svg.cloneNode(true));
+        });
+        btn.appendChild(svg);
+
+        var label = document.createElement('span');
+        label.className = 'tile-thumb-label';
+        label.textContent = def.name;
+        btn.appendChild(label);
+
+        btn.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            paletteDrag = { tileId: def.id };
+            state.activeTool = def.id;
+            state.selectedId = null;
+            closePropsPanel();
+            updatePaletteActive();
+            updateViewportCursor();
+        });
+
+        $tileList.appendChild(btn);
+    });
+}
+
+function updatePaletteActive() {
+    $tileList.querySelectorAll('.tile-thumb').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.tile === state.activeTool);
+    });
+}
+
+function updateViewportCursor(onCanvas) {
+    if (onCanvas === undefined) onCanvas = true; // default for non-mouse callers
+    $viewport.classList.remove('mode-place', 'mode-pan', 'mode-panning', 'mode-drag', 'mode-hover-canvas');
+    if (spaceHeld) {
+        $viewport.classList.add('mode-pan');
+    } else if (onCanvas) {
+        if (state.activeTool) {
+            $viewport.classList.add('mode-place');
+        } else {
+            $viewport.classList.add('mode-hover-canvas');
+        }
+    }
+    // else: no class → falls through to .canvas-viewport default (grab)
+}
+
+
+// =====================================================================
+// Properties Panel (right)
+// =====================================================================
+
+function openPropsPanel(tile) {
+    $panels.classList.add('props-open');
+    shapeChecked = [];
+
+    $rotBtns.querySelectorAll('.rot-btn').forEach(function(b) {
+        b.classList.toggle('active', parseInt(b.dataset.rot) === tile.rotation);
+    });
+
+    $selScale.querySelectorAll('.scale-btn').forEach(function(b) {
+        b.classList.toggle('active', parseInt(b.dataset.scale) === tile.scale);
+    });
+
+    renderShapeColors(tile);
+}
+
+function closePropsPanel() {
+    $panels.classList.remove('props-open');
+    shapeChecked = [];
+    $batchBar.classList.add('hidden');
+}
+
+var shapeChecked = [];
+
+function updateBatchBar() {
+    var count = shapeChecked.filter(Boolean).length;
+    if (count >= 2) {
+        $batchBar.classList.remove('hidden');
+        $batchCount.textContent = count + ' selected';
+    } else {
+        $batchBar.classList.add('hidden');
+    }
+}
+
+function getCheckedIndices() {
+    var indices = [];
+    shapeChecked.forEach(function(v, i) { if (v) indices.push(i); });
+    return indices;
+}
+
+function renderShapeColors(tile) {
+    var templateId = resolveTemplateId(tile);
+    var template = state.templates[templateId];
+    if (!template) return;
+
+    // Reset checkboxes to match shape count, preserve checks if count hasn't changed
+    if (shapeChecked.length !== template.shapes.length) {
+        shapeChecked = new Array(template.shapes.length).fill(false);
+    }
+
+    // Clear existing
+    while ($shapeColors.firstChild) $shapeColors.removeChild($shapeColors.firstChild);
+
+    var def = TILE_DEFS_MAP[tile.tileType] || {};
+
+    // Build display order: Star on top, Background at bottom, rest in middle
+    var order = [];
+    var middle = [];
+    template.shapes.forEach(function(_, i) {
+        var sn = def.shapeNames && def.shapeNames[i];
+        if (sn === 'Star' || sn === 'Circle' || sn === 'Leaf') order.push(i);
+        else if (sn !== 'Background') middle.push(i);
+    });
+    order = order.concat(middle);
+    template.shapes.forEach(function(_, i) {
+        if (def.shapeNames && def.shapeNames[i] === 'Background') order.push(i);
+    });
+
+    order.forEach(function(i) {
+        var shape = template.shapes[i];
+        var row = document.createElement('div');
+        row.className = 'shape-row';
+
+        var check = document.createElement('input');
+        check.type = 'checkbox';
+        check.className = 'shape-check';
+        check.checked = shapeChecked[i];
+        check.title = 'Select for batch recolor';
+        check.addEventListener('change', function() {
+            shapeChecked[i] = check.checked;
+            updateBatchBar();
+        });
+        row.appendChild(check);
+
+        var preview = document.createElement('div');
+        preview.className = 'shape-preview';
+        var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+        if (color === 'none') {
+            preview.classList.add('checkerboard');
+        } else {
+            preview.style.background = color;
+        }
+        row.appendChild(preview);
+
+        var name = document.createElement('span');
+        name.className = 'shape-name';
+        name.textContent = (def.shapeNames && def.shapeNames[i]) || ('Shape ' + (i + 1));
+        row.appendChild(name);
+
+        var btn = document.createElement('button');
+        btn.className = 'shape-color-btn';
+        if (color === 'none') {
+            btn.classList.add('checkerboard');
+        } else {
+            btn.style.background = color;
+        }
+        btn.title = 'Change color';
+        btn.addEventListener('click', function(e) {
+            var indices = getCheckedIndices();
+            // If this shape is checked and there are multiple checked, apply to all checked
+            if (shapeChecked[i] && indices.length >= 2) {
+                openColorPicker(e.currentTarget, function(hex) {
+                    pushUndo();
+                    indices.forEach(function(idx) { tile.shapeColors[idx] = hex; });
+                    renderCanvas();
+                    renderShapeColors(tile);
+                    saveState();
+                }, color);
+            } else {
+                openColorPicker(e.currentTarget, function(hex) {
+                    pushUndo();
+                    tile.shapeColors[i] = hex;
+                    renderCanvas();
+                    renderShapeColors(tile);
+                    saveState();
+                }, color);
+            }
+        });
+        row.appendChild(btn);
+
+        $shapeColors.appendChild(row);
+    });
+
+    updateBatchBar();
+}
+
+
+// =====================================================================
+// Color Picker Popover
+// =====================================================================
+
+var cpCallback = null;
+var cpCurrentColor = null;
+
+function buildColorPickerDOM() {
+    PALETTE_FAMILIES.forEach(function(fam) {
+        var famDiv = document.createElement('div');
+        famDiv.className = 'cp-family';
+
+        var famName = document.createElement('div');
+        famName.className = 'cp-family-name';
+        famName.textContent = fam.name;
+        famDiv.appendChild(famName);
+
+        var swatchesDiv = document.createElement('div');
+        swatchesDiv.className = 'cp-swatches';
+
+        fam.colors.forEach(function(c) {
+            var swatch = document.createElement('div');
+            swatch.className = 'cp-swatch';
+            swatch.dataset.hex = c.hex;
+            swatch.title = fam.name + ' ' + c.label;
+            if (c.hex === 'none') {
+                swatch.classList.add('checkerboard');
+            } else {
+                swatch.style.background = c.hex;
+            }
+            swatchesDiv.appendChild(swatch);
+        });
+
+        famDiv.appendChild(swatchesDiv);
+        $colorPicker.appendChild(famDiv);
+    });
+}
+
+function openColorPicker(anchor, callback, currentHex) {
+    cpCallback = callback;
+    cpCurrentColor = currentHex ? (currentHex === 'none' ? 'NONE' : currentHex.toUpperCase()) : null;
+
+    var rect = anchor.getBoundingClientRect();
+    var pickerW = 220;
+    var pickerH = 200;
+    var left = rect.left - pickerW - 8;
+    var top = rect.top;
+    if (left < 8) left = rect.right + 8;
+    if (top + pickerH > window.innerHeight - 8) top = window.innerHeight - pickerH - 8;
+
+    $colorPicker.style.left = left + 'px';
+    $colorPicker.style.top = top + 'px';
+    $colorPicker.style.display = 'block';
+    $colorPicker.setAttribute('aria-hidden', 'false');
+    $cpOverlay.style.display = 'block';
+
+    $colorPicker.querySelectorAll('.cp-swatch').forEach(function(s) {
+        var h = s.dataset.hex;
+        s.classList.toggle('active', (h === 'none' ? 'NONE' : h.toUpperCase()) === cpCurrentColor);
+    });
+}
+
+function closeColorPicker() {
+    $colorPicker.style.display = 'none';
+    $colorPicker.setAttribute('aria-hidden', 'true');
+    $cpOverlay.style.display = 'none';
+    cpCallback = null;
+    cpCurrentColor = null;
+}
+
+$cpOverlay.addEventListener('click', closeColorPicker);
+
+$colorPicker.addEventListener('click', function(e) {
+    var swatch = e.target.closest('.cp-swatch');
+    if (!swatch) return;
+    var hex = swatch.dataset.hex;
+    if (cpCallback) cpCallback(hex);
+    closeColorPicker();
+});
+
+// Batch recolor button
+$btnBatchColor.addEventListener('click', function(e) {
+    var indices = getCheckedIndices();
+    if (indices.length < 2 || state.selectedId === null) return;
+    var tile = state.tiles.find(function(t) { return t.id === state.selectedId; });
+    if (!tile) return;
+    openColorPicker(e.currentTarget, function(hex) {
+        pushUndo();
+        indices.forEach(function(idx) { tile.shapeColors[idx] = hex; });
+        renderCanvas();
+        renderShapeColors(tile);
+        saveState();
+    });
+});
+
+
+// =====================================================================
+// Zoom / Pan
+// =====================================================================
+
+var spaceHeld = false;
+var isPanning = false;
+var panStartX = 0;
+var panStartY = 0;
+
+function applyTransform() {
+    $container.style.transform = 'translate(' + state.panX + 'px, ' + state.panY + 'px) scale(' + state.zoom + ')';
+    updateZoomUI();
+}
+
+function updateZoomUI() {
+    var pct = Math.round(state.zoom * 100);
+    $zoomLabel.textContent = pct + '%';
+    $zoomSlider.value = pct;
+}
+
+function zoomToCenter(newZoom) {
+    newZoom = Math.max(0.2, Math.min(5, newZoom));
+    var rect = $viewport.getBoundingClientRect();
+    var cx = rect.width / 2;
+    var cy = rect.height / 2;
+    state.panX = cx - (cx - state.panX) * (newZoom / state.zoom);
+    state.panY = cy - (cy - state.panY) * (newZoom / state.zoom);
+    state.zoom = newZoom;
+    applyTransform();
+}
+
+function fitToViewport() {
+    var rect = $viewport.getBoundingClientRect();
+    var cw = state.cols * TILE_UNIT;
+    var ch = state.rows * TILE_UNIT;
+    var pad = 40;
+    var sx = (rect.width - pad * 2) / cw;
+    var sy = (rect.height - pad * 2) / ch;
+    state.zoom = Math.min(sx, sy, 3);
+    state.panX = (rect.width - cw * state.zoom) / 2;
+    state.panY = (rect.height - ch * state.zoom) / 2;
+    applyTransform();
+}
+
+$viewport.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    var delta = e.deltaY > 0 ? -0.08 : 0.08;
+    var newZoom = Math.max(0.2, Math.min(5, state.zoom + delta * state.zoom));
+    var rect = $viewport.getBoundingClientRect();
+    var mx = e.clientX - rect.left;
+    var my = e.clientY - rect.top;
+    state.panX = mx - (mx - state.panX) * (newZoom / state.zoom);
+    state.panY = my - (my - state.panY) * (newZoom / state.zoom);
+    state.zoom = newZoom;
+    applyTransform();
+}, { passive: false });
+
+
+// =====================================================================
+// Mouse Interaction (placement, selection, drag, pan)
+// =====================================================================
+
+var dragState = null;
+var paletteDrag = null;
+var resizeState = null;
+
+function viewportToGrid(clientX, clientY) {
+    var rect = $viewport.getBoundingClientRect();
+    var vx = clientX - rect.left;
+    var vy = clientY - rect.top;
+    var cx = (vx - state.panX) / state.zoom;
+    var cy = (vy - state.panY) / state.zoom;
+    return {
+        col: Math.floor(cx / TILE_UNIT),
+        row: Math.floor(cy / TILE_UNIT),
+    };
+}
+
+function isOnCanvas(clientX, clientY) {
+    var rect = $viewport.getBoundingClientRect();
+    var vx = clientX - rect.left;
+    var vy = clientY - rect.top;
+    var cx = (vx - state.panX) / state.zoom;
+    var cy = (vy - state.panY) / state.zoom;
+    return cx >= 0 && cy >= 0 && cx < state.cols * TILE_UNIT && cy < state.rows * TILE_UNIT;
+}
+
+// Keyboard
+document.addEventListener('keydown', function(e) {
+    if (e.code === 'Space' && !e.repeat && e.target === document.body) {
+        e.preventDefault();
+        spaceHeld = true;
+        updateViewportCursor();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.code === 'KeyZ' && !e.shiftKey) {
+        e.preventDefault();
+        undo();
+    }
+    if ((e.metaKey || e.ctrlKey) && e.code === 'KeyZ' && e.shiftKey) {
+        e.preventDefault();
+        redo();
+    }
+    if ((e.code === 'Delete' || e.code === 'Backspace') && state.selectedId !== null && e.target === document.body) {
+        e.preventDefault();
+        deleteSelected();
+    }
+    if (e.code === 'Escape') {
+        if (state.activeTool) {
+            state.activeTool = null;
+            state.ghost = null;
+            updatePaletteActive();
+            updateViewportCursor();
+            renderCanvas();
+        } else if (state.selectedId !== null) {
+            state.selectedId = null;
+            closePropsPanel();
+            renderCanvas();
+        }
+    }
+});
+
+document.addEventListener('keyup', function(e) {
+    if (e.code === 'Space') {
+        spaceHeld = false;
+        updateViewportCursor();
+    }
+});
+
+$viewport.addEventListener('mousedown', function(e) {
+    if (e.button !== 0) return;
+
+    // Pan mode (space held OR click outside canvas)
+    if (spaceHeld || !isOnCanvas(e.clientX, e.clientY)) {
+        isPanning = true;
+        panStartX = e.clientX - state.panX;
+        panStartY = e.clientY - state.panY;
+        $viewport.classList.add('mode-panning');
+        e.preventDefault();
+        return;
+    }
+
+    var pos = viewportToGrid(e.clientX, e.clientY);
+
+    // Placement mode — if dragging from palette, ignore mousedown on canvas
+    if (state.activeTool && paletteDrag) {
+        return;
+    }
+
+    // Resize handle — check if clicking the handle of the selected tile
+    if (state.selectedId !== null && e.target.dataset && e.target.dataset.resizeHandle) {
+        var rTile = state.tiles.find(function(t) { return t.id === state.selectedId; });
+        if (rTile) {
+            resizeState = { tileId: rTile.id, startScale: rTile.scale };
+            $viewport.classList.add('mode-resize');
+            e.preventDefault();
+            return;
+        }
+    }
+
+    // Click on placed tile
+    var clicked = tileAt(pos.col, pos.row);
+    if (clicked) {
+        state.selectedId = clicked.id;
+        state.activeTool = null;
+        updatePaletteActive();
+        openPropsPanel(clicked);
+        renderCanvas();
+
+        // Start drag
+        dragState = {
+            tileId: clicked.id,
+            startCol: clicked.col,
+            startRow: clicked.row,
+        };
+        $viewport.classList.add('mode-drag');
+        e.preventDefault();
+        return;
+    }
+
+    // Click empty
+    if (pos.col >= 0 && pos.col < state.cols && pos.row >= 0 && pos.row < state.rows) {
+        state.selectedId = null;
+        closePropsPanel();
+        renderCanvas();
+    }
+});
+
+document.addEventListener('mousemove', function(e) {
+    if (isPanning) {
+        state.panX = e.clientX - panStartX;
+        state.panY = e.clientY - panStartY;
+        applyTransform();
+        return;
+    }
+
+    var pos = viewportToGrid(e.clientX, e.clientY);
+    var onCanvas = isOnCanvas(e.clientX, e.clientY);
+
+    // Resize drag
+    if (resizeState) {
+        var rTile = state.tiles.find(function(t) { return t.id === resizeState.tileId; });
+        if (rTile) {
+            // Calculate target scale from cursor distance to tile origin
+            var rect = $viewport.getBoundingClientRect();
+            var cx = (e.clientX - rect.left - state.panX) / state.zoom;
+            var cy = (e.clientY - rect.top - state.panY) / state.zoom;
+            var dx = (cx / TILE_UNIT) - rTile.col;
+            var dy = (cy / TILE_UNIT) - rTile.row;
+            var raw = Math.max(dx, dy);
+            var newScale = raw < 1.5 ? 1 : raw < 2.5 ? 2 : 3;
+            if (newScale !== rTile.scale && canPlace(rTile.col, rTile.row, newScale, rTile.id)) {
+                rTile.scale = newScale;
+                renderCanvas();
+            }
+        }
+        return;
+    }
+
+    // Update cursor based on whether mouse is over the canvas
+    if (!dragState) updateViewportCursor(onCanvas);
+
+    // Dragging
+    if (dragState) {
+        var tile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
+        if (tile && (pos.col !== tile.col || pos.row !== tile.row)) {
+            if (canPlace(pos.col, pos.row, tile.scale, tile.id)) {
+                tile.col = pos.col;
+                tile.row = pos.row;
+                renderCanvas();
+            }
+        }
+        return;
+    }
+
+    // Ghost preview
+    if (state.activeTool) {
+        var inBounds = pos.col >= 0 && pos.row >= 0 && pos.col < state.cols && pos.row < state.rows;
+        var newGhost = inBounds ? { col: pos.col, row: pos.row } : null;
+        var changed = !state.ghost || !newGhost ||
+            state.ghost.col !== newGhost.col || state.ghost.row !== newGhost.row;
+        if (changed) {
+            state.ghost = newGhost;
+            renderCanvas();
+        }
+    }
+});
+
+document.addEventListener('mouseup', function() {
+    if (isPanning) {
+        isPanning = false;
+        $viewport.classList.remove('mode-panning');
+        updateViewportCursor();
+        return;
+    }
+
+    // Resize handle release
+    if (resizeState) {
+        var rTile = state.tiles.find(function(t) { return t.id === resizeState.tileId; });
+        if (rTile && rTile.scale !== resizeState.startScale) {
+            pushUndo();
+            // Update properties panel scale buttons
+            if (state.selectedId === rTile.id) openPropsPanel(rTile);
+            saveState();
+        }
+        resizeState = null;
+        $viewport.classList.remove('mode-resize');
+        updateViewportCursor();
+        renderCanvas();
+        return;
+    }
+
+    // Palette drag → place tile on release
+    if (paletteDrag) {
+        var pd = paletteDrag;
+        paletteDrag = null;
+        if (state.ghost && state.activeTool) {
+            var pos = state.ghost;
+            if (canPlace(pos.col, pos.row, state.activeScale)) {
+                pushUndo();
+                var newTile = {
+                    id: state.nextId++,
+                    tileType: pd.tileId,
+                    col: pos.col,
+                    row: pos.row,
+                    scale: state.activeScale,
+                    rotation: 0,
+                    shapeColors: getDefaultColors(pd.tileId, state.activeScale),
+                };
+                state.tiles.push(newTile);
+                state.selectedId = newTile.id;
+                openPropsPanel(newTile);
+                saveState();
+            }
+        }
+        state.activeTool = null;
+        state.ghost = null;
+        updatePaletteActive();
+        updateViewportCursor();
+        renderCanvas();
+        return;
+    }
+
+    if (dragState) {
+        var tile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
+        if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
+            // Create undo snapshot with original position
+            var undoSnap = snapshotTiles();
+            var snapTile = undoSnap.find(function(t) { return t.id === dragState.tileId; });
+            if (snapTile) {
+                snapTile.col = dragState.startCol;
+                snapTile.row = dragState.startRow;
+            }
+            state.undoStack.push({ tiles: undoSnap, nextId: state.nextId });
+            state.redoStack = [];
+            if (state.undoStack.length > 50) state.undoStack.shift();
+            updateUndoButtons();
+            saveState();
+        }
+        dragState = null;
+        $viewport.classList.remove('mode-drag');
+        updateViewportCursor();
+        renderCanvas();
+    }
+});
+
+$viewport.addEventListener('mouseleave', function() {
+    if (state.ghost) {
+        state.ghost = null;
+        renderCanvas();
+    }
+});
+
+
+// =====================================================================
+// Toolbar Controls
+// =====================================================================
+
+function applyGridSize(c, r) {
+    c = Math.max(1, Math.min(32, parseInt(c) || 8));
+    r = Math.max(1, Math.min(32, parseInt(r) || 6));
+
+    var removed = state.tiles.filter(function(t) {
+        return t.col + t.scale > c || t.row + t.scale > r;
+    });
+    if (removed.length > 0) pushUndo();
+    state.tiles = state.tiles.filter(function(t) {
+        return t.col + t.scale <= c && t.row + t.scale <= r;
+    });
+
+    state.cols = c;
+    state.rows = r;
+    $inpCols.value = c;
+    $inpRows.value = r;
+    renderCanvas();
+    fitToViewport();
+    saveState();
+}
+
+$inpCols.addEventListener('change', function() {
+    $inpPreset.value = '';
+    applyGridSize($inpCols.value, $inpRows.value);
+});
+$inpRows.addEventListener('change', function() {
+    $inpPreset.value = '';
+    applyGridSize($inpCols.value, $inpRows.value);
+});
+
+$inpPreset.addEventListener('change', function() {
+    var p = PRESETS[$inpPreset.value];
+    if (p) applyGridSize(p.cols, p.rows);
+});
+
+// Background color
+$btnBg.addEventListener('click', function(e) {
+    openColorPicker(e.currentTarget, function(hex) {
+        state.bgColor = hex;
+        $btnBg.style.background = hex;
+        renderCanvas();
+        saveState();
+    }, state.bgColor);
+});
+
+// Rotation (properties)
+$rotBtns.addEventListener('click', function(e) {
+    var btn = e.target.closest('.rot-btn');
+    if (!btn || state.selectedId === null) return;
+    var tile = state.tiles.find(function(t) { return t.id === state.selectedId; });
+    if (!tile) return;
+    var rot = parseInt(btn.dataset.rot);
+    if (rot === tile.rotation) return;
+    pushUndo();
+    tile.rotation = rot;
+    $rotBtns.querySelectorAll('.rot-btn').forEach(function(b) {
+        b.classList.toggle('active', b === btn);
+    });
+    renderCanvas();
+    saveState();
+});
+
+// Selected tile scale
+$selScale.addEventListener('click', function(e) {
+    var btn = e.target.closest('.scale-btn');
+    if (!btn || state.selectedId === null) return;
+    var tile = state.tiles.find(function(t) { return t.id === state.selectedId; });
+    if (!tile) return;
+    var newScale = parseInt(btn.dataset.scale);
+    if (newScale === tile.scale) return;
+    if (!canPlace(tile.col, tile.row, newScale, tile.id)) {
+        showToast('Not enough room to scale here');
+        return;
+    }
+    pushUndo();
+    tile.scale = newScale;
+    $selScale.querySelectorAll('.scale-btn').forEach(function(b) {
+        b.classList.toggle('active', b === btn);
+    });
+    renderCanvas();
+    saveState();
+});
+
+// Delete
+function deleteSelected() {
+    if (state.selectedId === null) return;
+    pushUndo();
+    state.tiles = state.tiles.filter(function(t) { return t.id !== state.selectedId; });
+    state.selectedId = null;
+    closePropsPanel();
+    renderCanvas();
+    saveState();
+}
+
+$btnDeleteTile.addEventListener('click', deleteSelected);
+$btnDeleteSel.addEventListener('click', deleteSelected);
+
+// New
+$btnNew.addEventListener('click', function() {
+    if (state.tiles.length > 0 && !confirm('Start fresh? Your current composition will be cleared.')) return;
+    state.tiles = [];
+    state.nextId = 1;
+    state.selectedId = null;
+    state.undoStack = [];
+    state.redoStack = [];
+    state.bgColor = '#FFFFFF';
+    $btnBg.style.background = '#FFFFFF';
+    closePropsPanel();
+    updateUndoButtons();
+    renderCanvas();
+    saveState();
+    showToast('Cleared');
+});
+
+$btnRecenter.addEventListener('click', fitToViewport);
+$btnZoomIn.addEventListener('click', function() { zoomToCenter(state.zoom * 1.25); });
+$btnZoomOut.addEventListener('click', function() { zoomToCenter(state.zoom / 1.25); });
+$zoomSlider.addEventListener('input', function() { zoomToCenter(parseInt($zoomSlider.value) / 100); });
+$btnUndo.addEventListener('click', undo);
+$btnRedo.addEventListener('click', redo);
+
+
+// =====================================================================
+// Export SVG
+// =====================================================================
+
+$btnExport.addEventListener('click', function() {
+    var w = state.cols * TILE_UNIT;
+    var h = state.rows * TILE_UNIT;
+
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('xmlns', SVG_NS);
+    svg.setAttribute('width', w);
+    svg.setAttribute('height', h);
+    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+
+    var defs = document.createElementNS(SVG_NS, 'defs');
+    svg.appendChild(defs);
+
+    var bg = document.createElementNS(SVG_NS, 'rect');
+    bg.setAttribute('width', w);
+    bg.setAttribute('height', h);
+    bg.setAttribute('fill', state.bgColor);
+    svg.appendChild(bg);
+
+    // Two-pass: clipped backgrounds first, then overflow stars on top
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        var mode = (def && def.overflow) ? 'clipped' : 'full';
+        var g = buildTileGroup(tile, defs, mode);
+        g.removeAttribute('data-tile-id');
+        g.style.cursor = '';
+        svg.appendChild(g);
+    });
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        if (def && def.overflow) {
+            var g = buildTileGroup(tile, defs, 'overflow');
+            g.removeAttribute('data-tile-id');
+            g.style.cursor = '';
+            svg.appendChild(g);
+        }
+    });
+
+    var serializer = new XMLSerializer();
+    var svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svg);
+    var blob = new Blob([svgString], { type: 'image/svg+xml' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'cospark-tile-composition.svg';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('SVG exported');
+});
+
+
+// =====================================================================
+// Persistence (localStorage)
+// =====================================================================
+
+var saveTimeout = null;
+
+function saveState() {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(function() {
+        try {
+            var data = {
+                v: 1,
+                cols: state.cols,
+                rows: state.rows,
+                bgColor: state.bgColor,
+                nextId: state.nextId,
+                tiles: state.tiles,
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        } catch (e) { /* localStorage full or unavailable */ }
+    }, 300);
+}
+
+function loadState() {
+    try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return false;
+        var data = JSON.parse(raw);
+        if (data.v !== 1) return false;
+        state.cols = data.cols || 8;
+        state.rows = data.rows || 6;
+        state.bgColor = data.bgColor || '#FFFFFF';
+        state.nextId = data.nextId || 1;
+        state.tiles = data.tiles || [];
+        $inpCols.value = state.cols;
+        $inpRows.value = state.rows;
+        $btnBg.style.background = state.bgColor;
+        $inpPreset.value = '';
+        Object.keys(PRESETS).forEach(function(key) {
+            if (PRESETS[key].cols === state.cols && PRESETS[key].rows === state.rows) {
+                $inpPreset.value = key;
+            }
+        });
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+
+// =====================================================================
+// Toast
+// =====================================================================
+
+var toastTimeout = null;
+
+function showToast(msg) {
+    $toast.textContent = msg;
+    $toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(function() { $toast.classList.remove('show'); }, 2000);
+}
+
+
+// =====================================================================
+// Init
+// =====================================================================
+
+function init() {
+    buildColorPickerDOM();
+    loadTiles().then(function() {
+        loadState();
+        renderPalette();
+        renderCanvas();
+        fitToViewport();
+        updateUndoButtons();
+        window.addEventListener('resize', fitToViewport);
+    });
+}
+
+init();
+</script>
+
+<script data-signature src="../../../shared/farkas-animation.js"></script>
+</body>
+</html>

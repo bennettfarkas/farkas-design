@@ -587,8 +587,8 @@ body.app-body { display: block !important; min-height: unset !important; }
 /* ── Canvas cursor states ── */
 .canvas-viewport { cursor: grab; }
 .canvas-viewport.mode-place { cursor: crosshair; }
-.canvas-viewport.mode-pan { cursor: grab; }
-.canvas-viewport.mode-panning { cursor: grabbing; }
+.canvas-viewport.mode-pan, .canvas-viewport.mode-pan * { cursor: grab !important; }
+.canvas-viewport.mode-panning, .canvas-viewport.mode-panning * { cursor: grabbing !important; }
 .canvas-viewport.mode-drag { cursor: grabbing; }
 .canvas-viewport.mode-hover-canvas { cursor: default; }
 .canvas-viewport.mode-resize { cursor: nwse-resize; }
@@ -639,6 +639,12 @@ body.app-body { display: block !important; min-height: unset !important; }
         <div class="toolbar-group">
             <label>BG</label>
             <button class="shape-color-btn" id="btn-bg" title="Canvas background color" style="background:#283845;"></button>
+        </div>
+        <div class="toolbar-sep"></div>
+        <div class="toolbar-group">
+            <label>Border</label>
+            <input type="number" class="toolbar-input" id="inp-border-width" min="0" max="10" step="0.1" value="0.3" style="width:48px;">
+            <button class="shape-color-btn" id="btn-border-color" title="Border color" style="background:#283845;"></button>
         </div>
         <div class="toolbar-spacer"></div>
         <div class="toolbar-actions">
@@ -756,11 +762,11 @@ var STORAGE_KEY = 'cospark-tile-wizard';
 var TILE_DEFS = [
     { id: 'spark', file: 'spark.svg', name: 'Spark',
       variants: { 2: 'spark-2x', 3: 'spark-3x' }, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
     { id: 'spark-2x', file: 'spark-2x.svg', hidden: true, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
     { id: 'spark-3x', file: 'spark-3x.svg', hidden: true, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
     { id: 'quarter-circle', file: 'quarter-circle.svg', name: 'Quarter',
       shapeNames: ['Background', 'Arc', 'Inner'] },
     { id: 'diamond', file: 'diamond.svg', name: 'Diamond',
@@ -854,6 +860,8 @@ var state = {
     panY: 0,
     undoStack: [],
     redoStack: [],
+    borderWidth: 0.3,
+    borderColor: '#283845',
 };
 
 
@@ -876,6 +884,8 @@ var $inpCols = document.getElementById('inp-cols');
 var $inpRows = document.getElementById('inp-rows');
 var $inpPreset = document.getElementById('inp-preset');
 var $btnBg = document.getElementById('btn-bg');
+var $inpBorderWidth = document.getElementById('inp-border-width');
+var $btnBorderColor = document.getElementById('btn-border-color');
 var $btnUndo = document.getElementById('btn-undo');
 var $btnRedo = document.getElementById('btn-redo');
 var $btnExport = document.getElementById('btn-export');
@@ -949,6 +959,8 @@ function getDefaultComposition() {
         cols: 6,
         rows: 6,
         bgColor: '#283845',
+        borderWidth: 0.3,
+        borderColor: '#283845',
         nextId: 26,
         tiles: [
             { id: 1,  tileType: 'solid',          col: 0, row: 0, scale: 1, rotation: 0,   shapeColors: ['#11202A'] },
@@ -1104,9 +1116,10 @@ function updateUndoButtons() {
 function renderCanvas() {
     var w = state.cols * TILE_UNIT;
     var h = state.rows * TILE_UNIT;
-    $canvas.setAttribute('width', w);
-    $canvas.setAttribute('height', h);
-    $canvas.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
+    $canvas.setAttribute('width', w + bw * 2);
+    $canvas.setAttribute('height', h + bw * 2);
+    $canvas.setAttribute('viewBox', (-bw) + ' ' + (-bw) + ' ' + (w + bw * 2) + ' ' + (h + bw * 2));
 
     // Clear all children
     while ($canvas.firstChild) $canvas.removeChild($canvas.firstChild);
@@ -1114,6 +1127,17 @@ function renderCanvas() {
     // Defs for clip paths
     var defs = document.createElementNS(SVG_NS, 'defs');
     $canvas.appendChild(defs);
+
+    // Border (rendered as larger rect behind BG)
+    if (state.borderWidth > 0) {
+        var borderRect = document.createElementNS(SVG_NS, 'rect');
+        borderRect.setAttribute('x', -bw);
+        borderRect.setAttribute('y', -bw);
+        borderRect.setAttribute('width', w + bw * 2);
+        borderRect.setAttribute('height', h + bw * 2);
+        borderRect.setAttribute('fill', state.borderColor);
+        $canvas.appendChild(borderRect);
+    }
 
     // Background
     var bg = document.createElementNS(SVG_NS, 'rect');
@@ -1683,8 +1707,9 @@ function zoomToCenter(newZoom) {
 
 function fitToViewport() {
     var rect = $viewport.getBoundingClientRect();
-    var cw = state.cols * TILE_UNIT;
-    var ch = state.rows * TILE_UNIT;
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
+    var cw = state.cols * TILE_UNIT + bw * 2;
+    var ch = state.rows * TILE_UNIT + bw * 2;
     var pad = 40;
     var sx = (rect.width - pad * 2) / cw;
     var sy = (rect.height - pad * 2) / ch;
@@ -1734,12 +1759,13 @@ function isOnCanvas(clientX, clientY) {
     var vy = clientY - rect.top;
     var cx = (vx - state.panX) / state.zoom;
     var cy = (vy - state.panY) / state.zoom;
-    return cx >= 0 && cy >= 0 && cx < state.cols * TILE_UNIT && cy < state.rows * TILE_UNIT;
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
+    return cx >= -bw && cy >= -bw && cx < state.cols * TILE_UNIT + bw && cy < state.rows * TILE_UNIT + bw;
 }
 
 // Keyboard
 document.addEventListener('keydown', function(e) {
-    if (e.code === 'Space' && !e.repeat && e.target === document.body) {
+    if (e.code === 'Space' && !e.repeat && !e.target.matches('input, select, textarea')) {
         e.preventDefault();
         spaceHeld = true;
         updateViewportCursor();
@@ -1783,6 +1809,11 @@ $viewport.addEventListener('mousedown', function(e) {
 
     // Pan mode (space held OR click outside canvas)
     if (spaceHeld || !isOnCanvas(e.clientX, e.clientY)) {
+        if (state.selectedId !== null) {
+            state.selectedId = null;
+            closePropsPanel();
+            renderCanvas();
+        }
         isPanning = true;
         panStartX = e.clientX - state.panX;
         panStartY = e.clientY - state.panY;
@@ -2032,6 +2063,26 @@ $btnBg.addEventListener('click', function(e) {
     }, state.bgColor);
 });
 
+// Border width
+$inpBorderWidth.addEventListener('input', function() {
+    var val = parseFloat($inpBorderWidth.value) || 0;
+    if (val < 0) val = 0;
+    if (val > 10) val = 10;
+    state.borderWidth = val;
+    renderCanvas();
+    saveState();
+});
+
+// Border color
+$btnBorderColor.addEventListener('click', function(e) {
+    openColorPicker(e.currentTarget, function(hex) {
+        state.borderColor = hex;
+        $btnBorderColor.style.background = hex;
+        renderCanvas();
+        saveState();
+    }, state.borderColor);
+});
+
 // Rotation (properties)
 $rotBtns.addEventListener('click', function(e) {
     var btn = e.target.closest('.rot-btn');
@@ -2093,9 +2144,13 @@ $btnNew.addEventListener('click', function() {
     state.undoStack = [];
     state.redoStack = [];
     state.bgColor = '#283845';
+    state.borderWidth = 0.3;
+    state.borderColor = '#283845';
     state.cols = 6;
     state.rows = 6;
     $btnBg.style.background = '#283845';
+    $inpBorderWidth.value = 0.3;
+    $btnBorderColor.style.background = '#283845';
     $inpCols.value = 6;
     $inpRows.value = 6;
     $inpPreset.value = '1:1';
@@ -2117,9 +2172,13 @@ document.getElementById('btn-restore').addEventListener('click', function() {
     state.undoStack = [];
     state.redoStack = [];
     state.bgColor = comp.bgColor;
+    state.borderWidth = comp.borderWidth || 0;
+    state.borderColor = comp.borderColor || '#283845';
     state.cols = comp.cols;
     state.rows = comp.rows;
     $btnBg.style.background = comp.bgColor;
+    $inpBorderWidth.value = state.borderWidth;
+    $btnBorderColor.style.background = state.borderColor;
     $inpCols.value = comp.cols;
     $inpRows.value = comp.rows;
     $inpPreset.value = '1:1';
@@ -2146,15 +2205,27 @@ $btnRedo.addEventListener('click', redo);
 $btnExport.addEventListener('click', function() {
     var w = state.cols * TILE_UNIT;
     var h = state.rows * TILE_UNIT;
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
 
     var svg = document.createElementNS(SVG_NS, 'svg');
     svg.setAttribute('xmlns', SVG_NS);
-    svg.setAttribute('width', w);
-    svg.setAttribute('height', h);
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    svg.setAttribute('width', w + bw * 2);
+    svg.setAttribute('height', h + bw * 2);
+    svg.setAttribute('viewBox', (-bw) + ' ' + (-bw) + ' ' + (w + bw * 2) + ' ' + (h + bw * 2));
 
     var defs = document.createElementNS(SVG_NS, 'defs');
     svg.appendChild(defs);
+
+    // Border
+    if (state.borderWidth > 0) {
+        var borderRect = document.createElementNS(SVG_NS, 'rect');
+        borderRect.setAttribute('x', -bw);
+        borderRect.setAttribute('y', -bw);
+        borderRect.setAttribute('width', w + bw * 2);
+        borderRect.setAttribute('height', h + bw * 2);
+        borderRect.setAttribute('fill', state.borderColor);
+        svg.appendChild(borderRect);
+    }
 
     var bg = document.createElementNS(SVG_NS, 'rect');
     bg.setAttribute('width', w);
@@ -2211,6 +2282,8 @@ function saveState() {
                 cols: state.cols,
                 rows: state.rows,
                 bgColor: state.bgColor,
+                borderWidth: state.borderWidth,
+                borderColor: state.borderColor,
                 nextId: state.nextId,
                 tiles: state.tiles,
             };
@@ -2234,10 +2307,14 @@ function loadState() {
         state.cols = data.cols || 6;
         state.rows = data.rows || 6;
         state.bgColor = data.bgColor || '#283845';
+        state.borderWidth = data.borderWidth || 0;
+        state.borderColor = data.borderColor || '#283845';
         state.nextId = data.nextId || 1;
         state.tiles = data.tiles || [];
         $inpCols.value = state.cols;
         $inpRows.value = state.rows;
+        $inpBorderWidth.value = state.borderWidth;
+        $btnBorderColor.style.background = state.borderColor;
         $btnBg.style.background = state.bgColor;
         if (state.bgColor === 'none') { $btnBg.classList.add('checkerboard'); $btnBg.style.background = ''; }
         $inpPreset.value = '';

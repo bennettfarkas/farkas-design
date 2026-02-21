@@ -176,7 +176,7 @@ input, select { font-family: inherit; }
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.12);
     z-index: 50;
-    min-width: 180px;
+    min-width: 240px;
     padding: 4px;
 }
 :root[data-theme="dark"] .export-menu { box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
@@ -194,6 +194,106 @@ input, select { font-family: inherit; }
 .export-menu-item:hover {
     background: var(--surface-raised);
     color: var(--color-heading);
+}
+.export-png {
+    padding: 8px 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 2px;
+}
+.export-png-title {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--color-body);
+    margin-bottom: 6px;
+}
+.export-png-fields {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+.export-png-fields select,
+.export-png-fields input {
+    height: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface-raised);
+    color: var(--color-heading);
+    font-size: var(--text-caption);
+    font-family: inherit;
+}
+.export-png-fields select {
+    padding: 0 4px;
+    cursor: pointer;
+}
+.export-png-fields select:focus,
+.export-png-fields input:focus {
+    outline: none;
+    border-color: var(--copper);
+}
+.export-png-fields input {
+    width: 60px;
+    text-align: center;
+    padding: 0 4px;
+    -moz-appearance: textfield;
+}
+.export-png-fields input::-webkit-inner-spin-button,
+.export-png-fields input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.export-png-dpi {
+    display: none;
+    gap: 4px;
+    align-items: center;
+    margin-top: 6px;
+}
+.export-png-dpi.visible { display: flex; }
+.export-png-dpi-chip {
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--color-body);
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.export-png-dpi-chip:hover {
+    border-color: var(--copper);
+    color: var(--color-heading);
+}
+.export-png-dpi-chip.active {
+    background: var(--copper);
+    color: #fff;
+    border-color: var(--copper);
+}
+.export-png-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+}
+.export-png-preview {
+    font-size: var(--text-meta);
+    color: var(--color-muted);
+    letter-spacing: 0.02em;
+}
+.btn-export-png {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: #fff;
+    background: var(--copper);
+    border: none;
+    transition: background 0.12s;
+}
+.btn-export-png:hover { background: var(--copper-600); }
+.btn-export-png:disabled {
+    opacity: 0.4;
+    cursor: default;
 }
 .theme-toggle {
     display: flex;
@@ -387,13 +487,6 @@ input, select { font-family: inherit; }
     flex-shrink: 0;
     margin: 0;
 }
-.shape-preview {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    flex-shrink: 0;
-}
 .shape-color-btn {
     width: 28px;
     height: 28px;
@@ -506,6 +599,29 @@ input, select { font-family: inherit; }
 }
 .cp-swatch:hover { transform: scale(1.3); box-shadow: 0 2px 6px rgba(0,0,0,0.15); z-index: 1; }
 .cp-swatch.active { box-shadow: 0 0 0 2px var(--copper); }
+.cp-global-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 0 6px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--color-muted);
+}
+.cp-global-swatch {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.08);
+    flex-shrink: 0;
+}
+.cp-global-count { flex: 1; }
+.cp-global-toggle {
+    display: flex; align-items: center; gap: 4px;
+    cursor: pointer; user-select: none;
+    font-size: 10px; color: var(--color-muted);
+}
+.cp-global-toggle input { accent-color: var(--copper); }
 .checkerboard {
     background-image:
         linear-gradient(45deg, #ccc 25%, transparent 25%),
@@ -727,6 +843,9 @@ body.app-body { display: block !important; min-height: unset !important; }
             <button class="toolbar-btn" id="btn-restore" title="Restore example mural">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 9 9"/><path d="M3 21v-6h6"/><polyline points="12 7 12 12 15 15"/></svg>
             </button>
+            <button class="toolbar-btn" id="btn-roll" title="Roll the dice — random composition">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="3"/><circle cx="8" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="8" r="1.5" fill="currentColor" stroke="none"/><circle cx="8" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="16" cy="16" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg>
+            </button>
             <div class="export-group" id="export-group">
                 <button class="btn-export" id="btn-export" title="Download SVG">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -736,8 +855,30 @@ body.app-body { display: block !important; min-height: unset !important; }
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5l3 3 3-3"/></svg>
                 </button>
                 <div class="export-menu" id="export-menu" style="display:none;">
-                    <button class="export-menu-item" id="btn-export-raw">Export SVG</button>
-                    <button class="export-menu-item" id="btn-export-merged">Export Merged SVG</button>
+                    <button class="export-menu-item" id="btn-export-unmerged">Export Unmerged SVG</button>
+                    <div class="export-png" id="export-png-form">
+                        <div class="export-png-title">Export PNG</div>
+                        <div class="export-png-fields">
+                            <select id="png-dim">
+                                <option value="width">Width</option>
+                                <option value="height">Height</option>
+                            </select>
+                            <input type="number" id="png-value" value="1920" min="1">
+                            <select id="png-unit">
+                                <option value="px">px</option>
+                                <option value="in">in</option>
+                            </select>
+                        </div>
+                        <div class="export-png-dpi" id="png-dpi-row">
+                            <button class="export-png-dpi-chip" data-dpi="72">72</button>
+                            <button class="export-png-dpi-chip" data-dpi="150">150</button>
+                            <button class="export-png-dpi-chip active" data-dpi="300">300</button>
+                        </div>
+                        <div class="export-png-info">
+                            <span class="export-png-preview" id="png-preview">1920 × 1920</span>
+                            <button class="btn-export-png" id="btn-export-png">Export PNG</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1051,6 +1192,179 @@ function getDefaultComposition() {
 }
 
 
+// Random composition generator — produces brand-coherent murals
+function generateRandomComposition(cols, rows) {
+    var FAMILIES = {
+        slate:  { 500: '#697B8C', 600: '#526372', 700: '#394B5A', 800: '#283845', 900: '#11202A', 950: '#0B1520' },
+        copper: { 500: '#D4792F', 600: '#AF5D20', 700: '#8A4215', 800: '#68280C', 900: '#470E00', 950: '#310A03' },
+        patina: { 500: '#008C76', 600: '#00715D', 700: '#005645', 800: '#063C30', 900: '#08241C', 950: '#001508' },
+        ember:  { 500: '#C25154', 600: '#A5383E', 700: '#812A2C', 800: '#5D1E1E', 900: '#331816', 950: '#240400' }
+    };
+    var FAMILY_NAMES = ['slate', 'copper', 'patina', 'ember'];
+    var COPPER_STAR = '#D4792F';
+
+    function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+    function weightedPick(items, weights) {
+        var total = 0; for (var i = 0; i < weights.length; i++) total += weights[i];
+        var r = Math.random() * total, cum = 0;
+        for (var j = 0; j < items.length; j++) { cum += weights[j]; if (r < cum) return items[j]; }
+        return items[items.length - 1];
+    }
+    function vals(fam) { var f = FAMILIES[fam], a = []; for (var k in f) a.push(f[k]); return a; }
+    function darkVals(fam) { var f = FAMILIES[fam]; return [f[700], f[800], f[900], f[950]]; }
+    function midVals(fam) { var f = FAMILIES[fam]; return [f[500], f[600], f[700]]; }
+    function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+    // a. Pick palette mood
+    var bgFamily = weightedPick(FAMILY_NAMES, [50, 10, 20, 20]);
+    var others = FAMILY_NAMES.filter(function(f) { return f !== bgFamily; });
+    shuffle(others);
+    var accentFamilies = Math.random() < 0.6 ? [others[0], others[1]] : [others[0]];
+    var allFamilies = [bgFamily].concat(accentFamilies);
+
+    var bgDarks = darkVals(bgFamily);
+    var bgColor = pick(bgDarks.slice(0, 2)); // 700-800 range for bg
+    var borderColor = bgColor;
+    var borderWidth = 0.3;
+
+    // b. Regional quadrants — divide grid, each leans toward a family
+    var quadFamilies = shuffle(allFamilies.slice()).concat(shuffle(allFamilies.slice()));
+    // 4 quadrants: TL=0, TR=1, BL=2, BR=3
+    function getQuadrant(c, r) {
+        var qc = c < cols / 2 ? 0 : 1;
+        var qr = r < rows / 2 ? 0 : 1;
+        return qr * 2 + qc;
+    }
+    function pickFamily(c, r) {
+        var q = getQuadrant(c, r);
+        var lean = quadFamilies[q % quadFamilies.length];
+        return Math.random() < 0.7 ? lean : pick(allFamilies);
+    }
+
+    // c. Occupancy grid
+    var occ = [];
+    for (var ri = 0; ri < rows; ri++) occ.push(new Array(cols).fill(false));
+    function canFit(c, r, s) {
+        if (c + s > cols || r + s > rows) return false;
+        for (var dr = 0; dr < s; dr++) for (var dc = 0; dc < s; dc++) if (occ[r + dr][c + dc]) return false;
+        return true;
+    }
+    function markOcc(c, r, s) {
+        for (var dr = 0; dr < s; dr++) for (var dc = 0; dc < s; dc++) occ[r + dr][c + dc] = true;
+    }
+
+    var tiles = [];
+    var nextId = 1;
+
+    // d. Place focal tiles first
+    var area = cols * rows;
+    if (area >= 16) {
+        var focalScale = (area >= 36 && cols >= 3 && rows >= 3) ? (Math.random() < 0.5 ? 3 : 2) : 2;
+        if (focalScale > Math.min(cols, rows)) focalScale = Math.min(cols, rows);
+        if (focalScale >= 2) {
+            var fc = Math.floor(Math.random() * (cols - focalScale));
+            var fr = Math.floor(Math.random() * (rows - focalScale));
+            if (canFit(fc, fr, focalScale)) {
+                var fFam = pick(accentFamilies.length ? accentFamilies : [bgFamily]);
+                tiles.push({
+                    id: nextId++, tileType: 'spark', col: fc, row: fr, scale: focalScale, rotation: 0,
+                    shapeColors: [pick(midVals(fFam)), pick(midVals(bgFamily)), pick(darkVals(fFam)), pick(darkVals(bgFamily)), COPPER_STAR]
+                });
+                markOcc(fc, fr, focalScale);
+            }
+        }
+    }
+    // Second focal (smaller)
+    if (area >= 36) {
+        var attempts = 0;
+        while (attempts < 10) {
+            var fc2 = Math.floor(Math.random() * (cols - 2));
+            var fr2 = Math.floor(Math.random() * (rows - 2));
+            if (canFit(fc2, fr2, 2)) {
+                var fType2 = Math.random() < 0.6 ? 'spark' : 'solid';
+                var fFam2 = pick(allFamilies);
+                if (fType2 === 'spark') {
+                    tiles.push({
+                        id: nextId++, tileType: 'spark', col: fc2, row: fr2, scale: 2, rotation: 0,
+                        shapeColors: [pick(darkVals(fFam2)), pick(darkVals(bgFamily)), pick(midVals(fFam2)), pick(darkVals(fFam2)), COPPER_STAR]
+                    });
+                } else {
+                    tiles.push({
+                        id: nextId++, tileType: 'solid', col: fc2, row: fr2, scale: 2, rotation: 0,
+                        shapeColors: [pick(darkVals(fFam2))]
+                    });
+                }
+                markOcc(fc2, fr2, 2);
+                break;
+            }
+            attempts++;
+        }
+    }
+
+    // e. Fill remaining cells
+    var TILE_TYPES = ['spark', 'solid', 'circle', 'half-circle', 'quarter-circle', 'spark-small', 'diamond', 'diagonal', 'leaf'];
+    var TILE_WEIGHTS = [15, 15, 15, 15, 12, 12, 5, 5, 6];
+    var ROTATABLE = { 'quarter-circle': true, 'half-circle': true, 'diagonal': true, 'leaf': true };
+    var ROTATIONS = [0, 90, 180, 270];
+
+    for (var row = 0; row < rows; row++) {
+        for (var col = 0; col < cols; col++) {
+            if (occ[row][col]) continue;
+
+            var type = weightedPick(TILE_TYPES, TILE_WEIGHTS);
+            var rot = ROTATABLE[type] ? pick(ROTATIONS) : 0;
+            var fam = pickFamily(col, row);
+            var colors;
+
+            if (type === 'solid') {
+                colors = [pick(darkVals(fam))];
+            } else if (type === 'spark') {
+                colors = [pick(darkVals(fam)), pick(darkVals(fam)), pick(darkVals(fam)), pick(darkVals(fam)), COPPER_STAR];
+            } else if (type === 'spark-small') {
+                colors = [pick(darkVals(fam)), Math.random() < 0.5 ? COPPER_STAR : pick(midVals(pick(accentFamilies.length ? accentFamilies : allFamilies)))];
+            } else if (type === 'circle') {
+                var cBase = pick(midVals(fam).concat(darkVals(fam)));
+                var cPool = midVals(fam).concat(darkVals(fam));
+                colors = [cBase, pick(cPool), pick(cPool), cBase, cBase, pick(cPool)];
+            } else if (type === 'half-circle') {
+                var hPool = midVals(fam).concat(darkVals(fam));
+                colors = [pick(hPool), pick(hPool)];
+            } else if (type === 'quarter-circle') {
+                var qFam = fam;
+                colors = ['none', pick(midVals(qFam).concat(darkVals(qFam))), pick(midVals(qFam))];
+            } else if (type === 'diamond') {
+                var dFam = fam;
+                var dFam2d = pick(allFamilies);
+                colors = ['none', pick(midVals(dFam)), pick(darkVals(dFam2d)), pick(darkVals(dFam)), pick(darkVals(dFam2d)), pick(darkVals(dFam))];
+            } else if (type === 'diagonal') {
+                var diPool = midVals(fam).concat(darkVals(fam));
+                colors = ['none', pick(diPool), pick(diPool)];
+            } else if (type === 'leaf') {
+                var lFam = fam;
+                var lFam2 = pick(allFamilies);
+                colors = ['none', pick(darkVals(lFam)), pick(darkVals(lFam2)), pick(midVals(lFam))];
+            } else {
+                colors = [pick(darkVals(fam))];
+            }
+
+            tiles.push({
+                id: nextId++, tileType: type, col: col, row: row, scale: 1, rotation: rot,
+                shapeColors: colors
+            });
+            occ[row][col] = true;
+        }
+    }
+
+    return {
+        tiles: tiles,
+        nextId: nextId,
+        bgColor: bgColor,
+        borderWidth: borderWidth,
+        borderColor: borderColor
+    };
+}
+
+
 // Default shape colors for a tile type — backgrounds are transparent
 function getDefaultColors(tileType, scale) {
     var def = TILE_DEFS_MAP[tileType];
@@ -1265,38 +1579,55 @@ function renderCanvas() {
         $canvas.appendChild(gg);
     }
 
-    // Selection highlight
+    // Selection highlight — corner handles + edge lines
     if (state.selectedId !== null) {
         var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
         if (sel) {
-            var rect = document.createElementNS(SVG_NS, 'rect');
-            rect.setAttribute('x', sel.col * TILE_UNIT - 1);
-            rect.setAttribute('y', sel.row * TILE_UNIT - 1);
-            rect.setAttribute('width', sel.scale * TILE_UNIT + 2);
-            rect.setAttribute('height', sel.scale * TILE_UNIT + 2);
-            rect.setAttribute('fill', 'none');
-            rect.setAttribute('stroke', '#D4792F');
-            rect.setAttribute('stroke-width', '2');
-            rect.setAttribute('stroke-dasharray', '4 3');
-            rect.setAttribute('rx', '2');
-            rect.style.pointerEvents = 'none';
-            $canvas.appendChild(rect);
+            var sx = sel.col * TILE_UNIT;
+            var sy = sel.row * TILE_UNIT;
+            var sw = sel.scale * TILE_UNIT;
+            var sh = sel.scale * TILE_UNIT;
+            var corners = [
+                [sx, sy], [sx + sw, sy],
+                [sx + sw, sy + sh], [sx, sy + sh]
+            ];
 
-            // Resize handle — bottom-right corner triangle
-            var hx = (sel.col + sel.scale) * TILE_UNIT;
-            var hy = (sel.row + sel.scale) * TILE_UNIT;
-            var hs = 10; // handle size in SVG units
-            var handle = document.createElementNS(SVG_NS, 'polygon');
-            handle.setAttribute('points',
-                hx + ',' + (hy - hs) + ' ' +
-                hx + ',' + hy + ' ' +
-                (hx - hs) + ',' + hy
-            );
-            handle.setAttribute('fill', '#D4792F');
-            handle.style.cursor = 'nwse-resize';
-            handle.style.pointerEvents = 'auto';
-            handle.dataset.resizeHandle = 'true';
-            $canvas.appendChild(handle);
+            // Edge lines connecting corners
+            for (var ei = 0; ei < 4; ei++) {
+                var c1 = corners[ei];
+                var c2 = corners[(ei + 1) % 4];
+                var line = document.createElementNS(SVG_NS, 'line');
+                line.setAttribute('x1', c1[0]);
+                line.setAttribute('y1', c1[1]);
+                line.setAttribute('x2', c2[0]);
+                line.setAttribute('y2', c2[1]);
+                line.setAttribute('stroke', '#D4792F');
+                line.setAttribute('stroke-width', '1.5');
+                line.setAttribute('opacity', '0.45');
+                line.style.pointerEvents = 'none';
+                $canvas.appendChild(line);
+            }
+
+            // Corner handle squares
+            var hs = 6; // handle size in SVG units
+            var half = hs / 2;
+            for (var ci = 0; ci < 4; ci++) {
+                var cr = document.createElementNS(SVG_NS, 'rect');
+                cr.setAttribute('x', corners[ci][0] - half);
+                cr.setAttribute('y', corners[ci][1] - half);
+                cr.setAttribute('width', hs);
+                cr.setAttribute('height', hs);
+                cr.setAttribute('rx', '1');
+                cr.setAttribute('fill', '#D4792F');
+                if (ci === 2) { // bottom-right corner
+                    cr.style.cursor = 'nwse-resize';
+                    cr.style.pointerEvents = 'auto';
+                    cr.dataset.resizeHandle = 'true';
+                } else {
+                    cr.style.pointerEvents = 'none';
+                }
+                $canvas.appendChild(cr);
+            }
         }
     }
 }
@@ -1346,6 +1677,7 @@ function buildTileGroup(tile, defs, mode) {
             template.shapes.forEach(function(shape, i) {
                 if (shape.overflow) return; // skip star in clipped pass
                 var clone = shape.svg.cloneNode(true);
+                clone.dataset.shapeIndex = i;
                 var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
                 if (color === 'none') {
                     clone.setAttribute('fill', 'none');
@@ -1369,6 +1701,7 @@ function buildTileGroup(tile, defs, mode) {
             template.shapes.forEach(function(shape, i) {
                 if (!shape.overflow) return; // only star in overflow pass
                 var clone = shape.svg.cloneNode(true);
+                clone.dataset.shapeIndex = i;
                 var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
                 if (color === 'none') {
                     clone.setAttribute('fill', 'none');
@@ -1406,6 +1739,7 @@ function buildTileGroup(tile, defs, mode) {
 
         template.shapes.forEach(function(shape, i) {
             var clone = shape.svg.cloneNode(true);
+            clone.dataset.shapeIndex = i;
             var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
             if (color === 'none') {
                 clone.setAttribute('fill', 'none');
@@ -1583,15 +1917,7 @@ function renderShapeColors(tile) {
         });
         row.appendChild(check);
 
-        var preview = document.createElement('div');
-        preview.className = 'shape-preview';
         var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
-        if (color === 'none') {
-            preview.classList.add('checkerboard');
-        } else {
-            preview.style.background = color;
-        }
-        row.appendChild(preview);
 
         var name = document.createElement('span');
         name.className = 'shape-name';
@@ -1608,6 +1934,8 @@ function renderShapeColors(tile) {
         btn.title = 'Change color';
         btn.addEventListener('click', function(e) {
             var indices = getCheckedIndices();
+            var globalCount = countColorInstances(color);
+            var globalCtx = { hex: color, count: globalCount };
             // If this shape is checked and there are multiple checked, apply to all checked
             if (shapeChecked[i] && indices.length >= 2) {
                 openColorPicker(e.currentTarget, function(hex) {
@@ -1616,7 +1944,7 @@ function renderShapeColors(tile) {
                     renderCanvas();
                     renderShapeColors(tile);
                     saveState();
-                }, color);
+                }, color, globalCtx);
             } else {
                 openColorPicker(e.currentTarget, function(hex) {
                     pushUndo();
@@ -1624,7 +1952,7 @@ function renderShapeColors(tile) {
                     renderCanvas();
                     renderShapeColors(tile);
                     saveState();
-                }, color);
+                }, color, globalCtx);
             }
         });
         row.appendChild(btn);
@@ -1642,8 +1970,70 @@ function renderShapeColors(tile) {
 
 var cpCallback = null;
 var cpCurrentColor = null;
+var cpGlobalHex = null;
+
+function countColorInstances(hex) {
+    var target = hex === 'none' ? 'none' : hex.toUpperCase();
+    var count = 0;
+    state.tiles.forEach(function(tile) {
+        var templateId = resolveTemplateId(tile);
+        var template = state.templates[templateId];
+        if (!template) return;
+        template.shapes.forEach(function(shape, i) {
+            var c = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+            if ((c === 'none' ? 'none' : c.toUpperCase()) === target) count++;
+        });
+    });
+    return count;
+}
+
+function recolorAllInstances(oldHex, newHex) {
+    var target = oldHex === 'none' ? 'none' : oldHex.toUpperCase();
+    pushUndo();
+    state.tiles.forEach(function(tile) {
+        var templateId = resolveTemplateId(tile);
+        var template = state.templates[templateId];
+        if (!template) return;
+        template.shapes.forEach(function(shape, i) {
+            var c = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+            if ((c === 'none' ? 'none' : c.toUpperCase()) === target) {
+                tile.shapeColors[i] = newHex;
+            }
+        });
+    });
+    renderCanvas();
+    var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
+    if (sel) renderShapeColors(sel);
+    saveState();
+}
 
 function buildColorPickerDOM() {
+    var bar = document.createElement('div');
+    bar.className = 'cp-global-bar';
+    bar.id = 'cp-global-bar';
+    bar.style.display = 'none';
+
+    var swatch = document.createElement('div');
+    swatch.className = 'cp-global-swatch';
+    swatch.id = 'cp-global-swatch';
+    bar.appendChild(swatch);
+
+    var countSpan = document.createElement('span');
+    countSpan.className = 'cp-global-count';
+    countSpan.id = 'cp-global-count';
+    bar.appendChild(countSpan);
+
+    var toggleLabel = document.createElement('label');
+    toggleLabel.className = 'cp-global-toggle';
+    var checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'cp-global-check';
+    toggleLabel.appendChild(checkbox);
+    toggleLabel.appendChild(document.createTextNode('Apply to all'));
+    bar.appendChild(toggleLabel);
+
+    $colorPicker.appendChild(bar);
+
     PALETTE_FAMILIES.forEach(function(fam) {
         var famDiv = document.createElement('div');
         famDiv.className = 'cp-family';
@@ -1674,9 +2064,30 @@ function buildColorPickerDOM() {
     });
 }
 
-function openColorPicker(anchor, callback, currentHex) {
+function openColorPicker(anchor, callback, currentHex, globalContext) {
     cpCallback = callback;
     cpCurrentColor = currentHex ? (currentHex === 'none' ? 'NONE' : currentHex.toUpperCase()) : null;
+
+    // Global recolor bar
+    var $bar = document.getElementById('cp-global-bar');
+    var $check = document.getElementById('cp-global-check');
+    if (globalContext && globalContext.count > 1) {
+        cpGlobalHex = globalContext.hex;
+        var $sw = document.getElementById('cp-global-swatch');
+        if (globalContext.hex === 'none') {
+            $sw.style.background = '';
+            $sw.classList.add('checkerboard');
+        } else {
+            $sw.classList.remove('checkerboard');
+            $sw.style.background = globalContext.hex;
+        }
+        document.getElementById('cp-global-count').textContent = globalContext.count + ' instances on canvas';
+        $check.checked = false;
+        $bar.style.display = '';
+    } else {
+        cpGlobalHex = null;
+        $bar.style.display = 'none';
+    }
 
     var rect = anchor.getBoundingClientRect();
     var pickerW = 220;
@@ -1704,6 +2115,7 @@ function closeColorPicker() {
     $cpOverlay.style.display = 'none';
     cpCallback = null;
     cpCurrentColor = null;
+    cpGlobalHex = null;
 }
 
 $cpOverlay.addEventListener('click', closeColorPicker);
@@ -1712,7 +2124,12 @@ $colorPicker.addEventListener('click', function(e) {
     var swatch = e.target.closest('.cp-swatch');
     if (!swatch) return;
     var hex = swatch.dataset.hex;
-    if (cpCallback) cpCallback(hex);
+    var $check = document.getElementById('cp-global-check');
+    if ($check && $check.checked && cpGlobalHex !== null) {
+        recolorAllInstances(cpGlobalHex, hex);
+    } else if (cpCallback) {
+        cpCallback(hex);
+    }
     closeColorPicker();
 });
 
@@ -1805,9 +2222,10 @@ function viewportToGrid(clientX, clientY) {
     var vy = clientY - rect.top;
     var cx = (vx - state.panX) / state.zoom;
     var cy = (vy - state.panY) / state.zoom;
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
     return {
-        col: Math.floor(cx / TILE_UNIT),
-        row: Math.floor(cy / TILE_UNIT),
+        col: Math.floor((cx - bw) / TILE_UNIT),
+        row: Math.floor((cy - bw) / TILE_UNIT),
     };
 }
 
@@ -1901,6 +2319,7 @@ $viewport.addEventListener('mousedown', function(e) {
     // Click on placed tile
     var clicked = tileAt(pos.col, pos.row);
     if (clicked) {
+        var wasAlreadySelected = state.selectedId === clicked.id;
         state.selectedId = clicked.id;
         state.activeTool = null;
         updatePaletteActive();
@@ -1912,6 +2331,10 @@ $viewport.addEventListener('mousedown', function(e) {
             tileId: clicked.id,
             startCol: clicked.col,
             startRow: clicked.row,
+            wasAlreadySelected: wasAlreadySelected,
+            mouseTarget: e.target,
+            clientX: e.clientX,
+            clientY: e.clientY,
         };
         $viewport.classList.add('mode-drag');
         e.preventDefault();
@@ -2056,6 +2479,33 @@ document.addEventListener('mouseup', function() {
             if (state.undoStack.length > 50) state.undoStack.shift();
             updateUndoButtons();
             saveState();
+        } else if (tile && dragState.wasAlreadySelected) {
+            // Stationary click on already-selected tile — open color picker for clicked shape
+            var shapeEl = dragState.mouseTarget;
+            while (shapeEl && (!shapeEl.dataset || shapeEl.dataset.shapeIndex === undefined)) {
+                shapeEl = shapeEl.parentElement;
+            }
+            if (shapeEl && shapeEl.dataset.shapeIndex !== undefined) {
+                var idx = parseInt(shapeEl.dataset.shapeIndex);
+                var templateId = resolveTemplateId(tile);
+                var template = state.templates[templateId];
+                if (template && template.shapes[idx]) {
+                    var shape = template.shapes[idx];
+                    var color = tile.shapeColors[idx] || shape.defaultFill || shape.defaultStroke || '#000';
+                    var globalCount = countColorInstances(color);
+                    var globalCtx = { hex: color, count: globalCount };
+                    // Virtual anchor at click point
+                    var cx = dragState.clientX, cy = dragState.clientY;
+                    var anchor = { getBoundingClientRect: function() { return { left: cx, right: cx, top: cy, bottom: cy }; } };
+                    openColorPicker(anchor, function(hex) {
+                        pushUndo();
+                        tile.shapeColors[idx] = hex;
+                        renderCanvas();
+                        renderShapeColors(tile);
+                        saveState();
+                    }, color, globalCtx);
+                }
+            }
         }
         dragState = null;
         $viewport.classList.remove('mode-drag');
@@ -2248,6 +2698,25 @@ document.getElementById('btn-restore').addEventListener('click', function() {
     showToast('Example mural restored');
 });
 
+// Roll the dice — random composition
+document.getElementById('btn-roll').addEventListener('click', function() {
+    pushUndo();
+    var comp = generateRandomComposition(state.cols, state.rows);
+    state.tiles = comp.tiles;
+    state.nextId = comp.nextId;
+    state.selectedId = null;
+    state.bgColor = comp.bgColor;
+    state.borderWidth = comp.borderWidth;
+    state.borderColor = comp.borderColor;
+    $btnBg.style.background = comp.bgColor;
+    $inpBorderWidth.value = state.borderWidth;
+    $btnBorderColor.style.background = state.borderColor;
+    closePropsPanel();
+    renderCanvas();
+    saveState();
+    showToast('Rolled!');
+});
+
 $btnRecenter.addEventListener('click', fitToViewport);
 $btnZoomIn.addEventListener('click', function() { zoomToCenter(state.zoom * 1.25); });
 $btnZoomOut.addEventListener('click', function() { zoomToCenter(state.zoom / 1.25); });
@@ -2326,7 +2795,7 @@ function exportRaw() {
     showToast('SVG exported');
 }
 
-$btnExport.addEventListener('click', exportRaw);
+$btnExport.addEventListener('click', mergeExport);
 
 
 // =====================================================================
@@ -2807,10 +3276,8 @@ function mergeByLevelAndColor(shapes) {
 
 // --- Merged export orchestrator ---
 
-function mergeExport() {
-    showToast('Preparing merged export\u2026');
+function buildMergedSVG(callback) {
     loadPaperJS().then(function() {
-        // Allow toast to render before heavy computation
         setTimeout(function() {
             paper.project.clear();
             try {
@@ -2835,7 +3302,6 @@ function mergeExport() {
                     svg.appendChild(pathEl);
                 });
 
-                // Debug: report color distribution
                 var colorCounts = {};
                 merged.forEach(function(m) {
                     colorCounts[m.color] = (colorCounts[m.color] || 0) + 1;
@@ -2845,15 +3311,61 @@ function mergeExport() {
                 console.log('[MergedExport] ' + merged.length + ' paths, ' + Object.keys(colorCounts).length + ' colors' +
                     (multi.length ? ', multi-entry: ' + multi.join(', ') : ', all colors single-path'));
 
-                downloadSVGBlob(svg, 'cospark-merged-v7.svg');
-                showToast('Merged SVG exported (' + svg.children.length + ' paths)');
+                callback(null, svg);
             } catch(err) {
-                showToast('Export failed: ' + err.message);
+                callback(err);
             }
             paper.project.clear();
         }, 50);
     }).catch(function() {
-        showToast('Failed to load Paper.js');
+        callback(new Error('Failed to load Paper.js'));
+    });
+}
+
+function mergeExport() {
+    showToast('Preparing merged export\u2026');
+    buildMergedSVG(function(err, svg) {
+        if (err) { showToast('Export failed: ' + err.message); return; }
+        downloadSVGBlob(svg, 'cospark-merged-v7.svg');
+        showToast('Merged SVG exported (' + svg.children.length + ' paths)');
+    });
+}
+
+function exportPNG(targetW, targetH) {
+    showToast('Preparing PNG export\u2026');
+    buildMergedSVG(function(err, svg) {
+        if (err) { showToast('Export failed: ' + err.message); return; }
+
+        var serializer = new XMLSerializer();
+        var svgString = serializer.serializeToString(svg);
+        var blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            canvas.width = targetW;
+            canvas.height = targetH;
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetW, targetH);
+            URL.revokeObjectURL(url);
+            canvas.toBlob(function(pngBlob) {
+                var pngUrl = URL.createObjectURL(pngBlob);
+                var a = document.createElement('a');
+                a.href = pngUrl;
+                a.download = 'cospark-tile-composition-' + targetW + 'x' + targetH + '.png';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(pngUrl);
+                showToast('PNG exported (' + targetW + '\u00d7' + targetH + ')');
+            }, 'image/png');
+        };
+        img.onerror = function() {
+            URL.revokeObjectURL(url);
+            showToast('PNG rendering failed');
+        };
+        img.src = url;
     });
 }
 
@@ -2867,14 +3379,86 @@ $exportDD.addEventListener('click', function(e) {
     $exportMenu.style.display = $exportMenu.style.display === 'none' ? 'block' : 'none';
 });
 
-document.getElementById('btn-export-raw').addEventListener('click', function() {
+document.getElementById('btn-export-unmerged').addEventListener('click', function() {
     $exportMenu.style.display = 'none';
     exportRaw();
 });
 
-document.getElementById('btn-export-merged').addEventListener('click', function() {
+// --- PNG export form ---
+
+var $pngDim = document.getElementById('png-dim');
+var $pngValue = document.getElementById('png-value');
+var $pngUnit = document.getElementById('png-unit');
+var $pngDpiRow = document.getElementById('png-dpi-row');
+var $pngPreview = document.getElementById('png-preview');
+var $btnExportPng = document.getElementById('btn-export-png');
+var pngDpi = 300;
+
+// Stop propagation on form so clicks don't close the dropdown
+document.getElementById('export-png-form').addEventListener('click', function(e) {
+    e.stopPropagation();
+});
+
+function getCanvasAspect() {
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
+    var svgW = state.cols * TILE_UNIT + bw * 2;
+    var svgH = state.rows * TILE_UNIT + bw * 2;
+    return { w: svgW, h: svgH, ratio: svgW / svgH };
+}
+
+function getPNGDimensions() {
+    var val = parseFloat($pngValue.value);
+    if (!val || val <= 0) return null;
+    var unit = $pngUnit.value;
+    var dim = $pngDim.value;
+    var aspect = getCanvasAspect();
+
+    var px = unit === 'in' ? Math.round(val * pngDpi) : Math.round(val);
+    if (px < 1) return null;
+
+    var w, h;
+    if (dim === 'width') {
+        w = px;
+        h = Math.max(1, Math.round(px / aspect.ratio));
+    } else {
+        h = px;
+        w = Math.max(1, Math.round(px * aspect.ratio));
+    }
+    return { w: w, h: h };
+}
+
+function updatePNGPreview() {
+    var dims = getPNGDimensions();
+    if (dims) {
+        $pngPreview.textContent = dims.w + ' \u00d7 ' + dims.h;
+        $btnExportPng.disabled = false;
+    } else {
+        $pngPreview.textContent = '\u2014';
+        $btnExportPng.disabled = true;
+    }
+}
+
+$pngDim.addEventListener('change', updatePNGPreview);
+$pngValue.addEventListener('input', updatePNGPreview);
+$pngUnit.addEventListener('change', function() {
+    $pngDpiRow.classList.toggle('visible', $pngUnit.value === 'in');
+    updatePNGPreview();
+});
+
+document.querySelectorAll('.export-png-dpi-chip').forEach(function(chip) {
+    chip.addEventListener('click', function() {
+        document.querySelectorAll('.export-png-dpi-chip').forEach(function(c) { c.classList.remove('active'); });
+        chip.classList.add('active');
+        pngDpi = parseInt(chip.dataset.dpi);
+        updatePNGPreview();
+    });
+});
+
+$btnExportPng.addEventListener('click', function() {
+    var dims = getPNGDimensions();
+    if (!dims) return;
     $exportMenu.style.display = 'none';
-    mergeExport();
+    exportPNG(dims.w, dims.h);
 });
 
 document.addEventListener('click', function(e) {

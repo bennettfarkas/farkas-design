@@ -42,7 +42,6 @@ input, select { font-family: inherit; }
     background: var(--surface-page);
     flex-shrink: 0;
     z-index: 10;
-    overflow: hidden;
 }
 .toolbar-back {
     display: flex;
@@ -146,6 +145,56 @@ input, select { font-family: inherit; }
 }
 .btn-export:hover { background: var(--copper-600); }
 .btn-export svg { width: 14px; height: 14px; }
+.export-group {
+    position: relative;
+    display: flex;
+}
+.export-group .btn-export {
+    border-radius: 6px 0 0 6px;
+}
+.btn-export-dropdown {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 32px;
+    border-radius: 0 6px 6px 0;
+    background: var(--copper);
+    color: #fff;
+    border-left: 1px solid rgba(255,255,255,0.2);
+    transition: background 0.15s;
+}
+.btn-export-dropdown:hover { background: var(--copper-600); }
+.btn-export-dropdown svg { width: 10px; height: 10px; }
+.export-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: var(--surface-overlay);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 50;
+    min-width: 180px;
+    padding: 4px;
+}
+:root[data-theme="dark"] .export-menu { box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.export-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--color-body);
+    transition: background 0.12s, color 0.12s;
+}
+.export-menu-item:hover {
+    background: var(--surface-raised);
+    color: var(--color-heading);
+}
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -678,10 +727,19 @@ body.app-body { display: block !important; min-height: unset !important; }
             <button class="toolbar-btn" id="btn-restore" title="Restore example mural">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 1 9 9"/><path d="M3 21v-6h6"/><polyline points="12 7 12 12 15 15"/></svg>
             </button>
-            <button class="btn-export" id="btn-export" title="Download SVG">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                Export
-            </button>
+            <div class="export-group" id="export-group">
+                <button class="btn-export" id="btn-export" title="Download SVG">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Export
+                </button>
+                <button class="btn-export-dropdown" id="btn-export-dd" title="Export options">
+                    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5l3 3 3-3"/></svg>
+                </button>
+                <div class="export-menu" id="export-menu" style="display:none;">
+                    <button class="export-menu-item" id="btn-export-raw">Export SVG</button>
+                    <button class="export-menu-item" id="btn-export-merged">Export Merged SVG</button>
+                </div>
+            </div>
         </div>
         <div class="toolbar-sep"></div>
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
@@ -762,11 +820,11 @@ var STORAGE_KEY = 'cospark-tile-wizard';
 var TILE_DEFS = [
     { id: 'spark', file: 'spark.svg', name: 'Spark',
       variants: { 2: 'spark-2x', 3: 'spark-3x' }, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
     { id: 'spark-2x', file: 'spark-2x.svg', hidden: true, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
     { id: 'spark-3x', file: 'spark-3x.svg', hidden: true, overflow: true,
-      shapeNames: ['Left', 'Right', 'Top', 'Background', 'Star'] },
+      shapeNames: ['Left', 'Right', 'Top', 'Bottom', 'Star'] },
     { id: 'quarter-circle', file: 'quarter-circle.svg', name: 'Quarter',
       shapeNames: ['Background', 'Arc', 'Inner'] },
     { id: 'diamond', file: 'diamond.svg', name: 'Diamond',
@@ -2202,7 +2260,21 @@ $btnRedo.addEventListener('click', redo);
 // Export SVG
 // =====================================================================
 
-$btnExport.addEventListener('click', function() {
+function downloadSVGBlob(svg, filename) {
+    var serializer = new XMLSerializer();
+    var svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svg);
+    var blob = new Blob([svgString], { type: 'image/svg+xml' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+function exportRaw() {
     var w = state.cols * TILE_UNIT;
     var h = state.rows * TILE_UNIT;
     var bw = (state.borderWidth || 0) * TILE_UNIT;
@@ -2216,7 +2288,6 @@ $btnExport.addEventListener('click', function() {
     var defs = document.createElementNS(SVG_NS, 'defs');
     svg.appendChild(defs);
 
-    // Border
     if (state.borderWidth > 0) {
         var borderRect = document.createElementNS(SVG_NS, 'rect');
         borderRect.setAttribute('x', -bw);
@@ -2233,7 +2304,6 @@ $btnExport.addEventListener('click', function() {
     bg.setAttribute('fill', state.bgColor);
     svg.appendChild(bg);
 
-    // Two-pass: clipped backgrounds first, then overflow stars on top
     state.tiles.forEach(function(tile) {
         var def = TILE_DEFS_MAP[tile.tileType];
         var mode = (def && def.overflow) ? 'clipped' : 'full';
@@ -2252,18 +2322,565 @@ $btnExport.addEventListener('click', function() {
         }
     });
 
-    var serializer = new XMLSerializer();
-    var svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + serializer.serializeToString(svg);
-    var blob = new Blob([svgString], { type: 'image/svg+xml' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'cospark-tile-composition.svg';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    downloadSVGBlob(svg, 'cospark-tile-composition.svg');
     showToast('SVG exported');
+}
+
+$btnExport.addEventListener('click', exportRaw);
+
+
+// =====================================================================
+// Merged SVG Export (Paper.js boolean path operations)
+// =====================================================================
+
+// --- Lazy loader: Paper.js + paperjs-offset ---
+
+var _paperPromise = null;
+
+function loadPaperJS() {
+    if (_paperPromise) return _paperPromise;
+    _paperPromise = new Promise(function(resolve, reject) {
+        function loadScript(url) {
+            return new Promise(function(res, rej) {
+                var s = document.createElement('script');
+                s.src = url;
+                s.onload = res;
+                s.onerror = rej;
+                document.head.appendChild(s);
+            });
+        }
+        var p = window.paper ? Promise.resolve() :
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/paper.js/0.12.18/paper-full.min.js');
+        p.then(function() {
+            paper.setup(document.createElement('canvas'));
+            return window.PaperOffset ? Promise.resolve() :
+                loadScript('https://cdn.jsdelivr.net/npm/paperjs-offset@1.0.8/dist/paperjs-offset.min.js');
+        }).then(resolve).catch(function(err) {
+            _paperPromise = null;
+            reject(err);
+        });
+    });
+    return _paperPromise;
+}
+
+// --- Import SVG element → Paper.js Path ---
+
+function importShapeToPaper(svgEl) {
+    var item;
+    try {
+        item = paper.project.importSVG(svgEl.cloneNode(true), { insert: false });
+    } catch(e) { return null; }
+    if (!item) return null;
+
+    function dig(it) {
+        if (it instanceof paper.Path || it instanceof paper.CompoundPath) return it;
+        if (it instanceof paper.Shape) return it.toPath(false);
+        if (it instanceof paper.Group) {
+            for (var i = 0; i < it.children.length; i++) {
+                var r = dig(it.children[i]);
+                if (r) return r;
+            }
+        }
+        return null;
+    }
+
+    var path = dig(item);
+    if (!path) return null;
+    return path.clone(false);
+}
+
+// --- Expand stroked path into filled geometry ---
+// For shapes where fill and stroke are the same color (e.g. spark stars
+// with stroke-width="0.1"), expand the path outward by half the stroke
+// width so the stroke becomes part of the fill geometry.
+
+function expandStroke(path, strokeWidth) {
+    if (strokeWidth <= 0) return path;
+    try {
+        var expanded = PaperOffset.offset(path, strokeWidth / 2, { join: 'miter', insert: false });
+        if (expanded && Math.abs(expanded.area) > 0.001) return expanded;
+    } catch(e) { /* fall through */ }
+    return path;
+}
+
+// --- Collect all shapes in render z-order ---
+
+function collectShapesForMerge() {
+    var shapes = [];
+    var w = state.cols * TILE_UNIT;
+    var h = state.rows * TILE_UNIT;
+    var bw = (state.borderWidth || 0) * TILE_UNIT;
+
+    // 1. Border rect (level -2, global cell blocks all cross-level merges)
+    if (state.borderWidth > 0 && state.borderColor !== 'none') {
+        shapes.push({
+            path: new paper.Path.Rectangle(new paper.Rectangle(-bw, -bw, w + bw * 2, h + bw * 2)),
+            color: state.borderColor, level: -2, cell: '__all__'
+        });
+    }
+
+    // 2. Background rect (level -1, global cell)
+    if (state.bgColor !== 'none') {
+        shapes.push({
+            path: new paper.Path.Rectangle(new paper.Rectangle(0, 0, w, h)),
+            color: state.bgColor, level: -1, cell: '__all__'
+        });
+    }
+
+    // 3. Pass 1: non-overflow shapes (clipped to tile cell)
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        var isOverflow = def && def.overflow;
+        var templateId = resolveTemplateId(tile);
+        var template = state.templates[templateId];
+        if (!template) return;
+
+        var px = tile.col * TILE_UNIT;
+        var py = tile.row * TILE_UNIT;
+        var cellSize = tile.scale * TILE_UNIT;
+
+        // For tiles where foreground shapes fully cover the cell,
+        // skip the background rect (shape 0) — it's invisible and
+        // creates z-level conflicts when same color appears at both
+        // bg level and a higher level (e.g. circle tile: copper bg + copper circle).
+        var FULL_COVER_TILES = { 'circle': 1, 'diamond': 1, 'leaf': 1, 'quarter-circle': 1, 'diagonal': 1 };
+        var canSkipBg = !!FULL_COVER_TILES[tile.tileType];
+        if (canSkipBg) {
+            // Only skip if ALL foreground shapes are visible (non-none)
+            for (var si = 1; si < template.shapes.length; si++) {
+                if (template.shapes[si].overflow) continue;
+                var sc = tile.shapeColors[si] || template.shapes[si].defaultFill;
+                if (!sc || sc === 'none') { canSkipBg = false; break; }
+            }
+        }
+
+        template.shapes.forEach(function(shape, i) {
+            if (shape.overflow) return;
+            if (i === 0 && canSkipBg) return; // skip redundant bg
+
+            var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+            if (color === 'none') return;
+
+            var p = importShapeToPaper(shape.svg);
+            if (!p) return;
+
+            // Flatten stroke into fill geometry
+            if (shape.hasStroke) {
+                var sw = parseFloat(shape.svg.getAttribute('stroke-width')) || 0;
+                if (sw > 0) {
+                    var exp = expandStroke(p, sw);
+                    if (exp !== p) { p.remove(); p = exp; }
+                }
+            }
+
+            // Apply tile transform
+            if (isOverflow) {
+                var contentSize = 4 * tile.scale;
+                var rotCenter = contentSize / 2 + SPARK_OFFSET;
+                if (tile.rotation) p.rotate(tile.rotation, new paper.Point(rotCenter, rotCenter));
+                p.translate(new paper.Point(-SPARK_OFFSET, -SPARK_OFFSET));
+                p.scale(TILE_UNIT / 4, new paper.Point(0, 0));
+                p.translate(new paper.Point(px, py));
+            } else {
+                if (tile.rotation) p.rotate(tile.rotation, new paper.Point(2, 2));
+                p.scale((tile.scale * TILE_UNIT) / 4, new paper.Point(0, 0));
+                p.translate(new paper.Point(px, py));
+            }
+
+            // Regular tiles fit within cell bounds after transform — no clipping needed
+            // (Paper.js intersect fails at tangent points, e.g. circle touching cell edge)
+            // Tag with shape index as z-level and cell position for smart merging
+            shapes.push({ path: p, color: color, level: i, cell: tile.col + '_' + tile.row });
+        });
+    });
+
+    // 4. Pass 2: overflow shapes (NOT clipped — stars render on top)
+    state.tiles.forEach(function(tile) {
+        var def = TILE_DEFS_MAP[tile.tileType];
+        if (!def || !def.overflow) return;
+        var templateId = resolveTemplateId(tile);
+        var template = state.templates[templateId];
+        if (!template) return;
+
+        var px = tile.col * TILE_UNIT;
+        var py = tile.row * TILE_UNIT;
+        var contentSize = 4 * tile.scale;
+        var rotCenter = contentSize / 2 + SPARK_OFFSET;
+
+        template.shapes.forEach(function(shape, i) {
+            if (!shape.overflow) return;
+
+            var color = tile.shapeColors[i] || shape.defaultFill || shape.defaultStroke || '#000';
+            if (color === 'none') return;
+
+            var p = importShapeToPaper(shape.svg);
+            if (!p) return;
+
+            // Flatten stroke into fill geometry (stars have stroke-width="0.1")
+            if (shape.hasStroke) {
+                var sw = parseFloat(shape.svg.getAttribute('stroke-width')) || 0;
+                if (sw > 0) {
+                    var exp = expandStroke(p, sw);
+                    if (exp !== p) { p.remove(); p = exp; }
+                }
+            }
+
+            if (tile.rotation) p.rotate(tile.rotation, new paper.Point(rotCenter, rotCenter));
+            p.translate(new paper.Point(-SPARK_OFFSET, -SPARK_OFFSET));
+            p.scale(TILE_UNIT / 4, new paper.Point(0, 0));
+            p.translate(new paper.Point(px, py));
+
+            shapes.push({ path: p, color: color, level: 9999, cell: 'ovf_' + tile.col + '_' + tile.row });
+        });
+    });
+
+    return shapes;
+}
+
+// --- Flatten: compute visible area per shape, removing hidden geometry ---
+
+function flattenShapes(shapes) {
+    var visible = [];
+    var coverage = null;
+
+    for (var i = shapes.length - 1; i >= 0; i--) {
+        var s = shapes[i];
+        var vis;
+
+        try {
+            if (coverage) {
+                vis = s.path.subtract(coverage, { insert: false });
+                var newCov = coverage.unite(s.path, { insert: false });
+                coverage.remove();
+                coverage = newCov;
+            } else {
+                vis = s.path.clone(false);
+                coverage = s.path.clone(false);
+            }
+        } catch(e) {
+            vis = s.path.clone(false);
+            if (!coverage) coverage = s.path.clone(false);
+        }
+
+        s.path.remove();
+
+        if (vis && Math.abs(vis.area) > 0.001) {
+            visible.push({ path: vis, color: s.color });
+        } else if (vis) {
+            vis.remove();
+        }
+    }
+
+    if (coverage) coverage.remove();
+    return visible;
+}
+
+// --- Group by color and unite into compound paths ---
+
+// Check if two Paper.js paths geometrically overlap (share area, not just a boundary).
+// Conservative: returns true on error or ambiguous results.
+function shapesOverlap(path1, path2) {
+    try {
+        var ix = path1.intersect(path2, { insert: false });
+        var area = Math.abs(ix.area);
+        ix.remove();
+        if (isNaN(area)) return true;
+        return area > 0.1;
+    } catch(e) {
+        return true; // assume overlap on error
+    }
+}
+
+function topoSortLayer(shapes, indices, succsOut) {
+    // Topological sort with color-run optimization for a subset of shapes.
+    // DAG edges based on GEOMETRIC OVERLAP: only shapes that actually overlap
+    // within the same cell need strict z-ordering. Non-overlapping shapes
+    // (e.g., circle tile corners vs. the central circle) can be freely reordered.
+    // succsOut: if provided, receives the successor graph for post-processing.
+    var n = indices.length;
+    if (n === 0) return [];
+
+    var cellShapes = {};
+    indices.forEach(function(i) {
+        var cell = shapes[i].cell;
+        if (cell) {
+            if (!cellShapes[cell]) cellShapes[cell] = [];
+            cellShapes[cell].push(i);
+        }
+    });
+
+    var predCount = {};
+    var succs = {};
+    indices.forEach(function(i) { predCount[i] = 0; succs[i] = []; });
+
+    // Build DAG edges only between shapes that geometrically overlap.
+    // For each pair (a, b) where a comes before b in original z-order:
+    // if they overlap, a must be rendered before b.
+    Object.keys(cellShapes).forEach(function(cell) {
+        var ids = cellShapes[cell];
+        for (var a = 0; a < ids.length; a++) {
+            for (var b = a + 1; b < ids.length; b++) {
+                if (shapesOverlap(shapes[ids[a]].path, shapes[ids[b]].path)) {
+                    succs[ids[a]].push(ids[b]);
+                    predCount[ids[b]]++;
+                }
+            }
+        }
+    });
+
+    // Export successor graph for consolidation pass
+    if (succsOut) {
+        indices.forEach(function(i) { succsOut[i] = succs[i]; });
+    }
+
+    var available = [];
+    indices.forEach(function(i) {
+        if (predCount[i] === 0) available.push(i);
+    });
+
+    var sorted = [];
+    var currentColor = null;
+
+    while (available.length > 0) {
+        var pick = -1;
+
+        // Try to continue current color run
+        if (currentColor) {
+            for (var k = 0; k < available.length; k++) {
+                if (shapes[available[k]].color.toUpperCase() === currentColor) {
+                    pick = k; break;
+                }
+            }
+        }
+
+        // New run: pick color with most currently available shapes
+        if (pick === -1) {
+            var colorCounts = {};
+            available.forEach(function(idx) {
+                var c = shapes[idx].color.toUpperCase();
+                colorCounts[c] = (colorCounts[c] || 0) + 1;
+            });
+            var bestColor = null, bestCount = 0;
+            for (var c in colorCounts) {
+                if (colorCounts[c] > bestCount) { bestCount = colorCounts[c]; bestColor = c; }
+            }
+            for (var k = 0; k < available.length; k++) {
+                if (shapes[available[k]].color.toUpperCase() === bestColor) { pick = k; break; }
+            }
+        }
+
+        var idx = available[pick];
+        available.splice(pick, 1);
+        sorted.push(idx);
+        currentColor = shapes[idx].color.toUpperCase();
+
+        for (var k = 0; k < succs[idx].length; k++) {
+            var s = succs[idx][k];
+            predCount[s]--;
+            if (predCount[s] === 0) available.push(s);
+        }
+    }
+
+    return sorted;
+}
+
+function mergeByLevelAndColor(shapes) {
+    // Partition into 3 layers to preserve global z-order:
+    //   Layer 0: border + background (level < 0)
+    //   Layer 1: non-overflow tile shapes (level 0..9998)
+    //   Layer 2: overflow shapes (level 9999)
+    // Topological sort within each layer, then DAG-aware consolidation.
+
+    var layer0 = [], layer1 = [], layer2 = [];
+    shapes.forEach(function(s, i) {
+        if (s.level < 0) layer0.push(i);
+        else if (s.level >= 9999) layer2.push(i);
+        else layer1.push(i);
+    });
+
+    // Build successor graph across all layers for consolidation
+    var allSuccs = {};
+    var sorted = layer0.concat(
+        topoSortLayer(shapes, layer1, allSuccs),
+        topoSortLayer(shapes, layer2, allSuccs)
+    );
+
+    // Merge consecutive same-colored shapes, tracking shape indices per entry.
+    // Tag each entry with its layer to prevent cross-layer merges.
+    var result = [];
+    sorted.forEach(function(idx) {
+        var s = shapes[idx];
+        var color = s.color.toUpperCase();
+        var layer = s.level < 0 ? 0 : (s.level >= 9999 ? 2 : 1);
+        var pd = s.path.pathData;
+        s.path.remove();
+
+        var last = result.length > 0 ? result[result.length - 1] : null;
+        if (last && last.color === color && last.layer === layer) {
+            last.pathData += ' ' + pd;
+            last.indices.push(idx);
+        } else {
+            result.push({ pathData: pd, color: color, layer: layer, indices: [idx] });
+        }
+    });
+
+    // Build predecessor graph (reverse of allSuccs) for bidirectional merge
+    var allPreds = {};
+    for (var idx in allSuccs) {
+        allSuccs[idx].forEach(function(succ) {
+            if (!allPreds[succ]) allPreds[succ] = [];
+            allPreds[succ].push(parseInt(idx));
+        });
+    }
+
+    // DAG-aware consolidation: merge non-adjacent same-colored entries.
+    // Try two directions:
+    //   "merge down" (move I to J): blocked if I has successors between I and J
+    //   "merge up" (move J to I): blocked if J has predecessors between I and J
+    var entryOf = {}; // shape index -> result entry index
+    result.forEach(function(e, ei) {
+        e.indices.forEach(function(idx) { entryOf[idx] = ei; });
+    });
+
+    var didMerge = true;
+    while (didMerge) {
+        didMerge = false;
+        for (var i = 0; i < result.length && !didMerge; i++) {
+            for (var j = i + 1; j < result.length && !didMerge; j++) {
+                if (result[j].color !== result[i].color) continue;
+                if (result[j].layer !== result[i].layer) continue; // never merge across layers
+
+                // Direction 1: merge I down into J
+                var blockedDown = false;
+                for (var si = 0; si < result[i].indices.length && !blockedDown; si++) {
+                    var shapeIdx = result[i].indices[si];
+                    var ss = allSuccs[shapeIdx];
+                    if (!ss) continue;
+                    for (var sk = 0; sk < ss.length && !blockedDown; sk++) {
+                        var succEntry = entryOf[ss[sk]];
+                        if (succEntry > i && succEntry < j) blockedDown = true;
+                    }
+                }
+
+                if (!blockedDown) {
+                    // Safe: merge I into J (move down)
+                    result[j].pathData = result[i].pathData + ' ' + result[j].pathData;
+                    result[j].indices = result[i].indices.concat(result[j].indices);
+                    result[i].indices.forEach(function(idx) { entryOf[idx] = j; });
+                    result.splice(i, 1);
+                    for (var idx in entryOf) {
+                        if (entryOf[idx] > i) entryOf[idx]--;
+                    }
+                    didMerge = true;
+                    continue;
+                }
+
+                // Direction 2: merge J up into I
+                var blockedUp = false;
+                for (var si = 0; si < result[j].indices.length && !blockedUp; si++) {
+                    var shapeIdx = result[j].indices[si];
+                    var ps = allPreds[shapeIdx];
+                    if (!ps) continue;
+                    for (var pk = 0; pk < ps.length && !blockedUp; pk++) {
+                        var predEntry = entryOf[ps[pk]];
+                        if (predEntry > i && predEntry < j) blockedUp = true;
+                    }
+                }
+
+                if (!blockedUp) {
+                    // Safe: merge J into I (move up)
+                    result[i].pathData += ' ' + result[j].pathData;
+                    result[i].indices = result[i].indices.concat(result[j].indices);
+                    result[j].indices.forEach(function(idx) { entryOf[idx] = i; });
+                    result.splice(j, 1);
+                    for (var idx in entryOf) {
+                        if (entryOf[idx] > j) entryOf[idx]--;
+                    }
+                    didMerge = true;
+                }
+            }
+        }
+    }
+
+    return result;
+}
+
+// --- Merged export orchestrator ---
+
+function mergeExport() {
+    showToast('Preparing merged export\u2026');
+    loadPaperJS().then(function() {
+        // Allow toast to render before heavy computation
+        setTimeout(function() {
+            paper.project.clear();
+            try {
+                var shapes = collectShapesForMerge();
+                var merged = mergeByLevelAndColor(shapes);
+
+                var w = state.cols * TILE_UNIT;
+                var h = state.rows * TILE_UNIT;
+                var bw = (state.borderWidth || 0) * TILE_UNIT;
+
+                var svg = document.createElementNS(SVG_NS, 'svg');
+                svg.setAttribute('xmlns', SVG_NS);
+                svg.setAttribute('width', w + bw * 2);
+                svg.setAttribute('height', h + bw * 2);
+                svg.setAttribute('viewBox', (-bw) + ' ' + (-bw) + ' ' + (w + bw * 2) + ' ' + (h + bw * 2));
+
+                merged.forEach(function(m) {
+                    var pathEl = document.createElementNS(SVG_NS, 'path');
+                    pathEl.setAttribute('d', m.pathData);
+                    pathEl.setAttribute('fill', m.color);
+                    pathEl.setAttribute('fill-rule', 'nonzero');
+                    svg.appendChild(pathEl);
+                });
+
+                // Debug: report color distribution
+                var colorCounts = {};
+                merged.forEach(function(m) {
+                    colorCounts[m.color] = (colorCounts[m.color] || 0) + 1;
+                });
+                var multi = [];
+                for (var c in colorCounts) { if (colorCounts[c] > 1) multi.push(c + ':' + colorCounts[c]); }
+                console.log('[MergedExport] ' + merged.length + ' paths, ' + Object.keys(colorCounts).length + ' colors' +
+                    (multi.length ? ', multi-entry: ' + multi.join(', ') : ', all colors single-path'));
+
+                downloadSVGBlob(svg, 'cospark-merged-v6.svg');
+                showToast('Merged SVG exported (' + svg.children.length + ' paths)');
+            } catch(err) {
+                showToast('Export failed: ' + err.message);
+            }
+            paper.project.clear();
+        }, 50);
+    }).catch(function() {
+        showToast('Failed to load Paper.js');
+    });
+}
+
+// --- Export dropdown UI ---
+
+var $exportMenu = document.getElementById('export-menu');
+var $exportDD = document.getElementById('btn-export-dd');
+
+$exportDD.addEventListener('click', function(e) {
+    e.stopPropagation();
+    $exportMenu.style.display = $exportMenu.style.display === 'none' ? 'block' : 'none';
+});
+
+document.getElementById('btn-export-raw').addEventListener('click', function() {
+    $exportMenu.style.display = 'none';
+    exportRaw();
+});
+
+document.getElementById('btn-export-merged').addEventListener('click', function() {
+    $exportMenu.style.display = 'none';
+    mergeExport();
+});
+
+document.addEventListener('click', function(e) {
+    if ($exportMenu.style.display !== 'none' && !e.target.closest('#export-group')) {
+        $exportMenu.style.display = 'none';
+    }
 });
 
 

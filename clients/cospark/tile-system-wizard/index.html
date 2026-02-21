@@ -2845,7 +2845,7 @@ function mergeExport() {
                 console.log('[MergedExport] ' + merged.length + ' paths, ' + Object.keys(colorCounts).length + ' colors' +
                     (multi.length ? ', multi-entry: ' + multi.join(', ') : ', all colors single-path'));
 
-                downloadSVGBlob(svg, 'cospark-merged-v6.svg');
+                downloadSVGBlob(svg, 'cospark-merged-v7.svg');
                 showToast('Merged SVG exported (' + svg.children.length + ' paths)');
             } catch(err) {
                 showToast('Export failed: ' + err.message);

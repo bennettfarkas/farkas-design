@@ -1378,6 +1378,58 @@ function getDefaultColors(tileType, scale) {
     });
 }
 
+function swapTileType(tile, newType) {
+    var oldDef = TILE_DEFS_MAP[tile.tileType];
+    var newDef = TILE_DEFS_MAP[newType];
+    if (!newDef) return;
+
+    // Resolve the new template for the tile's current scale
+    var newTemplateId = newType;
+    if (newDef.variants && newDef.variants[tile.scale]) newTemplateId = newDef.variants[tile.scale];
+    var newTmpl = state.templates[newTemplateId];
+    if (!newTmpl) return;
+
+    // Collect old non-'none' colors as a reuse pool
+    var pool = [];
+    for (var i = 0; i < tile.shapeColors.length; i++) {
+        if (tile.shapeColors[i] !== 'none') pool.push(tile.shapeColors[i]);
+    }
+
+    // Check if old tile had a star color
+    var oldStarColor = null;
+    if (oldDef && oldDef.shapeNames) {
+        for (var j = 0; j < oldDef.shapeNames.length; j++) {
+            if (oldDef.shapeNames[j] === 'Star' && tile.shapeColors[j] && tile.shapeColors[j] !== 'none') {
+                oldStarColor = tile.shapeColors[j];
+                break;
+            }
+        }
+    }
+
+    // Build new shapeColors
+    var newColors = [];
+    var poolIdx = 0;
+    var newShapeNames = newDef.shapeNames || [];
+    for (var k = 0; k < newTmpl.shapes.length; k++) {
+        var shapeName = newShapeNames[k] || '';
+        if (shapeName === 'Background') {
+            newColors.push('none');
+        } else if (shapeName === 'Star') {
+            newColors.push(oldStarColor || (pool.length > 0 ? pool[0] : '#D4792F'));
+        } else {
+            if (pool.length > 0) {
+                newColors.push(pool[poolIdx % pool.length]);
+                poolIdx++;
+            } else {
+                newColors.push(newTmpl.shapes[k].defaultFill || newTmpl.shapes[k].defaultStroke || '#000');
+            }
+        }
+    }
+
+    tile.tileType = newType;
+    tile.shapeColors = newColors;
+}
+
 // Resolve the correct template ID for a tile (handles spark scale variants)
 function resolveTemplateId(tile) {
     var def = TILE_DEFS_MAP[tile.tileType];
@@ -1796,6 +1848,18 @@ function renderPalette() {
         btn.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
             e.preventDefault();
+            // If a tile is selected, swap its type instead of entering placement mode
+            if (state.selectedId !== null) {
+                var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
+                if (sel && sel.tileType !== def.id) {
+                    pushUndo();
+                    swapTileType(sel, def.id);
+                    openPropsPanel(sel);
+                    renderCanvas();
+                    saveState();
+                }
+                return;
+            }
             paletteDrag = { tileId: def.id };
             state.activeTool = def.id;
             state.selectedId = null;

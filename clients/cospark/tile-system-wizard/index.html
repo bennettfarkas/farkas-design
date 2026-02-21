@@ -756,7 +756,8 @@ body.app-body { display: block !important; min-height: unset !important; }
 .canvas-viewport.mode-panning, .canvas-viewport.mode-panning * { cursor: grabbing !important; }
 .canvas-viewport.mode-drag { cursor: grabbing; }
 .canvas-viewport.mode-hover-canvas { cursor: default; }
-.canvas-viewport.mode-resize { cursor: nwse-resize; }
+.canvas-viewport.mode-resize-nwse { cursor: nwse-resize; }
+.canvas-viewport.mode-resize-nesw { cursor: nesw-resize; }
     </style>
     <script>
     (function(){
@@ -854,7 +855,9 @@ body.app-body { display: block !important; min-height: unset !important; }
                 <button class="btn-export-dropdown" id="btn-export-dd" title="Export options">
                     <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 5l3 3 3-3"/></svg>
                 </button>
+                <input type="file" id="import-svg-input" accept=".svg" style="display:none;">
                 <div class="export-menu" id="export-menu" style="display:none;">
+                    <button class="export-menu-item" id="btn-import-svg">Import Unmerged SVG</button>
                     <button class="export-menu-item" id="btn-export-unmerged">Export Unmerged SVG</button>
                     <div class="export-png" id="export-png-form">
                         <div class="export-png-title">Export PNG</div>
@@ -1671,13 +1674,9 @@ function renderCanvas() {
                 cr.setAttribute('height', hs);
                 cr.setAttribute('rx', '1');
                 cr.setAttribute('fill', '#D4792F');
-                if (ci === 2) { // bottom-right corner
-                    cr.style.cursor = 'nwse-resize';
-                    cr.style.pointerEvents = 'auto';
-                    cr.dataset.resizeHandle = 'true';
-                } else {
-                    cr.style.pointerEvents = 'none';
-                }
+                cr.style.pointerEvents = 'auto';
+                cr.dataset.resizeHandle = ci;
+                cr.style.cursor = (ci === 0 || ci === 2) ? 'nwse-resize' : 'nesw-resize';
                 $canvas.appendChild(cr);
             }
         }
@@ -2370,11 +2369,26 @@ $viewport.addEventListener('mousedown', function(e) {
     }
 
     // Resize handle — check if clicking the handle of the selected tile
-    if (state.selectedId !== null && e.target.dataset && e.target.dataset.resizeHandle) {
+    if (state.selectedId !== null && e.target.dataset && e.target.dataset.resizeHandle !== undefined) {
         var rTile = state.tiles.find(function(t) { return t.id === state.selectedId; });
         if (rTile) {
-            resizeState = { tileId: rTile.id, startScale: rTile.scale };
-            $viewport.classList.add('mode-resize');
+            var corner = parseInt(e.target.dataset.resizeHandle, 10);
+            var anchorCol, anchorRow;
+            if (corner === 0)      { anchorCol = rTile.col + rTile.scale; anchorRow = rTile.row + rTile.scale; }
+            else if (corner === 1) { anchorCol = rTile.col;               anchorRow = rTile.row + rTile.scale; }
+            else if (corner === 2) { anchorCol = rTile.col;               anchorRow = rTile.row; }
+            else                   { anchorCol = rTile.col + rTile.scale; anchorRow = rTile.row; }
+            resizeState = {
+                tileId: rTile.id,
+                startScale: rTile.scale,
+                startCol: rTile.col,
+                startRow: rTile.row,
+                corner: corner,
+                anchorCol: anchorCol,
+                anchorRow: anchorRow
+            };
+            var cursorClass = (corner === 0 || corner === 2) ? 'mode-resize-nwse' : 'mode-resize-nesw';
+            $viewport.classList.add(cursorClass);
             e.preventDefault();
             return;
         }
@@ -2428,16 +2442,36 @@ document.addEventListener('mousemove', function(e) {
     if (resizeState) {
         var rTile = state.tiles.find(function(t) { return t.id === resizeState.tileId; });
         if (rTile) {
-            // Calculate target scale from cursor distance to tile origin
             var rect = $viewport.getBoundingClientRect();
             var cx = (e.clientX - rect.left - state.panX) / state.zoom;
             var cy = (e.clientY - rect.top - state.panY) / state.zoom;
-            var dx = (cx / TILE_UNIT) - rTile.col;
-            var dy = (cy / TILE_UNIT) - rTile.row;
-            var raw = Math.max(dx, dy);
+            var cursorCol = cx / TILE_UNIT;
+            var cursorRow = cy / TILE_UNIT;
+            var corner = resizeState.corner;
+            var aCol = resizeState.anchorCol;
+            var aRow = resizeState.anchorRow;
+
+            // Raw distance from anchor toward the drag direction
+            var raw;
+            if (corner === 0)      raw = Math.max(aCol - cursorCol, aRow - cursorRow);
+            else if (corner === 1) raw = Math.max(cursorCol - aCol, aRow - cursorRow);
+            else if (corner === 2) raw = Math.max(cursorCol - aCol, cursorRow - aRow);
+            else                   raw = Math.max(aCol - cursorCol, cursorRow - aRow);
+
             var newScale = raw < 1.5 ? 1 : raw < 2.5 ? 2 : 3;
-            if (newScale !== rTile.scale && canPlace(rTile.col, rTile.row, newScale, rTile.id)) {
+
+            // Compute new col/row based on which corner is being dragged
+            var newCol, newRow;
+            if (corner === 0)      { newCol = aCol - newScale; newRow = aRow - newScale; }
+            else if (corner === 1) { newCol = aCol;            newRow = aRow - newScale; }
+            else if (corner === 2) { newCol = aCol;            newRow = aRow; }
+            else                   { newCol = aCol - newScale; newRow = aRow; }
+
+            if ((newScale !== rTile.scale || newCol !== rTile.col || newRow !== rTile.row)
+                && canPlace(newCol, newRow, newScale, rTile.id)) {
                 rTile.scale = newScale;
+                rTile.col = newCol;
+                rTile.row = newRow;
                 renderCanvas();
             }
         }
@@ -2484,14 +2518,14 @@ document.addEventListener('mouseup', function() {
     // Resize handle release
     if (resizeState) {
         var rTile = state.tiles.find(function(t) { return t.id === resizeState.tileId; });
-        if (rTile && rTile.scale !== resizeState.startScale) {
+        if (rTile && (rTile.scale !== resizeState.startScale || rTile.col !== resizeState.startCol || rTile.row !== resizeState.startRow)) {
             pushUndo();
             // Update properties panel scale buttons
             if (state.selectedId === rTile.id) openPropsPanel(rTile);
             saveState();
         }
         resizeState = null;
-        $viewport.classList.remove('mode-resize');
+        $viewport.classList.remove('mode-resize-nwse', 'mode-resize-nesw');
         updateViewportCursor();
         renderCanvas();
         return;
@@ -2820,6 +2854,21 @@ function exportRaw() {
 
     var defs = document.createElementNS(SVG_NS, 'defs');
     svg.appendChild(defs);
+
+    // Embed tile state as metadata for re-import
+    var meta = document.createElementNS(SVG_NS, 'metadata');
+    meta.setAttribute('id', 'tile-wizard-state');
+    meta.textContent = JSON.stringify({
+        v: 2,
+        cols: state.cols,
+        rows: state.rows,
+        bgColor: state.bgColor,
+        borderWidth: state.borderWidth,
+        borderColor: state.borderColor,
+        nextId: state.nextId,
+        tiles: state.tiles,
+    });
+    svg.appendChild(meta);
 
     if (state.borderWidth > 0) {
         var borderRect = document.createElementNS(SVG_NS, 'rect');
@@ -3446,6 +3495,71 @@ $exportDD.addEventListener('click', function(e) {
 document.getElementById('btn-export-unmerged').addEventListener('click', function() {
     $exportMenu.style.display = 'none';
     exportRaw();
+});
+
+// --- Import SVG ---
+
+var $importSvgInput = document.getElementById('import-svg-input');
+
+document.getElementById('btn-import-svg').addEventListener('click', function() {
+    $exportMenu.style.display = 'none';
+    $importSvgInput.click();
+});
+
+$importSvgInput.addEventListener('change', function() {
+    var file = $importSvgInput.files[0];
+    if (!file) return;
+    $importSvgInput.value = '';
+    var reader = new FileReader();
+    reader.onload = function() {
+        var parser = new DOMParser();
+        var doc = parser.parseFromString(reader.result, 'image/svg+xml');
+        var meta = doc.getElementById('tile-wizard-state');
+        if (!meta) {
+            showToast('No Tile Wizard data found in this SVG');
+            return;
+        }
+        try {
+            var data = JSON.parse(meta.textContent);
+        } catch (e) {
+            showToast('No Tile Wizard data found in this SVG');
+            return;
+        }
+        if (data.v !== 2 || !Array.isArray(data.tiles)) {
+            showToast('No Tile Wizard data found in this SVG');
+            return;
+        }
+        // Push current state to undo stack so import is Ctrl+Z reversible
+        pushUndo();
+        // Apply imported state
+        state.cols = data.cols || 6;
+        state.rows = data.rows || 6;
+        state.bgColor = data.bgColor || '#283845';
+        state.borderWidth = data.borderWidth || 0;
+        state.borderColor = data.borderColor || '#283845';
+        state.nextId = data.nextId || 1;
+        state.tiles = data.tiles || [];
+        state.selectedId = null;
+        // Update UI controls
+        $inpCols.value = state.cols;
+        $inpRows.value = state.rows;
+        $inpBorderWidth.value = state.borderWidth;
+        $btnBorderColor.style.background = state.borderColor;
+        $btnBg.style.background = state.bgColor;
+        if (state.bgColor === 'none') { $btnBg.classList.add('checkerboard'); $btnBg.style.background = ''; }
+        else { $btnBg.classList.remove('checkerboard'); }
+        $inpPreset.value = '';
+        Object.keys(PRESETS).forEach(function(key) {
+            if (PRESETS[key].cols === state.cols && PRESETS[key].rows === state.rows) {
+                $inpPreset.value = key;
+            }
+        });
+        closePropsPanel();
+        renderCanvas();
+        saveState();
+        showToast('Composition imported');
+    };
+    reader.readAsText(file);
 });
 
 // --- PNG export form ---

@@ -1,0 +1,201 @@
+/* Margin Shared Layout — used by all subpages (logo, color, typography) */
+
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: var(--font-sans);
+    font-weight: var(--weight-regular);
+    color: var(--color-heading);
+    background: var(--surface-page);
+    line-height: var(--leading-body);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Back link */
+.back {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    font-family: var(--font-mono);
+    font-size: var(--text-caption);
+    font-weight: var(--weight-regular);
+    color: var(--color-muted);
+    text-decoration: none;
+    line-height: var(--leading-caption);
+    letter-spacing: 0.04em;
+    transition: color 0.15s ease;
+    margin-bottom: 0.75rem;
+}
+
+.back:hover {
+    color: var(--color-heading);
+}
+
+/* Header */
+.header {
+    position: relative;
+    padding: 0.75rem 2.5rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.header-logo {
+    display: block;
+    margin-bottom: 1rem;
+    color: var(--color-heading);
+}
+
+[data-theme="dark"] .header-logo {
+    color: var(--spring);
+}
+
+.header-logo svg {
+    height: clamp(80px, 14vw, 120px);
+    width: auto;
+}
+
+/* Theme toggle */
+.theme-toggle {
+    position: absolute;
+    top: 0.75rem;
+    right: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-body);
+    padding: 0.75rem;
+    min-width: 44px;
+    min-height: 44px;
+    transition: color 0.15s ease;
+}
+
+.theme-toggle:hover {
+    color: var(--color-heading);
+}
+
+.theme-toggle svg {
+    width: 16px;
+    height: 16px;
+}
+
+.theme-toggle .icon-sun { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+
+.header h1 {
+    font-family: var(--font-mono);
+    font-weight: var(--weight-regular);
+    font-size: var(--text-caption);
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    line-height: var(--leading-caption);
+}
+
+/* Main content */
+.content {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 2.5rem;
+}
+
+/* Section headers */
+.section-header {
+    margin-bottom: 2rem;
+}
+
+.section-header h2 {
+    font-family: var(--font-sans);
+    font-weight: var(--weight-semibold);
+    font-size: var(--text-section);
+    color: var(--color-heading);
+    letter-spacing: var(--tracking-section);
+    line-height: var(--leading-section);
+    margin-bottom: 0.35rem;
+}
+
+.section-header p {
+    font-size: var(--text-small);
+    color: var(--color-body);
+    line-height: var(--leading-small);
+    max-width: var(--measure-body);
+}
+
+/* Guidelines */
+.guidelines-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.guideline-item h3 {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caption);
+    line-height: var(--leading-caption);
+    color: var(--color-heading);
+    margin-bottom: 0.5rem;
+}
+
+.guideline-item p {
+    font-size: var(--text-small);
+    color: var(--color-body);
+    line-height: var(--leading-small);
+}
+
+/* Don'ts */
+.donts {
+    margin-top: 3rem;
+}
+
+.donts h3 {
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-caption);
+    line-height: var(--leading-caption);
+    color: var(--color-heading);
+    margin-bottom: 1.25rem;
+}
+
+.donts-grid {
+    display: grid;
+    gap: 1rem;
+}
+
+.dont-card {
+    background: var(--surface-raised);
+    border-radius: 10px;
+    padding: 1.5rem 1rem;
+}
+
+.dont-card p {
+    font-size: var(--text-caption);
+    color: var(--color-body);
+    line-height: var(--leading-caption);
+}
+
+/* Screen-only utility */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Responsive — shared breakpoints */
+@media (max-width: 640px) {
+    .back { margin-bottom: 0.5rem; }
+    .header { padding: 0.625rem 1.5rem 1rem; }
+    .theme-toggle { right: 1.5rem; top: 0.625rem; }
+    .content { padding: 0 1.5rem; }
+    .guidelines-grid { grid-template-columns: 1fr; }
+}

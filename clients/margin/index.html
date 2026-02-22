@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Margin — Brand Assets</title>
+    <meta name="description" content="Margin brand assets — logo, color palette, typography, and guidelines.">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=JetBrains+Mono:wght@300;400;500&display=swap">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="brand.css">
+    <style>
+        .header { border-bottom: none; padding-top: calc(0.75rem + var(--text-caption) + 0.75rem); }
+
+        /* ── Top accent bar ── */
+        .accent-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--spring);
+            z-index: 100;
+        }
+
+        /* ── Navigation list ── */
+        .nav-list {
+            max-width: 640px;
+            padding: 0 2.5rem;
+        }
+
+        .nav-row {
+            display: grid;
+            grid-template-columns: 3rem 1fr auto auto;
+            align-items: center;
+            gap: 1.25rem;
+            padding: 1.5rem 0;
+            border-top: 1px solid var(--border);
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.15s ease;
+        }
+
+        .nav-row:last-child {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-row:hover .nav-name,
+        .nav-row:hover .nav-chevron {
+            color: var(--spring-600);
+        }
+
+        [data-theme="dark"] .nav-row:hover .nav-name,
+        [data-theme="dark"] .nav-row:hover .nav-chevron {
+            color: var(--spring-400);
+        }
+
+        .nav-row:hover .nav-chevron {
+            transform: translateX(3px);
+        }
+
+        /* Inline previews */
+        .nav-preview {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 3rem;
+            height: 3rem;
+            flex-shrink: 0;
+        }
+
+        .nav-preview svg {
+            color: var(--color-heading);
+        }
+
+        [data-theme="dark"] .nav-preview svg {
+            color: var(--spring);
+        }
+
+        .nav-preview-chips {
+            display: flex;
+            gap: 0.35rem;
+        }
+
+        .color-chip {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .chip-pine { background: var(--pine); }
+        .chip-spring { background: var(--spring); }
+
+        [data-theme="dark"] .chip-pine {
+            background: var(--pine-200);
+        }
+
+        .nav-preview-aa {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: 1.5rem;
+            color: var(--color-heading);
+            line-height: 1;
+        }
+
+        .nav-preview-kpi {
+            display: flex;
+            gap: 1px;
+            background: var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            width: 3rem;
+            height: 2rem;
+        }
+
+        .mini-kpi {
+            flex: 1;
+            background: var(--surface-raised);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1px;
+        }
+
+        .mini-kpi-bar {
+            width: 3px;
+            border-radius: 1px;
+            background: var(--spring-400);
+        }
+
+        .mini-kpi:nth-child(1) .mini-kpi-bar { height: 8px; }
+        .mini-kpi:nth-child(2) .mini-kpi-bar { height: 12px; }
+        .mini-kpi:nth-child(3) .mini-kpi-bar { height: 6px; }
+        .mini-kpi:nth-child(4) .mini-kpi-bar { height: 10px; }
+
+        /* Row text */
+        .nav-text {
+            min-width: 0;
+        }
+
+        .nav-name {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: var(--text-h3);
+            color: var(--color-heading);
+            line-height: var(--leading-h3);
+            margin-bottom: 0.15rem;
+            transition: color 0.15s ease;
+        }
+
+        .nav-desc {
+            font-size: var(--text-small);
+            color: var(--color-body);
+            line-height: var(--leading-small);
+        }
+
+        .nav-mono {
+            font-family: var(--font-mono);
+            font-size: var(--text-meta);
+            font-weight: var(--weight-regular);
+            color: var(--color-muted);
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            margin-right: 0.5rem;
+        }
+
+        .nav-chevron {
+            color: var(--color-muted);
+            transition: color 0.15s ease, transform 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .nav-chevron svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .nav-list { padding: 0 1.5rem; }
+            .nav-row {
+                grid-template-columns: 2.5rem 1fr auto;
+                gap: 1rem;
+            }
+            .nav-mono { display: none; }
+        }
+    </style>
+    <script>(function(){var t=localStorage.getItem('theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')})()</script>
+</head>
+<body>
+    <div class="accent-bar"></div>
+
+    <header class="header">
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
+        <div class="header-logo">
+            <svg aria-label="Margin" role="img" viewBox="0 0 340.09 69.74" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="header-grad" x1="1.75" y1="57.46" x2="41.5" y2="17.7" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity=".3"/></linearGradient></defs><g><circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/><circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="url(#header-grad)"/></g><path d="M166.93,52.52c-2.59,0-4.7-2.1-4.7-4.7v-16.13c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.49,3.28-7.49,9v15.11c0,2.59-2.1,4.7-4.7,4.7-2.59,0-4.7-2.1-4.7-4.7v-16.95c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.55,3.28-7.55,9l.05,15.11c0,2.6-2.15,4.71-4.75,4.71s-4.7-2.1-4.7-4.7v-31.54c0-.41.33-.73.73-.73h3.93c2.65,0,4.8,2.15,4.8,4.8h0c2.56-3.55,6.04-5.58,10.71-5.58,5.19,0,9.07,2.43,10.97,6.83,2.63-4.27,6.77-6.83,12.09-6.83,7.69,0,12.48,5.32,12.48,14.06v18.16c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M213.79,16.4h-3.6c-1.4,0-2.66.57-3.57,1.48-.91.91-1.48,2.17-1.48,3.57-2.5-3.48-6.31-5.84-11.43-5.84-9.27,0-16.43,7.68-16.43,18.85s7.03,18.85,16.49,18.85c5.06,0,8.8-2.23,11.37-5.65v.92s-.01.06-.01.06c0,2.57,2.09,4.67,4.67,4.67s4.67-2.08,4.67-4.66l.06-31.52c0-.4-.33-.73-.74-.73ZM195.87,44.38c-5.19,0-9.13-3.94-9.13-9.92s3.88-9.92,9.13-9.92,9.27,4.01,9.27,9.92-4.01,9.92-9.27,9.92Z" fill="currentColor"/><path d="M226.07,53.34c-2.59,0-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h2.35c3.48,0,6.31,2.82,6.31,6.31h0c2.23-4.73,6.17-7.09,11.3-7.09.61,0,1.11.03,1.57.07.3.03.53.28.53.59v8.48c0,.35-.3.62-.64.58-.46-.04-.93-.07-1.66-.07-5.98,0-11.1,2.63-11.1,11.17v12.22c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M282.52,16.4h-3.67c-1.38,0-2.63.56-3.53,1.46-.9.9-1.46,2.15-1.46,3.53-2.5-3.42-6.37-5.78-11.36-5.78-9.33,0-16.49,7.68-16.49,18.59s7.03,18.59,16.49,18.59c5.05,0,8.8-2.24,11.36-5.65v5.19c0,6.11-3.02,9.06-8.74,9.06-3.74,0-7.05-1.34-8.22-5.09-.08-.25-.29-.42-.55-.42h-8.59c-.37,0-.65.33-.59.69,1.68,8.98,9.7,13.17,18.22,13.17,10.9,0,17.86-6.97,17.86-17.67V17.13c0-.41-.32-.73-.73-.73ZM264.6,43.85c-5.19,0-9.13-4-9.13-9.65s3.87-9.66,9.13-9.66,9.26,4.01,9.26,9.66-4.01,9.65-9.26,9.65Z" fill="currentColor"/><path d="M294.79,15.37c2.59,0,4.7,2.1,4.7,4.7v28.59c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-28.59c0-2.59,2.1-4.7,4.7-4.7ZM298.63,1.59h0c-2.12-2.12-5.56-2.12-7.68,0h0c-2.12,2.12-2.12,5.56,0,7.68h0c2.12,2.12,5.56,2.12,7.68,0h0c2.12-2.12,2.12-5.56,0-7.68Z" fill="currentColor"/><path d="M335.39,53.34c-2.59,0-4.7-2.1-4.7-4.7v-16.75c0-4.73-1.77-7.36-6.77-7.36-5.32,0-8.15,3.09-8.15,9v15.11c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h3.73c2.72,0,4.93,2.21,4.93,4.93h0c2.63-3.68,6.24-5.71,11.23-5.71,8.15,0,13.07,5.39,13.07,14.25v18.79c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/></svg>
+        </div>
+        <h1>Brand Assets &middot; v1.0 &middot; February 2026</h1>
+    </header>
+
+    <main>
+        <!-- Navigation -->
+        <nav class="nav-list" aria-label="Brand asset sections">
+            <a class="nav-row" href="logo/index.html">
+                <div class="nav-preview">
+                    <svg width="28" height="28" viewBox="-2 6 92 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/>
+                        <path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/>
+                        <circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/>
+                        <path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="currentColor" opacity="0.4"/>
+                    </svg>
+                </div>
+                <div class="nav-text">
+                    <div class="nav-name">Logo</div>
+                    <div class="nav-desc">All variants and downloads</div>
+                </div>
+                <span class="nav-mono">4 variants</span>
+                <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
+            </a>
+            <a class="nav-row" href="color/index.html">
+                <div class="nav-preview">
+                    <div class="nav-preview-chips">
+                        <div class="color-chip chip-pine"></div>
+                        <div class="color-chip chip-spring"></div>
+                    </div>
+                </div>
+                <div class="nav-text">
+                    <div class="nav-name">Color</div>
+                    <div class="nav-desc">Palette, scales, and usage</div>
+                </div>
+                <span class="nav-mono">4 scales</span>
+                <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
+            </a>
+            <a class="nav-row" href="typography/index.html">
+                <div class="nav-preview">
+                    <span class="nav-preview-aa">Aa</span>
+                </div>
+                <div class="nav-text">
+                    <div class="nav-name">Typography</div>
+                    <div class="nav-desc">Typefaces, numerals, and scale</div>
+                </div>
+                <span class="nav-mono">2 typefaces</span>
+                <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
+            </a>
+            <a class="nav-row" href="ui-styles/index.html">
+                <div class="nav-preview">
+                    <div class="nav-preview-kpi">
+                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
+                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
+                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
+                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
+                    </div>
+                </div>
+                <div class="nav-text">
+                    <div class="nav-name">UI Styles</div>
+                    <div class="nav-desc">Product interface reference</div>
+                </div>
+                <span class="nav-mono">Dashboard ref.</span>
+                <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
+            </a>
+        </nav>
+    </main>
+
+    <script data-signature src="../../shared/farkas-animation.js"></script>
+</body>
+</html>

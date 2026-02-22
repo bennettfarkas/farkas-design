@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Margin — Typography</title>
+    <meta name="description" content="Margin typography system — typeface specimens, financial numerals, type scale, and usage guidelines.">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="../layout.css">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+        /* ── Reveal animation ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Stagger children */
+        .reveal-stagger > .reveal:nth-child(2) { transition-delay: 0.08s; }
+        .reveal-stagger > .reveal:nth-child(3) { transition-delay: 0.16s; }
+        .reveal-stagger > .reveal:nth-child(4) { transition-delay: 0.24s; }
+        .reveal-stagger > .reveal:nth-child(5) { transition-delay: 0.32s; }
+        .reveal-stagger > .reveal:nth-child(6) { transition-delay: 0.4s; }
+        .reveal-stagger > .reveal:nth-child(7) { transition-delay: 0.48s; }
+        .reveal-stagger > .reveal:nth-child(8) { transition-delay: 0.56s; }
+
+        /* ── Sections ── */
+        .type-section {
+            padding: 5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .type-section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* ── Hero Specimen ── */
+        .hero-specimen {
+            padding: 5rem 0 4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero-glyph-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.04em;
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: clamp(6rem, 18vw, 14rem);
+            line-height: 0.85;
+            color: var(--color-heading);
+            letter-spacing: -0.04em;
+            margin-bottom: 3rem;
+            overflow: hidden;
+        }
+
+        .hero-glyph-row span {
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        .hero-glyph-row span:hover {
+            color: var(--spring-500);
+        }
+
+        [data-theme="dark"] .hero-glyph-row span:hover {
+            color: var(--spring);
+        }
+
+        .hero-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 2rem;
+        }
+
+        .hero-info-left h2 {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: var(--text-h2);
+            color: var(--color-heading);
+            margin-bottom: 0.35rem;
+        }
+
+        .hero-info-left p {
+            font-size: var(--text-small);
+            color: var(--color-body);
+            line-height: var(--leading-body);
+            max-width: 48ch;
+        }
+
+        .hero-info-right {
+            display: flex;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .feature-tag {
+            font-family: var(--font-mono);
+            font-size: var(--text-meta);
+            font-weight: var(--weight-medium);
+            color: var(--spring-700);
+            background: var(--spring-50);
+            border: 1px solid var(--spring-100);
+            border-radius: 4px;
+            padding: 0.25em 0.55em;
+            letter-spacing: 0.02em;
+        }
+
+        [data-theme="dark"] .feature-tag {
+            color: var(--spring-300);
+            background: rgba(196, 253, 164, 0.06);
+            border-color: rgba(196, 253, 164, 0.1);
+        }
+
+        /* ── Specimens ── */
+        .specimen {
+            border-radius: 14px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            padding: 2.5rem 2.25rem;
+            margin-bottom: 1.25rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .specimen:hover {
+            border-color: var(--border-strong);
+        }
+
+        .specimen:last-child {
+            margin-bottom: 0;
+        }
+
+        .specimen-meta {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .specimen-name {
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            color: var(--color-body);
+        }
+
+        .specimen-role {
+            font-size: var(--text-caption);
+            color: var(--color-muted);
+            line-height: var(--leading-caption);
+        }
+
+        .specimen-display {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            line-height: 1;
+            color: var(--color-heading);
+            margin-bottom: 2rem;
+            padding-bottom: 0.15em;
+        }
+
+        .specimen-display.sans {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            letter-spacing: -0.02em;
+        }
+
+        .specimen-display.mono {
+            font-family: var(--font-mono);
+            font-weight: var(--weight-regular);
+            font-size: clamp(1.4rem, 3.5vw, 2.25rem);
+            letter-spacing: -0.01em;
+        }
+
+        .specimen-weights {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.75rem;
+        }
+
+        .weight-sample {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+        }
+
+        .weight-sample span:first-child {
+            font-size: var(--text-h2);
+            line-height: 1.1;
+            color: var(--color-heading);
+            transition: color 0.2s ease;
+        }
+
+        .weight-sample:hover span:first-child {
+            color: var(--spring-600);
+        }
+
+        [data-theme="dark"] .weight-sample:hover span:first-child {
+            color: var(--spring-300);
+        }
+
+        .weight-sample span:first-child.sans {
+            font-family: var(--font-sans);
+        }
+
+        .weight-sample span:first-child.mono {
+            font-family: var(--font-mono);
+        }
+
+        .weight-sample span:last-child {
+            font-size: var(--text-meta);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            color: var(--color-muted);
+        }
+
+        .specimen-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .specimen-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+        }
+
+        .specimen-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: var(--text-caption);
+            font-weight: var(--weight-medium);
+            color: var(--spring-600);
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        .specimen-link:hover {
+            color: var(--color-heading);
+        }
+
+        [data-theme="dark"] .specimen-link {
+            color: var(--spring-400);
+        }
+
+        .specimen-link svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* ── Financial Numerals ── */
+        .numeral-hero {
+            text-align: center;
+            padding: 3rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .numeral-hero-label {
+            font-size: var(--text-label);
+            font-weight: var(--weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            color: var(--color-muted);
+            margin-bottom: 1rem;
+        }
+
+        .numeral-hero-value {
+            font-family: var(--font-sans);
+            font-variant-numeric: tabular-nums lining-nums;
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .nh-currency {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: var(--weight-semibold);
+            color: var(--spring-600);
+            margin-right: 0.06em;
+        }
+
+        [data-theme="dark"] .nh-currency {
+            color: var(--spring-300);
+        }
+
+        .nh-whole {
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: var(--weight-bold);
+            color: var(--spring-600);
+            letter-spacing: -0.03em;
+        }
+
+        [data-theme="dark"] .nh-whole {
+            color: var(--spring);
+        }
+
+        .nh-cents {
+            font-size: clamp(1.25rem, 3vw, 2.5rem);
+            font-weight: var(--weight-medium);
+            color: var(--spring-400);
+            margin-left: 0.04em;
+        }
+
+        [data-theme="dark"] .nh-cents {
+            color: var(--spring-500);
+        }
+
+        .numeral-hero-sub {
+            font-size: var(--text-small);
+            color: var(--color-body);
+            margin-top: 1rem;
+        }
+
+        .numeral-hero-sub code {
+            font-family: var(--font-mono);
+            font-size: var(--text-caption);
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.15em 0.4em;
+            color: var(--color-subtle);
+        }
+
+        /* Numeral grid */
+        .numeral-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .numeral-card {
+            border-radius: 14px;
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .numeral-card:hover {
+            border-color: var(--border-strong);
+        }
+
+        .numeral-card-label {
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            color: var(--color-body);
+            margin-bottom: 1.25rem;
+        }
+
+        .numeral-demo {
+            color: var(--color-heading);
+            margin-bottom: 0.5rem;
+        }
+
+        .numeral-note {
+            font-size: var(--text-meta);
+            color: var(--color-muted);
+            line-height: var(--leading-caption);
+            letter-spacing: var(--tracking-meta);
+        }
+
+        /* Polarity demo */
+        .polarity-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            font-family: var(--font-sans);
+            font-variant-numeric: tabular-nums lining-nums;
+        }
+
+        .polarity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 1.25rem;
+            font-weight: var(--weight-semibold);
+        }
+
+        .polarity-item span:first-child {
+            font-size: var(--text-small);
+            font-weight: var(--weight-medium);
+            color: var(--color-body);
+        }
+
+        .pol-positive { color: var(--spring-600); }
+        .pol-negative { color: var(--scarlet); }
+        .pol-neutral  { color: var(--color-heading); }
+
+        [data-theme="dark"] .pol-positive { color: var(--spring-300); }
+
+        /* Tabular demo */
+        .tab-demo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+            font-family: var(--font-sans);
+            font-size: 1.25rem;
+            font-weight: var(--weight-medium);
+            line-height: 1.5;
+            text-align: right;
+        }
+
+        .tab-demo.tabular {
+            font-variant-numeric: tabular-nums lining-nums;
+        }
+
+        /* Table numerals */
+        .table-demo {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: var(--font-sans);
+            font-size: var(--text-small);
+        }
+
+        .table-demo th {
+            font-size: var(--text-meta);
+            font-weight: var(--weight-semibold);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            color: var(--color-muted);
+            text-align: right;
+            padding: 0 0 0.6rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table-demo th:first-child { text-align: left; }
+
+        .table-demo td {
+            padding: 0.55rem 0;
+            border-bottom: 1px solid var(--border);
+            font-variant-numeric: tabular-nums lining-nums;
+            text-align: right;
+            color: var(--color-heading);
+        }
+
+        .table-demo td:first-child {
+            text-align: left;
+            font-weight: var(--weight-medium);
+        }
+
+        .table-demo tr:last-child td {
+            border-bottom: none;
+            font-weight: var(--weight-semibold);
+        }
+
+        .table-demo .positive { color: var(--spring-600); }
+        [data-theme="dark"] .table-demo .positive { color: var(--spring-300); }
+
+        /* Full-bleed numeral banner */
+        .numeral-card.full {
+            grid-column: 1 / -1;
+        }
+
+        /* ── Type Scale ── */
+        .scale-item {
+            display: grid;
+            grid-template-columns: 8rem 1fr;
+            gap: 2rem;
+            align-items: baseline;
+            padding: 1.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .scale-item:last-child {
+            border-bottom: none;
+        }
+
+        .scale-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .scale-label span:first-child {
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            color: var(--color-body);
+        }
+
+        .scale-label span:last-child {
+            font-size: var(--text-meta);
+            color: var(--color-muted);
+            letter-spacing: var(--tracking-meta);
+            line-height: var(--leading-meta);
+            font-variant-numeric: tabular-nums;
+            font-family: var(--font-mono);
+        }
+
+        .scale-sample {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            padding-bottom: 0.15em;
+            transition: color 0.2s ease;
+        }
+
+        .sample-display {
+            font-family: var(--font-sans);
+            font-size: var(--text-display);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-display);
+            line-height: var(--leading-display);
+        }
+
+        .sample-h1 {
+            font-family: var(--font-sans);
+            font-size: var(--text-h1);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-h1);
+            line-height: var(--leading-h1);
+        }
+
+        .sample-h2 {
+            font-family: var(--font-sans);
+            font-size: var(--text-h2);
+            font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-h2);
+            line-height: var(--leading-h2);
+        }
+
+        .sample-h3 {
+            font-family: var(--font-sans);
+            font-size: var(--text-h3);
+            font-weight: var(--weight-semibold);
+            letter-spacing: var(--tracking-h3);
+            line-height: var(--leading-h3);
+        }
+
+        .sample-body {
+            font-family: var(--font-sans);
+            font-size: var(--text-body);
+            font-weight: var(--weight-regular);
+            letter-spacing: var(--tracking-body);
+            line-height: var(--leading-body);
+            white-space: normal;
+            max-width: var(--measure-body);
+        }
+
+        .sample-small {
+            font-family: var(--font-sans);
+            font-size: var(--text-small);
+            font-weight: var(--weight-regular);
+            letter-spacing: var(--tracking-small);
+            line-height: var(--leading-small);
+            white-space: normal;
+        }
+
+        .sample-caption {
+            font-family: var(--font-sans);
+            font-size: var(--text-caption);
+            font-weight: var(--weight-medium);
+            letter-spacing: var(--tracking-caption);
+            line-height: var(--leading-caption);
+            text-transform: uppercase;
+        }
+
+        .sample-label {
+            font-family: var(--font-sans);
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            text-transform: uppercase;
+        }
+
+        /* ── Text Color ── */
+        .color-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .color-card {
+            border-radius: 14px;
+            padding: 2.25rem;
+            min-height: 300px;
+        }
+
+        .color-card-light {
+            background: var(--white);
+            border: 1px solid var(--pine-100);
+        }
+
+        .color-card-dark {
+            background: var(--pine-950);
+        }
+
+        .color-card-label {
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            margin-bottom: 1.75rem;
+        }
+
+        .color-card-light .color-card-label { color: var(--color-body); }
+        .color-card-dark .color-card-label { color: var(--pine-600); }
+
+        .color-level {
+            margin-bottom: 1.4rem;
+        }
+
+        .color-level:last-child { margin-bottom: 0; }
+
+        .color-level-text {
+            font-family: var(--font-sans);
+            font-size: var(--text-body);
+            line-height: var(--leading-small);
+            margin-bottom: 0.25rem;
+        }
+
+        .color-level-meta {
+            font-size: var(--text-meta);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-meta);
+            line-height: var(--leading-meta);
+            font-family: var(--font-mono);
+        }
+
+        .color-card-light .color-level-meta { color: var(--pine-300); }
+        .color-card-dark .color-level-meta { color: var(--pine-700); }
+
+        .color-card-light .color-primary { color: var(--pine-900); }
+        .color-card-light .color-secondary { color: var(--pine-600); }
+        .color-card-light .color-tertiary { color: var(--pine-400); }
+        .color-card-light .color-disabled { color: var(--pine-200); }
+
+        .color-card-dark .color-primary { color: var(--pine-50); }
+        .color-card-dark .color-secondary { color: var(--pine-200); }
+        .color-card-dark .color-tertiary { color: var(--pine-400); }
+        .color-card-dark .color-disabled { color: var(--pine-700); }
+
+        /* ── Guidelines ── */
+        .guideline-item code {
+            font-family: var(--font-mono);
+            font-size: var(--text-small);
+            background: var(--surface-raised);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.1em 0.35em;
+            color: var(--color-subtle);
+        }
+
+        .donts-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .dont-card {
+            transition: transform 0.15s ease;
+        }
+
+        .dont-card:hover {
+            transform: scale(1.02);
+        }
+
+        .dont-card .dont-example {
+            margin-bottom: 0.75rem;
+            min-height: 2.5rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .dont-card .dont-example::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            width: 60px;
+            height: 2px;
+            background: var(--scarlet);
+            border-radius: 1px;
+        }
+
+        .dont-proportional {
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            font-weight: var(--weight-semibold);
+            font-variant-numeric: proportional-nums;
+            line-height: 1.5;
+        }
+
+        .dont-tiny-text {
+            font-family: var(--font-sans);
+            font-size: 0.6rem;
+            font-weight: var(--weight-regular);
+            line-height: 1.2;
+        }
+
+        .dont-mixed-weights {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+        }
+
+        .dont-mixed-weights span:first-child { font-weight: 800; }
+        .dont-mixed-weights span:last-child { font-weight: 200; opacity: 0.6; }
+
+        /* ── Responsive ── */
+        @media (max-width: 640px) {
+            .hero-glyph-row { font-size: clamp(3.5rem, 16vw, 6rem); margin-bottom: 2rem; }
+            .hero-info { flex-direction: column; align-items: flex-start; }
+            .hero-info-right { flex-wrap: wrap; }
+            .specimen-weights { gap: 1rem; }
+            .numeral-grid { grid-template-columns: 1fr; }
+            .scale-item { grid-template-columns: 1fr; gap: 0.5rem; }
+            .color-grid { grid-template-columns: 1fr; }
+            .donts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    <script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.setAttribute('data-theme','dark')})()</script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a class="back" href="../index.html">All assets</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
+        <div class="header-logo">
+            <svg aria-label="Margin" role="img" viewBox="0 0 340.09 69.74" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="header-grad" x1="1.75" y1="57.46" x2="41.5" y2="17.7" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity=".3"/></linearGradient></defs><g><circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/><circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="url(#header-grad)"/></g><path d="M166.93,52.52c-2.59,0-4.7-2.1-4.7-4.7v-16.13c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.49,3.28-7.49,9v15.11c0,2.59-2.1,4.7-4.7,4.7-2.59,0-4.7-2.1-4.7-4.7v-16.95c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.55,3.28-7.55,9l.05,15.11c0,2.6-2.15,4.71-4.75,4.71s-4.7-2.1-4.7-4.7v-31.54c0-.41.33-.73.73-.73h3.93c2.65,0,4.8,2.15,4.8,4.8h0c2.56-3.55,6.04-5.58,10.71-5.58,5.19,0,9.07,2.43,10.97,6.83,2.63-4.27,6.77-6.83,12.09-6.83,7.69,0,12.48,5.32,12.48,14.06v18.16c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M213.79,16.4h-3.6c-1.4,0-2.66.57-3.57,1.48-.91.91-1.48,2.17-1.48,3.57-2.5-3.48-6.31-5.84-11.43-5.84-9.27,0-16.43,7.68-16.43,18.85s7.03,18.85,16.49,18.85c5.06,0,8.8-2.23,11.37-5.65v.92s-.01.06-.01.06c0,2.57,2.09,4.67,4.67,4.67s4.67-2.08,4.67-4.66l.06-31.52c0-.4-.33-.73-.74-.73ZM195.87,44.38c-5.19,0-9.13-3.94-9.13-9.92s3.88-9.92,9.13-9.92,9.27,4.01,9.27,9.92-4.01,9.92-9.27,9.92Z" fill="currentColor"/><path d="M226.07,53.34c-2.59,0-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h2.35c3.48,0,6.31,2.82,6.31,6.31h0c2.23-4.73,6.17-7.09,11.3-7.09.61,0,1.11.03,1.57.07.3.03.53.28.53.59v8.48c0,.35-.3.62-.64.58-.46-.04-.93-.07-1.66-.07-5.98,0-11.1,2.63-11.1,11.17v12.22c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M282.52,16.4h-3.67c-1.38,0-2.63.56-3.53,1.46-.9.9-1.46,2.15-1.46,3.53-2.5-3.42-6.37-5.78-11.36-5.78-9.33,0-16.49,7.68-16.49,18.59s7.03,18.59,16.49,18.59c5.05,0,8.8-2.24,11.36-5.65v5.19c0,6.11-3.02,9.06-8.74,9.06-3.74,0-7.05-1.34-8.22-5.09-.08-.25-.29-.42-.55-.42h-8.59c-.37,0-.65.33-.59.69,1.68,8.98,9.7,13.17,18.22,13.17,10.9,0,17.86-6.97,17.86-17.67V17.13c0-.41-.32-.73-.73-.73ZM264.6,43.85c-5.19,0-9.13-4-9.13-9.65s3.87-9.66,9.13-9.66,9.26,4.01,9.26,9.66-4.01,9.65-9.26,9.65Z" fill="currentColor"/><path d="M294.79,15.37c2.59,0,4.7,2.1,4.7,4.7v28.59c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-28.59c0-2.59,2.1-4.7,4.7-4.7ZM298.63,1.59h0c-2.12-2.12-5.56-2.12-7.68,0h0c-2.12,2.12-2.12,5.56,0,7.68h0c2.12,2.12,5.56,2.12,7.68,0h0c2.12-2.12,2.12-5.56,0-7.68Z" fill="currentColor"/><path d="M335.39,53.34c-2.59,0-4.7-2.1-4.7-4.7v-16.75c0-4.73-1.77-7.36-6.77-7.36-5.32,0-8.15,3.09-8.15,9v15.11c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h3.73c2.72,0,4.93,2.21,4.93,4.93h0c2.63-3.68,6.24-5.71,11.23-5.71,8.15,0,13.07,5.39,13.07,14.25v18.79c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/></svg>
+        </div>
+        <h1>Typography</h1>
+    </header>
+
+    <main class="content">
+
+        <!-- Hero Specimen -->
+        <div class="hero-specimen reveal">
+            <div class="hero-glyph-row" aria-hidden="true">
+                <span>M</span><span>a</span><span>r</span><span>g</span><span>i</span><span>n</span>
+            </div>
+            <div class="hero-info">
+                <div class="hero-info-left">
+                    <h2>Plus Jakarta Sans</h2>
+                    <p>A rounded geometric sans-serif that shares the logo's soft DNA. Variable weight from 200 to 800 with tabular lining figures for financial data.</p>
+                </div>
+                <div class="hero-info-right">
+                    <span class="feature-tag">tnum</span>
+                    <span class="feature-tag">lnum</span>
+                    <span class="feature-tag">ss03</span>
+                    <span class="feature-tag">wght 200–800</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Typeface Specimens -->
+        <div class="type-section">
+            <div class="section-header reveal">
+                <h2>Typefaces</h2>
+                <p>Plus Jakarta Sans is the primary typeface across all contexts. JetBrains Mono is the companion for codes, IDs, and reference numbers.</p>
+            </div>
+
+            <div class="specimen reveal">
+                <div class="specimen-meta">
+                    <span class="specimen-name">Plus Jakarta Sans</span>
+                    <span class="specimen-role">Headings, body, UI, financial data, labels</span>
+                </div>
+                <div class="specimen-display sans">
+                    Precision meets clarity in every margin
+                </div>
+                <div class="specimen-weights reveal-stagger">
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 200;">Aa</span>
+                        <span>200 Extra Light</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 300;">Aa</span>
+                        <span>300 Light</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 400;">Aa</span>
+                        <span>400 Regular</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 500;">Aa</span>
+                        <span>500 Medium</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 600;">Aa</span>
+                        <span>600 Semibold</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 700;">Aa</span>
+                        <span>700 Bold</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="sans" style="font-weight: 800;">Aa</span>
+                        <span>800 Extra Bold</span>
+                    </div>
+                </div>
+                <div class="specimen-footer">
+                    <div class="specimen-features">
+                        <span class="feature-tag">tnum</span>
+                        <span class="feature-tag">lnum</span>
+                        <span class="feature-tag">ss03</span>
+                        <span class="feature-tag">variable</span>
+                    </div>
+                    <a class="specimen-link" href="https://fonts.google.com/specimen/Plus+Jakarta+Sans" target="_blank" rel="noopener noreferrer">
+                        Google Fonts
+                        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
+                    </a>
+                </div>
+            </div>
+
+            <div class="specimen reveal">
+                <div class="specimen-meta">
+                    <span class="specimen-name">JetBrains Mono</span>
+                    <span class="specimen-role">Project codes, IDs, reference numbers, developer data</span>
+                </div>
+                <div class="specimen-display mono">
+                    ACM260214 · $829,892.00 · 70.8%
+                </div>
+                <div class="specimen-weights reveal-stagger">
+                    <div class="weight-sample reveal">
+                        <span class="mono" style="font-weight: 300;">Aa</span>
+                        <span>300 Light</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="mono" style="font-weight: 400;">Aa</span>
+                        <span>400 Regular</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="mono" style="font-weight: 500;">Aa</span>
+                        <span>500 Medium</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="mono" style="font-weight: 600;">Aa</span>
+                        <span>600 Semibold</span>
+                    </div>
+                    <div class="weight-sample reveal">
+                        <span class="mono" style="font-weight: 700;">Aa</span>
+                        <span>700 Bold</span>
+                    </div>
+                </div>
+                <div class="specimen-footer">
+                    <div class="specimen-features">
+                        <span class="feature-tag">zero</span>
+                        <span class="feature-tag">cv01–cv18</span>
+                        <span class="feature-tag">liga</span>
+                    </div>
+                    <a class="specimen-link" href="https://fonts.google.com/specimen/JetBrains+Mono" target="_blank" rel="noopener noreferrer">
+                        Google Fonts
+                        <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h7v7M13 3L6 10"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Numerals -->
+        <div class="type-section">
+            <div class="section-header reveal">
+                <h2>Financial Numerals</h2>
+                <p>Number display is the most critical typographic decision in a financial application. Every numeric element uses tabular lining figures for clean column alignment.</p>
+            </div>
+
+            <!-- Cinematic hero number -->
+            <div class="numeral-hero reveal">
+                <div class="numeral-hero-label">Margin</div>
+                <div class="numeral-hero-value">
+                    <span class="nh-currency">$</span><span class="nh-whole">587,905</span><span class="nh-cents">.00</span>
+                </div>
+                <div class="numeral-hero-sub">Currency at 55% &middot; cents at 50% &middot; <code>font-variant-numeric: tabular-nums lining-nums</code></div>
+            </div>
+
+            <div class="numeral-grid reveal-stagger">
+                <div class="numeral-card reveal">
+                    <div class="numeral-card-label">Polarity</div>
+                    <div class="numeral-demo polarity-row">
+                        <div class="polarity-item">
+                            <span>Labor</span>
+                            <span class="pol-positive">+$120,433.00</span>
+                        </div>
+                        <div class="polarity-item">
+                            <span>Designer</span>
+                            <span class="pol-negative">-$39.20</span>
+                        </div>
+                        <div class="polarity-item">
+                            <span>Engineer</span>
+                            <span class="pol-neutral">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="numeral-note">Spring 600 for gains, Scarlet for losses, heading color for neutral.</div>
+                </div>
+
+                <div class="numeral-card reveal">
+                    <div class="numeral-card-label">Tabular Alignment</div>
+                    <div class="numeral-demo tab-demo tabular">
+                        <span>$199,967.00</span>
+                        <span>&nbsp;$41,020.00</span>
+                        <span>&nbsp;&nbsp;$1,000.00</span>
+                    </div>
+                    <div class="numeral-note">Every digit occupies the same advance width. Columns align without manual spacing.</div>
+                </div>
+
+                <div class="numeral-card full reveal">
+                    <div class="numeral-card-label">Table Data</div>
+                    <table class="table-demo">
+                        <thead>
+                            <tr><th>Item</th><th>Cost</th><th>Base Fee</th><th>Margin</th><th>Margin %</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Labor</td>
+                                <td>$199,967.00</td>
+                                <td>$320,400.00</td>
+                                <td class="positive">$120,433.00</td>
+                                <td>37.6%</td>
+                            </tr>
+                            <tr>
+                                <td>Contractors</td>
+                                <td>$41,020.00</td>
+                                <td>$55,377.00</td>
+                                <td class="positive">$14,357.00</td>
+                                <td>25.9%</td>
+                            </tr>
+                            <tr>
+                                <td>Direct Costs</td>
+                                <td>$1,000.00</td>
+                                <td>$1,180.00</td>
+                                <td class="positive">$180.00</td>
+                                <td>15.3%</td>
+                            </tr>
+                            <tr>
+                                <td>Base Fee</td>
+                                <td>$241,987.00</td>
+                                <td>$376,957.00</td>
+                                <td class="positive">$134,970.00</td>
+                                <td class="positive">35.8%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Type Scale -->
+        <div class="type-section">
+            <div class="section-header reveal">
+                <h2>Type Scale</h2>
+                <p>Eight levels of hierarchy tuned for financial dashboards. Each level at its specified size, weight, and spacing.</p>
+            </div>
+
+            <div class="reveal-stagger">
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>Display</span>
+                        <span>clamp(2.5–4rem) / 700</span>
+                    </div>
+                    <div class="scale-sample sample-display">Know Your Numbers</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>H1</span>
+                        <span>clamp(2–2.5rem) / 700</span>
+                    </div>
+                    <div class="scale-sample sample-h1">Project Overview</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>H2</span>
+                        <span>1.5rem / 600</span>
+                    </div>
+                    <div class="scale-sample sample-h2">Website Redesign</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>H3</span>
+                        <span>1.125rem / 600</span>
+                    </div>
+                    <div class="scale-sample sample-h3">Team Labor Breakdown</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>Body</span>
+                        <span>1rem / 400</span>
+                    </div>
+                    <div class="scale-sample sample-body">Margin helps creative agencies track project profitability in real time. Know exactly where every dollar goes so you can make smarter pricing decisions before it's too late.</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>Small</span>
+                        <span>0.875rem / 400</span>
+                    </div>
+                    <div class="scale-sample sample-small">Base Fee $376,957.00 &middot; Acceptable Cost $665,573.38</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>Caption</span>
+                        <span>0.75rem / 500</span>
+                    </div>
+                    <div class="scale-sample sample-caption">Edited Feb 22, 2026 &middot; Retainer &middot; Acme Labs</div>
+                </div>
+                <div class="scale-item reveal">
+                    <div class="scale-label">
+                        <span>Label</span>
+                        <span>0.7rem / 500</span>
+                    </div>
+                    <div class="scale-sample sample-label">Price &ensp; Cost &ensp; Margin &ensp; Margin %</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Color -->
+        <div class="type-section">
+            <div class="section-header reveal">
+                <h2>Text Color</h2>
+                <p>Four semantic levels establish visual hierarchy across light and dark surfaces.</p>
+            </div>
+
+            <div class="color-grid reveal-stagger">
+                <div class="color-card color-card-light reveal">
+                    <div class="color-card-label">Light mode</div>
+                    <div class="color-level">
+                        <div class="color-level-text color-primary">Primary text demands immediate attention.</div>
+                        <div class="color-level-meta">Primary — Pine 900 #0B281A</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-secondary">Secondary text supports with context.</div>
+                        <div class="color-level-meta">Secondary — Pine 600 #1F6542</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-tertiary">Tertiary text provides supplemental detail.</div>
+                        <div class="color-level-meta">Tertiary — Pine 400 #4BA075</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-disabled">Disabled text indicates inactive elements.</div>
+                        <div class="color-level-meta">Disabled — Pine 200 #A6CEBA</div>
+                    </div>
+                </div>
+                <div class="color-card color-card-dark reveal">
+                    <div class="color-card-label">Dark mode</div>
+                    <div class="color-level">
+                        <div class="color-level-text color-primary">Primary text demands immediate attention.</div>
+                        <div class="color-level-meta">Primary — Pine 50 #EBF5F0</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-secondary">Secondary text supports with context.</div>
+                        <div class="color-level-meta">Secondary — Pine 200 #A6CEBA</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-tertiary">Tertiary text provides supplemental detail.</div>
+                        <div class="color-level-meta">Tertiary — Pine 400 #4BA075</div>
+                    </div>
+                    <div class="color-level">
+                        <div class="color-level-text color-disabled">Disabled text indicates inactive elements.</div>
+                        <div class="color-level-meta">Disabled — Pine 700 #164B31</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Guidelines -->
+        <div class="type-section">
+            <div class="section-header reveal">
+                <h2>Usage Guidelines</h2>
+                <p>Rules for consistent, legible typography across the Margin platform.</p>
+            </div>
+
+            <div class="guidelines-grid reveal">
+                <div class="guideline-item">
+                    <h3>Tabular Figures</h3>
+                    <p>All financial data uses <code>font-variant-numeric: tabular-nums lining-nums</code>. Proportional figures break column alignment and cause layout shift on live data.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>KPI De-emphasis</h3>
+                    <p>In hero KPI displays, the currency symbol renders at <code>55%</code> of the main figure and cents at <code>50%</code>. The whole-dollar figure is what matters.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Minimum Body Size</h3>
+                    <p>Body text must never be smaller than <code>16px</code>. Table data may go to <code>14px</code>. Labels may go to <code>11px</code> but never smaller.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Numeric Alignment</h3>
+                    <p>Right-align all numeric columns. Pad with trailing zeros: <code>$829,892.00</code> not <code>$829,892</code>.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Color for Polarity</h3>
+                    <p>Positive values use <code>Spring 600</code>. Negative values use <code>Scarlet 500</code>. Always pair with +/&minus; signs — never rely on color alone.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Label Tracking</h3>
+                    <p>Uppercase labels use <code>letter-spacing: 0.08em</code> at weight 500. This prevents the visual clumping uppercase creates at small sizes.</p>
+                </div>
+            </div>
+
+            <div class="donts reveal">
+                <h3>Don'ts</h3>
+                <div class="donts-grid">
+                    <div class="dont-card">
+                        <div class="dont-example">
+                            <span class="dont-proportional">$829,892.00<br>$41,020.00<br>$1,000.00</span>
+                        </div>
+                        <p>Don't use proportional figures in data columns</p>
+                    </div>
+                    <div class="dont-card">
+                        <div class="dont-example">
+                            <span class="dont-tiny-text">This body text is set far too small to read comfortably on any screen</span>
+                        </div>
+                        <p>Don't set body text below 16px on screen</p>
+                    </div>
+                    <div class="dont-card">
+                        <div class="dont-example">
+                            <span class="dont-mixed-weights"><span>$587,905</span> <span>margin on project</span></span>
+                        </div>
+                        <p>Don't mix extreme weights within the same line</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Scroll reveal -->
+    <script>
+    (function () {
+        var els = document.querySelectorAll('.reveal');
+        if (!('IntersectionObserver' in window)) {
+            els.forEach(function (el) { el.classList.add('visible'); });
+            return;
+        }
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        els.forEach(function (el) { observer.observe(el); });
+    })();
+    </script>
+
+    <script data-signature src="../../../shared/farkas-animation.js"></script>
+
+</body>
+</html>

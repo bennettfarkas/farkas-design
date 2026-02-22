@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Margin — Color</title>
+    <meta name="description" content="Margin color system — core brand palette, scales, and usage guidelines.">
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200..800&display=swap">
+    <link rel="stylesheet" href="../layout.css">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+        /* Sections */
+        .color-section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .color-section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Primary & Secondary swatches */
+        .swatch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+        }
+
+        .swatch-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: box-shadow 0.15s ease;
+        }
+
+        .swatch-card:hover,
+        .swatch-card:focus {
+            box-shadow: 0 4px 16px rgba(11, 40, 26, 0.1);
+        }
+
+        .swatch-card:active {
+            box-shadow: 0 2px 8px rgba(11, 40, 26, 0.08);
+        }
+
+        .swatch-card:focus {
+            outline: 2px solid var(--spring);
+            outline-offset: 2px;
+        }
+
+        .swatch-fill {
+            height: 160px;
+        }
+
+        .swatch-info {
+            padding: 1rem 1.25rem;
+            background: var(--surface-overlay);
+        }
+
+        .swatch-name {
+            font-size: var(--text-small);
+            font-weight: var(--weight-semibold);
+            line-height: var(--leading-small);
+            color: var(--color-heading);
+            margin-bottom: 0.15rem;
+        }
+
+        .swatch-hex {
+            font-size: var(--text-caption);
+            font-weight: var(--weight-medium);
+            color: var(--color-body);
+            line-height: var(--leading-caption);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Color scales */
+        .scale-block {
+            margin-bottom: 2.5rem;
+        }
+
+        .scale-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .scale-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .scale-name {
+            font-size: var(--text-label);
+            font-weight: var(--weight-medium);
+            text-transform: uppercase;
+            letter-spacing: var(--tracking-label);
+            line-height: var(--leading-label);
+            color: var(--color-heading);
+        }
+
+        .scale-desc {
+            font-size: var(--text-caption);
+            color: var(--color-muted);
+            line-height: var(--leading-caption);
+        }
+
+        .scale-strip {
+            display: grid;
+            grid-template-columns: repeat(11, 1fr);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .scale-step {
+            position: relative;
+            height: 64px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+
+        .scale-step:hover,
+        .scale-step:focus {
+            transform: scaleY(1.12);
+            z-index: 1;
+        }
+
+        .scale-step:active {
+            transform: scaleY(1.0);
+        }
+
+        .scale-step-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.3rem 0.4rem;
+            opacity: 0;
+            transition: opacity 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            gap: 0.05rem;
+        }
+
+        .scale-step:hover .scale-step-info,
+        .scale-step:focus .scale-step-info,
+        .scale-step:active .scale-step-info {
+            opacity: 1;
+        }
+
+        .scale-step-num {
+            font-size: var(--text-meta);
+            font-weight: var(--weight-medium);
+            line-height: var(--leading-meta);
+        }
+
+        .scale-step-hex {
+            font-size: var(--text-meta);
+            font-weight: var(--weight-regular);
+            line-height: var(--leading-meta);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Light text for dark swatches, dark text for light swatches */
+        .scale-step.light-text .scale-step-info { color: var(--white); }
+        .scale-step.dark-text .scale-step-info { color: var(--pine-900); }
+
+        /* Anchor indicator */
+        .scale-step.anchor::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            border: 1.5px solid;
+        }
+
+        .scale-step.anchor.light-text::after { border-color: var(--white); }
+        .scale-step.anchor.dark-text::after { border-color: var(--pine-900); }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100%);
+            background: var(--pine-900);
+            color: var(--pine-50);
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: var(--text-caption);
+            font-weight: var(--weight-medium);
+            line-height: var(--leading-caption);
+            font-variant-numeric: tabular-nums;
+            pointer-events: none;
+            opacity: 0;
+            transition: transform 0.25s ease, opacity 0.25s ease;
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        [data-theme="dark"] .toast {
+            background: var(--pine-50);
+            color: var(--pine-900);
+        }
+        [data-theme="dark"] .swatch-fill {
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+        [data-theme="dark"] .swatch-card:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+        [data-theme="dark"] .swatch-card:active {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .swatch-grid { grid-template-columns: 1fr; }
+            .swatch-fill { height: 120px; }
+            .scale-step { height: 48px; }
+        }
+    </style>
+    <script>(function(){var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&window.matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.setAttribute('data-theme','dark')})()</script>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <a class="back" href="../index.html">All assets</a>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+            <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+            <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
+        </button>
+        <div class="header-logo">
+            <svg aria-label="Margin" role="img" viewBox="0 0 340.09 69.74" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="header-grad" x1="1.75" y1="57.46" x2="41.5" y2="17.7" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity=".3"/></linearGradient></defs><g><circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/><circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/><path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="url(#header-grad)"/></g><path d="M166.93,52.52c-2.59,0-4.7-2.1-4.7-4.7v-16.13c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.49,3.28-7.49,9v15.11c0,2.59-2.1,4.7-4.7,4.7-2.59,0-4.7-2.1-4.7-4.7v-16.95c0-4.6-1.71-7.16-6.24-7.16-4.93,0-7.55,3.28-7.55,9l.05,15.11c0,2.6-2.15,4.71-4.75,4.71s-4.7-2.1-4.7-4.7v-31.54c0-.41.33-.73.73-.73h3.93c2.65,0,4.8,2.15,4.8,4.8h0c2.56-3.55,6.04-5.58,10.71-5.58,5.19,0,9.07,2.43,10.97,6.83,2.63-4.27,6.77-6.83,12.09-6.83,7.69,0,12.48,5.32,12.48,14.06v18.16c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M213.79,16.4h-3.6c-1.4,0-2.66.57-3.57,1.48-.91.91-1.48,2.17-1.48,3.57-2.5-3.48-6.31-5.84-11.43-5.84-9.27,0-16.43,7.68-16.43,18.85s7.03,18.85,16.49,18.85c5.06,0,8.8-2.23,11.37-5.65v.92s-.01.06-.01.06c0,2.57,2.09,4.67,4.67,4.67s4.67-2.08,4.67-4.66l.06-31.52c0-.4-.33-.73-.74-.73ZM195.87,44.38c-5.19,0-9.13-3.94-9.13-9.92s3.88-9.92,9.13-9.92,9.27,4.01,9.27,9.92-4.01,9.92-9.27,9.92Z" fill="currentColor"/><path d="M226.07,53.34c-2.59,0-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h2.35c3.48,0,6.31,2.82,6.31,6.31h0c2.23-4.73,6.17-7.09,11.3-7.09.61,0,1.11.03,1.57.07.3.03.53.28.53.59v8.48c0,.35-.3.62-.64.58-.46-.04-.93-.07-1.66-.07-5.98,0-11.1,2.63-11.1,11.17v12.22c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/><path d="M282.52,16.4h-3.67c-1.38,0-2.63.56-3.53,1.46-.9.9-1.46,2.15-1.46,3.53-2.5-3.42-6.37-5.78-11.36-5.78-9.33,0-16.49,7.68-16.49,18.59s7.03,18.59,16.49,18.59c5.05,0,8.8-2.24,11.36-5.65v5.19c0,6.11-3.02,9.06-8.74,9.06-3.74,0-7.05-1.34-8.22-5.09-.08-.25-.29-.42-.55-.42h-8.59c-.37,0-.65.33-.59.69,1.68,8.98,9.7,13.17,18.22,13.17,10.9,0,17.86-6.97,17.86-17.67V17.13c0-.41-.32-.73-.73-.73ZM264.6,43.85c-5.19,0-9.13-4-9.13-9.65s3.87-9.66,9.13-9.66,9.26,4.01,9.26,9.66-4.01,9.65-9.26,9.65Z" fill="currentColor"/><path d="M294.79,15.37c2.59,0,4.7,2.1,4.7,4.7v28.59c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-28.59c0-2.59,2.1-4.7,4.7-4.7ZM298.63,1.59h0c-2.12-2.12-5.56-2.12-7.68,0h0c-2.12,2.12-2.12,5.56,0,7.68h0c2.12,2.12,5.56,2.12,7.68,0h0c2.12-2.12,2.12-5.56,0-7.68Z" fill="currentColor"/><path d="M335.39,53.34c-2.59,0-4.7-2.1-4.7-4.7v-16.75c0-4.73-1.77-7.36-6.77-7.36-5.32,0-8.15,3.09-8.15,9v15.11c0,2.59-2.1,4.7-4.7,4.7s-4.7-2.1-4.7-4.7v-31.52c0-.41.33-.73.73-.73h3.73c2.72,0,4.93,2.21,4.93,4.93h0c2.63-3.68,6.24-5.71,11.23-5.71,8.15,0,13.07,5.39,13.07,14.25v18.79c0,2.59-2.1,4.7-4.7,4.7Z" fill="currentColor"/></svg>
+        </div>
+        <h1>Color</h1>
+    </header>
+
+    <main class="content">
+
+        <!-- Core Colors -->
+        <div class="color-section">
+            <div class="section-header">
+                <h2>Core Palette</h2>
+                <p>Two primary colors define the Margin brand. Pine is the deep, grounding dark. Spring is the bright, energizing accent. Together they create a bold contrast between depth and vitality.</p>
+            </div>
+
+            <div class="swatch-grid">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#0B281A" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--pine-900);"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Pine</div>
+                        <div class="swatch-hex">#0B281A</div>
+                    </div>
+                </div>
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#C4FDA4" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--spring-200);"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Spring</div>
+                        <div class="swatch-hex">#C4FDA4</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Utility Colors -->
+        <div class="color-section">
+            <div class="section-header">
+                <h2>Utility</h2>
+                <p>Amber and Scarlet form the warm utility pair — split-complementary to Pine's green anchor. In a financial context, Amber signals caution and pending states; Scarlet signals errors and losses. Together they balance the primary pair with deliberate warmth.</p>
+            </div>
+
+            <div class="swatch-grid">
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#D49A2A" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--amber-500);"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Amber</div>
+                        <div class="swatch-hex">#D49A2A</div>
+                    </div>
+                </div>
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#D93B3B" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--scarlet-500);"></div>
+                    <div class="swatch-info">
+                        <div class="swatch-name">Scarlet</div>
+                        <div class="swatch-hex">#D93B3B</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Scales -->
+        <div class="color-section">
+            <div class="section-header">
+                <h2>Scales</h2>
+                <p>Each color extends into an 11-step scale from tint to shade. The dot marks the brand anchor — the step that represents the color at full strength. Click any step to copy its hex value.</p>
+            </div>
+
+            <!-- Pine Scale -->
+            <div class="scale-block">
+                <div class="scale-header">
+                    <span class="scale-name">Pine</span>
+                    <span class="scale-desc">Deep greens that stay rich through the full range</span>
+                </div>
+                <div class="scale-strip">
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-50);" data-hex="#EBF5F0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EBF5F0</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-100);" data-hex="#D1E6DB" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#D1E6DB</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-200);" data-hex="#A6CEBA" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#A6CEBA</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-300);" data-hex="#78B596" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#78B596</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-400);" data-hex="#4BA075" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#4BA075</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-500);" data-hex="#2A7E54" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#2A7E54</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-600);" data-hex="#1F6542" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#1F6542</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-700);" data-hex="#164B31" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#164B31</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-800);" data-hex="#0F3421" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#0F3421</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--pine-900);" data-hex="#0B281A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#0B281A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-950);" data-hex="#06180F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#06180F</span></div></div>
+                </div>
+            </div>
+
+            <!-- Spring Scale -->
+            <div class="scale-block">
+                <div class="scale-header">
+                    <span class="scale-name">Spring</span>
+                    <span class="scale-desc">Bright yellow-greens that bring energy and life</span>
+                </div>
+                <div class="scale-strip">
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-50);" data-hex="#F7FFEE" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#F7FFEE</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-100);" data-hex="#EAFED2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#EAFED2</span></div></div>
+                    <div class="scale-step anchor dark-text" tabindex="0" role="button" style="background: var(--spring-200);" data-hex="#C4FDA4" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#C4FDA4</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-300);" data-hex="#9BEE72" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#9BEE72</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-400);" data-hex="#79DC49" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#79DC49</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-500);" data-hex="#5DBF27" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#5DBF27</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-600);" data-hex="#4A9A1F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#4A9A1F</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-700);" data-hex="#387518" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#387518</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-800);" data-hex="#285211" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#285211</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-900);" data-hex="#1A360B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#1A360B</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-950);" data-hex="#102108" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#102108</span></div></div>
+                </div>
+            </div>
+
+            <!-- Amber Scale -->
+            <div class="scale-block">
+                <div class="scale-header">
+                    <span class="scale-name">Amber</span>
+                    <span class="scale-desc">Warm golds for warnings, pending states, and positive signals</span>
+                </div>
+                <div class="scale-strip">
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--amber-50);" data-hex="#FFF8EB" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FFF8EB</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--amber-100);" data-hex="#FEECC8" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FEECC8</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--amber-200);" data-hex="#FDD78F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#FDD78F</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--amber-300);" data-hex="#F6BF5C" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#F6BF5C</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--amber-400);" data-hex="#EAAB3A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#EAAB3A</span></div></div>
+                    <div class="scale-step anchor dark-text" tabindex="0" role="button" style="background: var(--amber-500);" data-hex="#D49A2A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#D49A2A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--amber-600);" data-hex="#AD7B1E" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#AD7B1E</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--amber-700);" data-hex="#845D16" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#845D16</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--amber-800);" data-hex="#5E4110" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#5E4110</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--amber-900);" data-hex="#3B280B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#3B280B</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--amber-950);" data-hex="#231806" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#231806</span></div></div>
+                </div>
+            </div>
+
+            <!-- Scarlet Scale -->
+            <div class="scale-block">
+                <div class="scale-header">
+                    <span class="scale-name">Scarlet</span>
+                    <span class="scale-desc">Clear warm reds for errors, losses, and alerts</span>
+                </div>
+                <div class="scale-strip">
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--scarlet-50);" data-hex="#FEF2F2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#FEF2F2</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--scarlet-100);" data-hex="#FDD8D8" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#FDD8D8</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--scarlet-200);" data-hex="#F9ADAD" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#F9ADAD</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--scarlet-300);" data-hex="#F28080" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#F28080</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--scarlet-400);" data-hex="#E85A5A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#E85A5A</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--scarlet-500);" data-hex="#D93B3B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#D93B3B</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--scarlet-600);" data-hex="#B52A2A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#B52A2A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--scarlet-700);" data-hex="#8C2020" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#8C2020</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--scarlet-800);" data-hex="#641818" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#641818</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--scarlet-900);" data-hex="#401111" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#401111</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--scarlet-950);" data-hex="#280A0A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#280A0A</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Guidelines -->
+        <div class="color-section">
+            <div class="section-header">
+                <h2>Usage Guidelines</h2>
+                <p>Rules for consistent, intentional color usage across all touchpoints.</p>
+            </div>
+
+            <div class="guidelines-grid">
+                <div class="guideline-item">
+                    <h3>Pine as Foundation</h3>
+                    <p>Pine is the default text and background color. It grounds the page and provides the deep, quiet canvas that lets Spring stand out.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Spring as Accent</h3>
+                    <p>Spring is for energy, action, and emphasis. Use it for CTAs, highlights, and moments that need to pop. Never set body text in Spring on a light background.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Amber for Caution</h3>
+                    <p>Amber signals warnings, pending states, and positive financial movement. Use it for alert banners, gain indicators, and anything that needs attention without alarm.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Scarlet for Danger</h3>
+                    <p>Scarlet signals errors, losses, and destructive actions. Use it for validation errors, negative deltas, and confirmations of irreversible operations.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Temperature Balance</h3>
+                    <p>Pine and Spring are the cool primary pair. Amber and Scarlet are the warm utility pair. Let the cool pair dominate — warm colors should appear only where their meaning is needed.</p>
+                </div>
+                <div class="guideline-item">
+                    <h3>Accessibility</h3>
+                    <p>Always maintain WCAG AA contrast (4.5:1 minimum) for text. Use the scale steps to find accessible pairings — light text on dark backgrounds, dark text on light.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let toastTimeout;
+
+        function copyHex(el) {
+            const hex = el.dataset.hex;
+            if (!hex) return;
+            navigator.clipboard.writeText(hex).then(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = 'Copied ' + hex;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 1800);
+            }).catch(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = hex;
+                toast.classList.add('show');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 1800);
+            });
+        }
+
+        // Keyboard support for clickable elements
+        document.querySelectorAll('[role="button"]').forEach(el => {
+            el.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    el.click();
+                }
+            });
+        });
+    </script>
+    <script data-signature src="../../../shared/farkas-animation.js"></script>
+
+</body>
+</html>

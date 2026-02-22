@@ -1,0 +1,151 @@
+/* Margin Brand Tokens */
+
+:root {
+    /* ── Typography ── */
+
+    /* Font families */
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+    /* Weights */
+    --weight-light: 300;
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+
+    /* Type scale — sizes */
+    --text-display: clamp(2.5rem, 6vw, 4rem);
+    --text-h1: clamp(2rem, 3.5vw, 2.5rem);
+    --text-h2: 1.5rem;
+    --text-h3: 1.125rem;
+    --text-subtitle: 1.5rem;
+    --text-section: 1.25rem;
+    --text-body: 1rem;
+    --text-small: 0.875rem;
+    --text-caption: 0.75rem;
+    --text-label: 0.7rem;
+    --text-meta: 0.65rem;
+
+    /* Type scale — line heights */
+    --leading-display: 0.95;
+    --leading-h1: 1.0;
+    --leading-h2: 1.1;
+    --leading-h3: 1.2;
+    --leading-subtitle: 1.3;
+    --leading-section: 1.2;
+    --leading-body: 1.6;
+    --leading-small: 1.5;
+    --leading-caption: 1.4;
+    --leading-label: 1.4;
+    --leading-meta: 1.4;
+
+    /* Type scale — tracking */
+    --tracking-display: -0.03em;
+    --tracking-h1: -0.02em;
+    --tracking-h2: 0.04em;
+    --tracking-h3: 0;
+    --tracking-subtitle: -0.01em;
+    --tracking-section: -0.01em;
+    --tracking-body: 0;
+    --tracking-small: 0;
+    --tracking-caption: 0.03em;
+    --tracking-label: 0.08em;
+    --tracking-meta: 0.06em;
+
+    /* Measure */
+    --measure-body: 65ch;
+
+    /* ── Color ── */
+
+    /* Primary */
+    --pine: #0B281A;
+    --spring: #C4FDA4;
+
+    /* Pine scale */
+    --pine-50: #EBF5F0;
+    --pine-100: #D1E6DB;
+    --pine-200: #A6CEBA;
+    --pine-300: #78B596;
+    --pine-400: #4BA075;
+    --pine-500: #2A7E54;
+    --pine-600: #1F6542;
+    --pine-700: #164B31;
+    --pine-800: #0F3421;
+    --pine-900: #0B281A;
+    --pine-950: #06180F;
+
+    /* Spring scale */
+    --spring-50: #F7FFEE;
+    --spring-100: #EAFED2;
+    --spring-200: #C4FDA4;
+    --spring-300: #9BEE72;
+    --spring-400: #79DC49;
+    --spring-500: #5DBF27;
+    --spring-600: #4A9A1F;
+    --spring-700: #387518;
+    --spring-800: #285211;
+    --spring-900: #1A360B;
+    --spring-950: #102108;
+
+    /* Utility */
+    --amber: #D49A2A;
+    --scarlet: #D93B3B;
+
+    /* Amber scale */
+    --amber-50: #FFF8EB;
+    --amber-100: #FEECC8;
+    --amber-200: #FDD78F;
+    --amber-300: #F6BF5C;
+    --amber-400: #EAAB3A;
+    --amber-500: #D49A2A;
+    --amber-600: #AD7B1E;
+    --amber-700: #845D16;
+    --amber-800: #5E4110;
+    --amber-900: #3B280B;
+    --amber-950: #231806;
+
+    /* Scarlet scale */
+    --scarlet-50: #FEF2F2;
+    --scarlet-100: #FDD8D8;
+    --scarlet-200: #F9ADAD;
+    --scarlet-300: #F28080;
+    --scarlet-400: #E85A5A;
+    --scarlet-500: #D93B3B;
+    --scarlet-600: #B52A2A;
+    --scarlet-700: #8C2020;
+    --scarlet-800: #641818;
+    --scarlet-900: #401111;
+    --scarlet-950: #280A0A;
+
+    /* Semantic */
+    --white: #FFFFFF;
+
+    /* Semantic surface tokens */
+    --surface-page: var(--white);
+    --surface-raised: var(--pine-50);
+    --surface-overlay: var(--white);
+
+    /* Semantic text-color tokens */
+    --color-heading: var(--pine-900);
+    --color-body: var(--pine-400);
+    --color-muted: var(--pine-300);
+    --color-subtle: var(--pine-600);
+
+    /* Semantic border tokens */
+    --border: var(--pine-100);
+    --border-strong: var(--pine-200);
+}
+
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface-page: var(--pine-950);
+    --surface-raised: var(--pine-900);
+    --surface-overlay: var(--pine-800);
+    --color-heading: var(--pine-50);
+    --color-body: var(--pine-300);
+    --color-muted: var(--pine-500);
+    --color-subtle: var(--pine-400);
+    --border: var(--pine-800);
+    --border-strong: var(--pine-700);
+}

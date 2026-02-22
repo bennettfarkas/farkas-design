@@ -357,11 +357,12 @@ input, select { font-family: inherit; }
 /* ── Tile Palette (left) ── */
 .tile-list {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 6px;
 }
 .tile-thumb {
     aspect-ratio: 1;
+    min-width: 0;
     border-radius: 6px;
     border: 2px solid transparent;
     background: var(--surface-raised);
@@ -372,27 +373,12 @@ input, select { font-family: inherit; }
     padding: 6px;
     transition: border-color 0.12s, background 0.12s;
     position: relative;
+    overflow: hidden;
 }
 .tile-thumb:hover { background: var(--border); }
 .tile-thumb.active { border-color: var(--copper); background: var(--copper-50); }
 :root[data-theme="dark"] .tile-thumb.active { background: var(--copper-900); }
 .tile-thumb svg { width: 100%; height: 100%; display: block; }
-.tile-thumb-label {
-    position: absolute;
-    bottom: 2px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 8px;
-    font-weight: var(--weight-medium);
-    color: var(--color-muted);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.12s;
-}
-.tile-thumb:hover .tile-thumb-label { opacity: 1; }
 
 /* Scale buttons */
 .scale-btns {
@@ -554,6 +540,27 @@ input, select { font-family: inherit; }
 .btn-delete:hover { background: var(--ember-100); border-color: var(--ember); }
 :root[data-theme="dark"] .btn-delete:hover { background: var(--ember-900); }
 .btn-delete svg { width: 14px; height: 14px; }
+
+.btn-duplicate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    width: 100%;
+    height: 32px;
+    border-radius: 6px;
+    font-size: var(--text-caption);
+    font-weight: var(--weight-medium);
+    color: var(--copper);
+    border: 1px solid var(--copper-100);
+    background: var(--copper-50);
+    transition: all 0.12s;
+    margin-top: 0.5rem;
+}
+:root[data-theme="dark"] .btn-duplicate { background: var(--copper-950); border-color: var(--copper-800); }
+.btn-duplicate:hover { background: var(--copper-100); border-color: var(--copper); }
+:root[data-theme="dark"] .btn-duplicate:hover { background: var(--copper-900); }
+.btn-duplicate svg { width: 14px; height: 14px; }
 
 /* ── Color Picker Popover ── */
 .color-picker-overlay {
@@ -936,6 +943,10 @@ body.app-body { display: block !important; min-height: unset !important; }
                     <button class="batch-color-btn" id="btn-batch-color">Recolor</button>
                 </div>
             </div>
+            <button class="btn-duplicate" id="btn-duplicate-tile">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Duplicate tile
+            </button>
             <button class="btn-delete" id="btn-delete-tile">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
                 Delete tile
@@ -1099,6 +1110,7 @@ var $zoomSlider = document.getElementById('zoom-slider');
 var $zoomLabel = document.getElementById('zoom-label');
 var $btnDeleteSel = document.getElementById('btn-delete-sel');
 var $btnDeleteTile = document.getElementById('btn-delete-tile');
+var $btnDuplicateTile = document.getElementById('btn-duplicate-tile');
 var $colorPicker = document.getElementById('color-picker');
 var $cpOverlay = document.getElementById('cp-overlay');
 var $toast = document.getElementById('toast');
@@ -1839,11 +1851,6 @@ function renderPalette() {
         });
         btn.appendChild(svg);
 
-        var label = document.createElement('span');
-        label.className = 'tile-thumb-label';
-        label.textContent = def.name;
-        btn.appendChild(label);
-
         btn.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
             e.preventDefault();
@@ -2321,6 +2328,10 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         deleteSelected();
     }
+    if ((e.metaKey || e.ctrlKey) && e.code === 'KeyD') {
+        e.preventDefault();
+        duplicateSelected();
+    }
     if (e.code === 'Escape') {
         if (state.activeTool) {
             state.activeTool = null;
@@ -2397,19 +2408,31 @@ $viewport.addEventListener('mousedown', function(e) {
     // Click on placed tile
     var clicked = tileAt(pos.col, pos.row);
     if (clicked) {
-        var wasAlreadySelected = state.selectedId === clicked.id;
-        state.selectedId = clicked.id;
+        var isDuplicate = e.altKey;
+        var dragTarget = clicked;
+
+        if (isDuplicate) {
+            pushUndo();
+            var clone = JSON.parse(JSON.stringify(clicked));
+            clone.id = state.nextId++;
+            state.tiles.push(clone);
+            dragTarget = clone;
+        }
+
+        var wasAlreadySelected = !isDuplicate && state.selectedId === dragTarget.id;
+        state.selectedId = dragTarget.id;
         state.activeTool = null;
         updatePaletteActive();
-        openPropsPanel(clicked);
+        openPropsPanel(dragTarget);
         renderCanvas();
 
         // Start drag
         dragState = {
-            tileId: clicked.id,
-            startCol: clicked.col,
-            startRow: clicked.row,
+            tileId: dragTarget.id,
+            startCol: dragTarget.col,
+            startRow: dragTarget.row,
             wasAlreadySelected: wasAlreadySelected,
+            isDuplicate: isDuplicate,
             mouseTarget: e.target,
             clientX: e.clientX,
             clientY: e.clientY,
@@ -2564,7 +2587,15 @@ document.addEventListener('mouseup', function() {
 
     if (dragState) {
         var tile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
-        if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
+        if (dragState.isDuplicate) {
+            // Duplicate: undo was already pushed in mousedown, just save
+            if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
+                saveState();
+            } else {
+                // Stationary Option+click — clone placed on top, already undo-able
+                saveState();
+            }
+        } else if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
             // Create undo snapshot with original position
             var undoSnap = snapshotTiles();
             var snapTile = undoSnap.find(function(t) { return t.id === dragState.tileId; });
@@ -2740,6 +2771,35 @@ function deleteSelected() {
 
 $btnDeleteTile.addEventListener('click', deleteSelected);
 $btnDeleteSel.addEventListener('click', deleteSelected);
+
+// Duplicate
+function duplicateSelected() {
+    if (state.selectedId === null) return;
+    var tile = state.tiles.find(function(t) { return t.id === state.selectedId; });
+    if (!tile) return;
+    pushUndo();
+    var clone = JSON.parse(JSON.stringify(tile));
+    clone.id = state.nextId++;
+    // Try offset positions: +1,+1 then +1,0 then 0,+1 then same position
+    var offsets = [[1,1],[1,0],[0,1],[0,0]];
+    for (var i = 0; i < offsets.length; i++) {
+        var nc = tile.col + offsets[i][0];
+        var nr = tile.row + offsets[i][1];
+        if (canPlace(nc, nr, tile.scale)) {
+            clone.col = nc;
+            clone.row = nr;
+            break;
+        }
+    }
+    state.tiles.push(clone);
+    state.selectedId = clone.id;
+    openPropsPanel(clone);
+    renderCanvas();
+    saveState();
+    showToast('Tile duplicated');
+}
+
+$btnDuplicateTile.addEventListener('click', duplicateSelected);
 
 // New
 $btnNew.addEventListener('click', function() {

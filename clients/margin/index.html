@@ -12,17 +12,18 @@
     <link rel="stylesheet" href="layout.css">
     <link rel="stylesheet" href="brand.css">
     <style>
-        .header { padding-top: 2.5rem; }
+        .back[aria-hidden] { visibility: hidden; }
 
         /* ── Navigation list ── */
         .nav-list {
-            max-width: 640px;
+            max-width: calc(clamp(80px, 14vw, 120px) * 4.88 + 5rem);
             padding: 0 2.5rem;
+            margin-top: clamp(2rem, 5vw, 3.5rem);
         }
 
         .nav-row {
             display: grid;
-            grid-template-columns: 3rem 1fr auto auto;
+            grid-template-columns: 1fr auto auto;
             align-items: center;
             gap: 1.25rem;
             padding: 1.5rem 0;
@@ -32,8 +33,16 @@
             transition: color 0.15s ease;
         }
 
+        [data-theme="dark"] .nav-row {
+            border-color: rgba(196, 253, 164, 0.08);
+        }
+
         .nav-row:last-child {
             border-bottom: 1px solid var(--border);
+        }
+
+        [data-theme="dark"] .nav-row:last-child {
+            border-color: rgba(196, 253, 164, 0.08);
         }
 
         .nav-row:hover .nav-name,
@@ -50,81 +59,6 @@
             transform: translateX(3px);
         }
 
-        /* Inline previews */
-        .nav-preview {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 3rem;
-            height: 3rem;
-            flex-shrink: 0;
-        }
-
-        .nav-preview svg {
-            color: var(--color-heading);
-        }
-
-        [data-theme="dark"] .nav-preview svg {
-            color: var(--spring);
-        }
-
-        .nav-preview-chips {
-            display: flex;
-            gap: 0.35rem;
-        }
-
-        .color-chip {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-        }
-
-        .chip-pine { background: var(--pine); }
-        .chip-spring { background: var(--spring); }
-
-        [data-theme="dark"] .chip-pine {
-            background: var(--pine-200);
-        }
-
-        .nav-preview-aa {
-            font-family: var(--font-sans);
-            font-weight: var(--weight-bold);
-            font-size: 1.5rem;
-            color: var(--color-heading);
-            line-height: 1;
-        }
-
-        .nav-preview-kpi {
-            display: flex;
-            gap: 1px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            width: 3rem;
-            height: 2rem;
-        }
-
-        .mini-kpi {
-            flex: 1;
-            background: var(--surface-raised);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1px;
-        }
-
-        .mini-kpi-bar {
-            width: 3px;
-            border-radius: 1px;
-            background: var(--spring-400);
-        }
-
-        .mini-kpi:nth-child(1) .mini-kpi-bar { height: 8px; }
-        .mini-kpi:nth-child(2) .mini-kpi-bar { height: 12px; }
-        .mini-kpi:nth-child(3) .mini-kpi-bar { height: 6px; }
-        .mini-kpi:nth-child(4) .mini-kpi-bar { height: 10px; }
-
         /* Row text */
         .nav-text {
             min-width: 0;
@@ -136,14 +70,11 @@
             font-size: var(--text-h3);
             color: var(--color-heading);
             line-height: var(--leading-h3);
-            margin-bottom: 0.15rem;
             transition: color 0.15s ease;
         }
 
-        .nav-desc {
-            font-size: var(--text-small);
-            color: var(--color-body);
-            line-height: var(--leading-small);
+        [data-theme="dark"] .nav-name {
+            color: var(--spring-100);
         }
 
         .nav-mono {
@@ -167,20 +98,54 @@
             height: 16px;
         }
 
+        /* ── Ending mark ── */
+        .ending-mark {
+            padding: 0 2.5rem;
+            margin-top: clamp(3rem, 8vw, 5rem);
+        }
+
+        .ending-mark svg {
+            height: 28px;
+            width: auto;
+            color: var(--color-muted);
+        }
+
+        /* ── Entrance animation ── */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-row {
+            animation: fadeIn 0.4s ease both;
+        }
+
+        .nav-row:nth-child(1) { animation-delay: 0s; }
+        .nav-row:nth-child(2) { animation-delay: 0.06s; }
+        .nav-row:nth-child(3) { animation-delay: 0.12s; }
+        .nav-row:nth-child(4) { animation-delay: 0.18s; }
+
+        .ending-mark {
+            animation: fadeIn 0.4s ease both;
+            animation-delay: 0.28s;
+        }
+
         /* ── Responsive ── */
         @media (max-width: 640px) {
-            .nav-list { padding: 0 1.5rem; }
+            .nav-list { max-width: calc(clamp(80px, 14vw, 120px) * 4.88 + 3rem); padding: 0 1.5rem; }
             .nav-row {
-                grid-template-columns: 2.5rem 1fr auto;
+                grid-template-columns: 1fr auto;
                 gap: 1rem;
             }
             .nav-mono { display: none; }
+            .ending-mark { padding: 0 1.5rem; }
         }
     </style>
     <script>(function(){var t=localStorage.getItem('theme');if(t==='light')document.documentElement.setAttribute('data-theme','light')})()</script>
 </head>
 <body>
     <header class="header">
+        <span class="back" aria-hidden="true"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>All assets</span>
         <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
             <svg class="icon-moon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
             <svg class="icon-sun" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42m12.72-12.72l1.42-1.42"/></svg>
@@ -195,63 +160,45 @@
         <!-- Navigation -->
         <nav class="nav-list" aria-label="Brand asset sections">
             <a class="nav-row" href="logo/index.html">
-                <div class="nav-preview">
-                    <svg width="28" height="28" viewBox="-2 6 92 58" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/>
-                        <path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/>
-                        <circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/>
-                        <path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="currentColor" opacity="0.4"/>
-                    </svg>
-                </div>
                 <div class="nav-text">
                     <div class="nav-name">Logo</div>
-                    <div class="nav-desc">All variants and downloads</div>
                 </div>
                 <span class="nav-mono">4 variants</span>
                 <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
             </a>
             <a class="nav-row" href="color/index.html">
-                <div class="nav-preview">
-                    <div class="nav-preview-chips">
-                        <div class="color-chip chip-pine"></div>
-                        <div class="color-chip chip-spring"></div>
-                    </div>
-                </div>
                 <div class="nav-text">
                     <div class="nav-name">Color</div>
-                    <div class="nav-desc">Palette, scales, and usage</div>
                 </div>
                 <span class="nav-mono">4 scales</span>
                 <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
             </a>
             <a class="nav-row" href="typography/index.html">
-                <div class="nav-preview">
-                    <span class="nav-preview-aa">Aa</span>
-                </div>
                 <div class="nav-text">
                     <div class="nav-name">Typography</div>
-                    <div class="nav-desc">Typefaces, numerals, and scale</div>
                 </div>
                 <span class="nav-mono">2 typefaces</span>
                 <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
             </a>
             <a class="nav-row" href="ui-styles/index.html">
-                <div class="nav-preview">
-                    <div class="nav-preview-kpi">
-                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
-                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
-                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
-                        <div class="mini-kpi"><div class="mini-kpi-bar"></div></div>
-                    </div>
-                </div>
                 <div class="nav-text">
                     <div class="nav-name">UI Styles</div>
-                    <div class="nav-desc">Product interface reference</div>
                 </div>
                 <span class="nav-mono">Dashboard ref.</span>
                 <span class="nav-chevron"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg></span>
             </a>
         </nav>
+
+        <!-- Ending mark -->
+        <div class="ending-mark" aria-hidden="true">
+            <svg viewBox="-2 6 92 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs><linearGradient id="ending-grad" x1="1.75" y1="57.46" x2="41.5" y2="17.7" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="currentColor"/><stop offset="1" stop-color="currentColor" stop-opacity=".3"/></linearGradient></defs>
+                <circle cx="79.19" cy="52.77" r="6.43" fill="currentColor"/>
+                <path fill-rule="evenodd" d="M83.75,11.84c2.51,2.51,2.51,6.58,0,9.09l-36.39,36.39c-2.51,2.51-6.59,2.51-9.1,0s-2.51-6.59,0-9.09L74.65,11.84c2.51-2.51,6.58-2.51,9.09,0Z" fill="currentColor"/>
+                <circle cx="42.81" cy="16.39" r="6.43" fill="currentColor"/>
+                <path fill-rule="evenodd" d="M1.88,57.31c-2.51-2.51-2.51-6.58,0-9.09L38.27,11.84l9.09,9.09L10.98,57.32c-2.51,2.51-6.59,2.51-9.1,0h0Z" fill="url(#ending-grad)"/>
+            </svg>
+        </div>
     </main>
 
     <script data-signature src="../../shared/farkas-animation.js"></script>

@@ -28,6 +28,7 @@ body::before {
 .back {
     display: inline-flex;
     align-items: center;
+    gap: 0.35rem;
     width: fit-content;
     font-family: var(--font-mono);
     font-size: var(--text-caption);
@@ -38,6 +39,15 @@ body::before {
     letter-spacing: 0.04em;
     transition: color 0.15s ease;
     margin-bottom: 0.75rem;
+}
+.back svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+}
+.back:hover svg {
+    transform: translateX(-2px);
 }
 
 .back:hover {

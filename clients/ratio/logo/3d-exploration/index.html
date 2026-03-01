@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Mark Has Depth — Ratio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Inter:wght@400;500;600&display=swap">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #0B1C21;
+            color: #EEF5F7;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 3rem 2.5rem 1.5rem;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .header a { pointer-events: auto; }
+        nav { margin-bottom: 2rem; }
+        nav a {
+            font-size: 0.6rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #548D9A;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+        nav a:hover { color: #CA67FF; }
+        h1 {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #548D9A;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle {
+            font-size: 0.6rem;
+            color: #3A6B75;
+            margin-bottom: 0;
+        }
+
+        .scroll-stage {
+            position: relative;
+            height: 500vh;
+        }
+        .hero {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+        }
+        .hero canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Scroll indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 2.8rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            pointer-events: none;
+            opacity: 0;
+            animation: hintEnter 1s ease 1.8s forwards;
+        }
+        .scroll-hint.hidden {
+            opacity: 0 !important;
+            transition: opacity 0.5s ease;
+        }
+        .scroll-hint-label {
+            font-size: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #3A6B75;
+        }
+        .scroll-hint-chevron {
+            width: 14px;
+            height: 14px;
+            border-right: 1.5px solid #3A6B75;
+            border-bottom: 1.5px solid #3A6B75;
+            transform: rotate(45deg);
+            animation: chevronBob 2s ease-in-out infinite;
+        }
+        @keyframes hintEnter {
+            from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+            to   { opacity: 0.7; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes chevronBob {
+            0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+            50%      { transform: rotate(45deg) translateY(3px); opacity: 0.4; }
+        }
+
+        /* Wordmark overlay */
+        .wordmark-overlay {
+            position: absolute;
+            pointer-events: none;
+            opacity: 0;
+        }
+        .wordmark-overlay svg {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="scroll-stage" id="scroll-stage">
+        <div class="hero" id="hero">
+            <div class="header" id="header">
+                <nav><a href="../">&larr; Logo</a></nav>
+                <h1>The Mark Has Depth</h1>
+                <p class="subtitle">Four squares become four cubes — scroll to reveal the third dimension</p>
+            </div>
+            <div class="scroll-hint" id="scroll-hint">
+                <span class="scroll-hint-label">Scroll</span>
+                <div class="scroll-hint-chevron"></div>
+            </div>
+            <div class="wordmark-overlay" id="wordmark">
+                <svg viewBox="0 0 620 201" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M273.121 180.518C268.452 186.303 262.433 191.008 255.14 194.555C241.094 201.497 217.478 201.767 202.198 194.71C194.249 191.239 187.342 186.496 181.554 180.402C175.765 174.309 171.212 167.021 167.932 158.498C161.45 142.031 161.295 119.626 167.932 103.197C171.212 94.8675 175.765 87.656 181.554 81.5629C187.342 75.4698 194.249 70.8035 202.198 67.5256C217.478 60.854 241.094 61.0083 255.14 67.7955C262.433 71.2663 268.414 75.9711 273.121 81.9871L275.089 65.4431H304.57V197.101H275.63L273.083 180.557L273.121 180.518ZM249.236 168.293C254.098 166.134 258.265 163.241 261.738 159.578C265.211 155.914 267.873 151.634 269.726 146.659C273.43 136.979 273.507 124.716 269.726 115.075C267.835 110.216 265.172 106.012 261.738 102.426C258.265 98.8781 254.098 96.063 249.236 94.0191C239.898 89.9699 226.739 89.8542 217.478 94.0191C212.809 96.063 208.758 98.8781 205.401 102.426C202.043 105.974 199.419 110.177 197.529 115.075C193.747 124.716 193.824 136.979 197.529 146.659C199.381 151.634 202.005 155.914 205.401 159.578C208.758 163.241 212.809 166.134 217.478 168.293C226.739 172.651 239.859 172.535 249.236 168.293Z" fill="white"/>
+                    <path d="M319.773 65.4046H340.842V28.923L372.291 20.8246V65.4046H413.309V92.3608H372.291V148.24C372.291 157.033 374.876 163.087 380.008 166.327C386.105 170.414 396.099 171.957 404.743 170.954C406.518 170.761 408.138 170.492 409.643 170.106V198.18C407.212 198.759 404.434 199.222 401.347 199.569C391.122 200.841 380.24 199.916 371.288 197.178C364.843 195.211 359.364 192.165 354.849 188.038C350.373 183.912 346.785 178.667 344.161 172.304C341.537 165.941 340.225 158.382 340.225 149.551V92.2837H319.735V65.3274L319.773 65.4046Z" fill="white"/>
+                    <path d="M437.002 39.8752C434.648 38.9496 432.641 37.5999 430.982 35.7874C429.284 34.0135 427.934 31.9696 426.892 29.6172C424.885 25.0666 424.808 19.0892 426.892 14.4615C427.934 12.1091 429.284 10.1038 430.982 8.44552C432.68 6.7487 434.686 5.39896 437.002 4.35773C441.555 2.31384 447.883 2.31384 452.437 4.35773C454.79 5.39896 456.836 6.7487 458.611 8.44552C460.386 10.1423 461.736 12.1477 462.701 14.4615C464.592 19.0892 464.553 25.0666 462.701 29.6172C461.775 31.9696 460.386 34.0135 458.611 35.7874C456.836 37.5613 454.79 38.9111 452.437 39.8752C447.883 41.7648 441.555 41.7648 437.002 39.8752ZM428.435 197.062V65.4046H460.733V197.062H428.435Z" fill="white"/>
+                    <path d="M483.77 104.161C487.32 95.7545 492.259 88.5044 498.51 82.4113C504.8 76.3182 512.209 71.4977 520.852 67.9498C537.638 60.8926 560.443 60.8154 577.305 67.9498C585.91 71.4977 593.358 76.3182 599.647 82.4113C605.937 88.5044 610.838 95.7545 614.388 104.161C621.488 120.59 621.527 142.108 614.388 158.498C610.838 166.828 605.899 174.078 599.647 180.248C593.358 186.418 585.91 191.239 577.305 194.71C560.443 201.651 537.638 201.613 520.852 194.71C512.247 191.239 504.8 186.418 498.51 180.248C492.22 174.078 487.32 166.828 483.77 158.498C476.631 142.108 476.67 120.628 483.77 104.161ZM564.803 167.599C569.588 165.555 573.64 162.779 577.035 159.308C580.392 155.837 583.094 151.672 585.023 146.813C588.997 137.211 588.92 125.179 585.023 115.653C583.055 110.794 580.392 106.63 577.035 103.159C573.678 99.688 569.588 96.9499 564.803 94.8675C555.426 90.7026 542.615 90.7797 533.354 94.8675C528.57 96.9114 524.518 99.688 521.122 103.159C517.765 106.63 515.064 110.794 513.135 115.653C509.237 125.179 509.16 137.211 513.135 146.813C515.103 151.672 517.765 155.837 521.122 159.308C524.479 162.779 528.57 165.517 533.354 167.599C542.615 171.687 555.465 171.764 564.803 167.599Z" fill="white"/>
+                    <path d="M126.296 130.809C130.811 127.955 134.979 124.639 138.683 120.705C144.587 114.458 149.179 107.015 152.42 98.3768C158.903 81.4858 158.941 58.9258 152.266 42.0733C148.909 33.435 144.317 25.9921 138.413 19.7448C132.509 13.4974 125.525 8.63834 117.537 5.16758C109.549 1.73538 100.867 0 91.5292 0H0V197.101H33.9954V140.797H91.5292C92.1852 140.797 92.8412 140.72 93.4972 140.72L125.911 197.139H165.231L126.296 130.809ZM33.9954 29.5015H87.4389C92.2623 29.5015 96.8928 30.3884 101.292 32.0853C105.729 33.8206 109.588 36.5587 112.907 40.2608C116.225 43.963 118.888 48.3593 120.894 53.4497C124.83 63.1679 124.907 77.2437 121.203 87.2704C119.389 92.3608 116.881 96.7957 113.678 100.652C110.476 104.508 106.655 107.401 102.218 109.368C97.7803 111.334 92.8797 112.337 87.4389 112.337H33.9954V29.5015Z" fill="white"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+    var ICON = {
+        W: 336, H: 196,
+        cubes: [
+            { id: 'xl', x: 0,   y: 0,   s: 196 },
+            { id: 'lg', x: 224, y: 0,   s: 112 },
+            { id: 'sm', x: 224, y: 168, s: 28  },
+            { id: 'md', x: 280, y: 140, s: 56  },
+        ]
+    };
+
+    var PURPLE = {
+        main:  0x850DBD,
+        light: 0xBE0AFF,
+        pale:  0xCA67FF,
+        dark:  0x5A0084,
+        deep:  0x14001D,
+    };
+
+    function createScene(container, opts) {
+        opts = opts || {};
+        var bgColor = opts.bgColor !== undefined ? opts.bgColor : 0x0B1C21;
+        var depthScale = opts.depthScale !== undefined ? opts.depthScale : 1;
+
+        var renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(bgColor, 1);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        var scene = new THREE.Scene();
+        var aspect = container.clientWidth / container.clientHeight;
+        var camera = new THREE.PerspectiveCamera(10, aspect, 1, 120000);
+        camera.position.set(0, 0, 2400);
+        camera.lookAt(0, 0, 0);
+
+        var group = new THREE.Group();
+        scene.add(group);
+
+        var ambient = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambient);
+        var keyLight = new THREE.DirectionalLight(0xffffff, 1.4);
+        keyLight.position.set(-200, 300, 400);
+        scene.add(keyLight);
+        var fillLight = new THREE.DirectionalLight(0xCA67FF, 0.3);
+        fillLight.position.set(200, -100, 200);
+        scene.add(fillLight);
+        var rimLight = new THREE.DirectionalLight(0xBE0AFF, 0.2);
+        rimLight.position.set(0, 0, -400);
+        scene.add(rimLight);
+
+        var meshes = {};
+        ICON.cubes.forEach(function(c) {
+            var depth = c.s * depthScale;
+            var geo = new THREE.BoxGeometry(c.s, c.s, depth);
+            var mat = new THREE.MeshStandardMaterial({
+                color: PURPLE.main, roughness: 0.35, metalness: 0.1,
+            });
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(
+                c.x + c.s / 2 - ICON.W / 2,
+                -(c.y + c.s / 2 - ICON.H / 2),
+                -depth / 2
+            );
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            group.add(mesh);
+            meshes[c.id] = mesh;
+        });
+
+        function resize() {
+            var w = container.clientWidth;
+            var h = container.clientHeight;
+            renderer.setSize(w, h);
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+        }
+        resize();
+        new ResizeObserver(resize).observe(container);
+
+        return {
+            renderer: renderer, scene: scene, camera: camera,
+            group: group, meshes: meshes,
+            lights: { ambient: ambient, key: keyLight, fill: fillLight, rim: rimLight }
+        };
+    }
+
+    function lerp(a, b, t) { return a + (b - a) * t; }
+    function smoothstep(edge0, edge1, x) {
+        var t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+        return t * t * (3 - 2 * t);
+    }
+
+    // ════════════════════════════════════════════════
+    // Scroll-driven hero
+    // ════════════════════════════════════════════════
+    (function() {
+        var container = document.getElementById('hero');
+        var s = createScene(container, { depthScale: 1 });
+
+        var GROUP_Y_HOME = 50;
+        s.group.position.y = GROUP_Y_HOME;
+
+        var MIN_FOV = 0.5;
+        var MAX_FOV = 30;
+        var FRAME_HEIGHT = 700;
+
+        var hintEl = document.getElementById('scroll-hint');
+        var wordmarkEl = document.getElementById('wordmark');
+        var stage = document.getElementById('scroll-stage');
+        var header = document.getElementById('header');
+
+        // Home positions
+        var homePos = {};
+        var ids = ['xl', 'lg', 'sm', 'md'];
+        for (var i = 0; i < ids.length; i++) {
+            var id = ids[i];
+            homePos[id] = {
+                x: s.meshes[id].position.x,
+                y: s.meshes[id].position.y,
+                z: s.meshes[id].position.z
+            };
+        }
+
+        // XL centering offset for box logo
+        var xlCenterOffset = { x: -homePos.xl.x, y: -homePos.xl.y };
+
+        // Scatter offsets (mid-scroll chaos)
+        var scatter = {
+            xl: { x: -250, y: 130,  z: -100 },
+            lg: { x: 200,  y: 300,  z: 150  },
+            sm: { x: -300, y: -200, z: 250  },
+            md: { x: 300,  y: -300, z: -200 }
+        };
+        // Individual spins
+        var spins = {
+            xl: { x: 0.3,  y: 0.5,  z: 0.1  },
+            lg: { x: -0.6, y: 0.3,  z: -0.4 },
+            sm: { x: 0.8,  y: -0.7, z: 0.9  },
+            md: { x: -0.4, y: 0.8,  z: -0.5 }
+        };
+
+        // Per-cube chaos colors from the purple scale
+        var baseColor = new THREE.Color(0x850DBD);
+        var chaosColors = {
+            xl: new THREE.Color(0x850DBD),
+            lg: new THREE.Color(0xBE0AFF),
+            sm: new THREE.Color(0x5A0084),
+            md: new THREE.Color(0xCA67FF)
+        };
+
+        // Entrance animation state
+        var loadTime = performance.now();
+        var ENTRANCE_DELAY = 400;
+        var ENTRANCE_DURATION = 1200;
+        var entranceStagger = [0, 120, 200, 60]; // xl, lg, sm, md
+
+        var scrollProgress = 0;
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            var elapsed = performance.now() - loadTime;
+
+            // ── Entrance fade ──
+            var entranceAlphas = [];
+            for (var ei = 0; ei < ids.length; ei++) {
+                var eStart = ENTRANCE_DELAY + entranceStagger[ei];
+                var eT = Math.max(0, Math.min(1, (elapsed - eStart) / ENTRANCE_DURATION));
+                // Ease out cubic
+                entranceAlphas.push(1 - Math.pow(1 - eT, 3));
+            }
+
+            // ── Scroll progress ──
+            var stageTop = stage.offsetTop;
+            var stageScroll = window.scrollY - stageTop;
+            var stageRunway = stage.offsetHeight - window.innerHeight;
+            var rawProgress = stageRunway > 0 ? Math.max(0, Math.min(1, stageScroll / stageRunway)) : 0;
+            scrollProgress += (rawProgress - scrollProgress) * 0.08;
+
+            // Hide scroll hint
+            if (scrollProgress > 0.015 && !hintEl.classList.contains('hidden')) {
+                hintEl.classList.add('hidden');
+            }
+
+            // ── SCROLL PHASES ──
+            // Phase 1: 0.0–0.4  Icon → chaos (rotate out, scatter, spin)
+            // Phase 2: 0.4–0.6  Full chaos
+            // Phase 3: 0.6–1.0  XL returns, others vanish, wordmark appears
+
+            // Group rotation: full 360° arc
+            var rotY, rotX;
+            if (scrollProgress < 0.6) {
+                var rt = scrollProgress / 0.6;
+                rotY = rt * Math.PI * 1.1;
+                rotX = rt * -0.3;
+            } else {
+                var rt = (scrollProgress - 0.6) / 0.4;
+                rotY = Math.PI * 1.1 + rt * (Math.PI * 2 - Math.PI * 1.1);
+                rotX = -0.3 * (1 - rt);
+            }
+            // Snap to exactly 0 at end
+            if (scrollProgress > 0.97) {
+                var snap = smoothstep(0.97, 1.0, scrollProgress);
+                rotY = lerp(rotY, Math.PI * 2, snap);
+                rotX = lerp(rotX, 0, snap);
+            }
+            s.group.rotation.x = rotX;
+            s.group.rotation.y = rotY % (Math.PI * 2);
+
+            // Group Y: transition to slightly above center in Phase 3 for balanced lockup
+            var groupYT = smoothstep(0.7, 0.95, scrollProgress);
+            s.group.position.y = lerp(GROUP_Y_HOME, 0, groupYT);
+
+            // FOV blend: ortho at start AND end, perspective in middle
+            var fovT;
+            if (scrollProgress < 0.08) {
+                fovT = smoothstep(0, 0.08, scrollProgress);
+            } else if (scrollProgress > 0.85) {
+                fovT = 1 - smoothstep(0.85, 1.0, scrollProgress);
+            } else {
+                fovT = 1;
+            }
+            var fov = lerp(MIN_FOV, MAX_FOV, fovT);
+            var dist = FRAME_HEIGHT / (2 * Math.tan(fov * Math.PI / 360));
+            s.camera.fov = fov;
+            s.camera.position.z = dist;
+            s.camera.updateProjectionMatrix();
+
+            // Scatter: bell curve — out during middle, back at end
+            var scatterOut = smoothstep(0.02, 0.35, scrollProgress);
+            var scatterBack = smoothstep(0.6, 0.95, scrollProgress);
+            var scatterT = scatterOut * (1 - scatterBack);
+
+            // Phase 3: XL centers + scales for box logo
+            var xlCenter = smoothstep(0.7, 0.95, scrollProgress);
+            var xlScale = 1 + smoothstep(0.75, 0.95, scrollProgress) * 0.35;
+
+            for (var i = 0; i < ids.length; i++) {
+                var cid = ids[i];
+                var mesh = s.meshes[cid];
+                var eAlpha = entranceAlphas[i];
+
+                if (cid === 'xl') {
+                    mesh.position.x = homePos.xl.x + scatter.xl.x * scatterT + xlCenterOffset.x * xlCenter;
+                    mesh.position.y = homePos.xl.y + scatter.xl.y * scatterT + xlCenterOffset.y * xlCenter;
+                    mesh.position.z = homePos.xl.z + scatter.xl.z * scatterT;
+                    mesh.rotation.x = spins.xl.x * scatterT * Math.PI;
+                    mesh.rotation.y = spins.xl.y * scatterT * Math.PI;
+                    mesh.rotation.z = spins.xl.z * scatterT * Math.PI;
+                    mesh.scale.setScalar(xlScale);
+                    mesh.material.opacity = eAlpha;
+                    mesh.material.transparent = eAlpha < 1;
+                } else {
+                    var vanish = smoothstep(0.6, 0.85, scrollProgress);
+                    var extraDrift = 1 + vanish * 2;
+                    mesh.position.x = homePos[cid].x + scatter[cid].x * scatterT * extraDrift;
+                    mesh.position.y = homePos[cid].y + scatter[cid].y * scatterT * extraDrift;
+                    mesh.position.z = homePos[cid].z + scatter[cid].z * scatterT * extraDrift;
+                    mesh.rotation.x = spins[cid].x * scatterT * Math.PI;
+                    mesh.rotation.y = spins[cid].y * scatterT * Math.PI;
+                    mesh.rotation.z = spins[cid].z * scatterT * Math.PI;
+                    mesh.scale.setScalar((1 - vanish) * eAlpha);
+                    mesh.material.opacity = eAlpha;
+                    mesh.material.transparent = eAlpha < 1 || vanish > 0;
+                }
+
+                // Color: uniform #850DBD at rest → unique purple during chaos
+                mesh.material.color.copy(baseColor).lerp(chaosColors[cid], scatterT);
+            }
+
+            // ── Lighting: flat at start → dramatic during chaos → flat at end ──
+            var lightsIn = smoothstep(0.02, 0.15, scrollProgress);
+            var lightsOut = smoothstep(0.7, 0.95, scrollProgress);
+            var lightT = lightsIn * (1 - lightsOut);
+            s.lights.key.intensity = 1.4 * lightT;
+            s.lights.fill.intensity = 0.3 * lightT;
+            s.lights.rim.intensity = 0.2 * lightT;
+            s.lights.ambient.intensity = lerp(1.0, 0.5, lightT);
+
+            var heroW = container.clientWidth;
+            var heroH = container.clientHeight;
+            var cubeScreenH = (196 * xlScale / FRAME_HEIGHT) * heroH;
+            var groupOffsetPx = (s.group.position.y / FRAME_HEIGHT) * heroH;
+            var cubeCenterX = heroW / 2 + s.meshes.xl.position.x / FRAME_HEIGHT * heroH;
+            var cubeCenterY = heroH / 2 - groupOffsetPx - s.meshes.xl.position.y / FRAME_HEIGHT * heroH;
+
+            // ~72% of cube width, optically centered on cube
+            var wmWidth = cubeScreenH * 0.72;
+            var wmHeight = wmWidth * (201 / 620);
+            var wmLeft = cubeCenterX - wmWidth / 2 + cubeScreenH * 0.015;
+            var wmTop = cubeCenterY - wmHeight / 2 + cubeScreenH * 0.02;
+            wordmarkEl.style.width = wmWidth + 'px';
+            wordmarkEl.style.left = wmLeft + 'px';
+            wordmarkEl.style.top = wmTop + 'px';
+
+            // ── Header fade ──
+            var headerFade = 1 - smoothstep(0.65, 0.8, scrollProgress);
+            header.style.opacity = headerFade;
+
+            // ── Background: dark → white ──
+            var bgT = smoothstep(0.75, 0.95, scrollProgress);
+            var bgR = Math.round(lerp(11, 255, bgT));
+            var bgG = Math.round(lerp(28, 255, bgT));
+            var bgB = Math.round(lerp(33, 255, bgT));
+            var bgHex = (bgR << 16) | (bgG << 8) | bgB;
+            s.renderer.setClearColor(bgHex, 1);
+            document.body.style.background = 'rgb(' + bgR + ',' + bgG + ',' + bgB + ')';
+
+            // Wordmark: hidden until mid-chaos, fades in, then knockout takes over
+            var wmOpacity = smoothstep(0.5, 0.65, scrollProgress);
+            wordmarkEl.style.opacity = wmOpacity;
+            var wmFill = 'rgb(' + bgR + ',' + bgG + ',' + bgB + ')';
+            var wmPaths = wordmarkEl.querySelectorAll('path');
+            for (var wi = 0; wi < wmPaths.length; wi++) {
+                wmPaths[wi].setAttribute('fill', wmFill);
+            }
+
+            s.renderer.render(s.scene, s.camera);
+        }
+        animate();
+    })();
+
+    </script>
+</body>
+</html>

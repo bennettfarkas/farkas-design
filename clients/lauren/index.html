@@ -275,10 +275,6 @@
                 var drawW = img.naturalWidth * layer.scale;
                 var drawH = img.naturalHeight * layer.scale;
 
-                if (layer.scale * scaleMultiplier > 1.5) {
-                    ctx.filter = 'blur(' + (layer.scale * scaleMultiplier * 0.7).toFixed(1) + 'px)';
-                }
-
                 if (layer.rotation) {
                     var cx = layer.x + drawW / 2;
                     var cy = layer.y + drawH / 2;

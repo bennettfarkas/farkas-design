@@ -98,7 +98,6 @@
 
         var layers = [];
         var images = {};
-        var transparentImages = {};
         var processedCanvases = {};
 
         // Viewport (current + animation targets)
@@ -157,12 +156,7 @@
                 return cached.canvas;
             }
 
-            var srcImg;
-            if (layer.bgMode === 'ai' && transparentImages[layer.id]) {
-                srcImg = transparentImages[layer.id];
-            } else {
-                srcImg = images[layer.id];
-            }
+            var srcImg = images[layer.id];
             if (!srcImg) return null;
 
             var w = srcImg.naturalWidth, h = srcImg.naturalHeight;
@@ -237,8 +231,9 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
-            var centerX = CANVAS_W / 2;
-            var centerY = CANVAS_H / 2;
+            // Perspective anchor = viewport center in canvas coordinates
+            var centerX = (window.innerWidth / 2 - homeX) / viewZoom;
+            var centerY = (window.innerHeight / 2 - homeY) / viewZoom;
 
             // Pan offset in canvas units — closer layers shift more
             var panCX = (viewX - homeX) / viewZoom;
@@ -257,7 +252,7 @@
                 var processed = getProcessedCanvas(layer);
                 if (!processed) continue;
 
-                var img = images[layer.id] || transparentImages[layer.id];
+                var img = images[layer.id];
                 if (!img) continue;
 
                 // Perspective: closer layers scale up, normalized so
@@ -496,18 +491,6 @@
                 });
 
                 Promise.all(promises).then(function() {
-                    // Load transparent PNGs in background for ai-mode layers (non-uploaded only)
-                    layers.forEach(function(layer) {
-                        if (layer.uploaded) return;
-                        var pngName = layer.filename.replace('.jpg', '.png');
-                        var img = new Image();
-                        img.onload = function() {
-                            transparentImages[layer.id] = img;
-                            delete processedCanvases[layer.id];
-                        };
-                        img.src = 'transparent/' + pngName;
-                    });
-
                     // Prepare dive-sorted layers and start
                     diveSorted = layers.filter(function(l) { return l.visible; })
                         .sort(function(a, b) { return b.zIndex - a.zIndex; });

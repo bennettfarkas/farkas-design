@@ -304,12 +304,18 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
+            var centerX = CANVAS_W / 2;
+            var centerY = CANVAS_H / 2;
+
             // Draw back-to-front (diveSorted is top-first, so reverse)
             for (var i = diveSorted.length - 1; i >= 0; i--) {
                 var layer = diveSorted[i];
-                var phase = scrollProgress - i;
 
-                if (phase >= 1) continue; // fully passed
+                // Each layer sits at depth (i+1). Camera at scrollProgress.
+                var layerZ = i + 1;
+                var relZ = layerZ - scrollProgress;
+
+                if (relZ <= 0.05) continue; // behind camera
 
                 var processed = getProcessedCanvas(layer);
                 if (!processed) continue;
@@ -317,35 +323,38 @@
                 var img = images[layer.id] || transparentImages[layer.id];
                 if (!img) continue;
 
-                ctx.save();
-                var layerOpacity = layer.opacity;
-                var extraScale = 1;
+                // Perspective: closer layers scale up, normalized so
+                // at scroll=0 every layer has scaleMultiplier=1
+                var scaleMultiplier = layerZ / relZ;
 
-                if (phase > 0 && phase < 1) {
-                    layerOpacity *= (1 - phase);
-                    extraScale = 1 + phase * 1.5;
+                var opacity = layer.opacity;
+                if (relZ < 0.4) {
+                    opacity *= relZ / 0.4;
                 }
 
-                ctx.globalAlpha = layerOpacity;
-                var origW = img.naturalWidth * layer.scale;
-                var origH = img.naturalHeight * layer.scale;
-                var drawW = origW * extraScale;
-                var drawH = origH * extraScale;
-                var offsetX = layer.x - (drawW - origW) / 2;
-                var offsetY = layer.y - (drawH - origH) / 2;
+                ctx.save();
+                ctx.globalAlpha = opacity;
 
-                if (layer.scale * extraScale > 1.5) {
-                    ctx.filter = 'blur(' + (layer.scale * extraScale * 0.7).toFixed(1) + 'px)';
+                // Apply perspective zoom from composition center
+                ctx.translate(centerX, centerY);
+                ctx.scale(scaleMultiplier, scaleMultiplier);
+                ctx.translate(-centerX, -centerY);
+
+                var drawW = img.naturalWidth * layer.scale;
+                var drawH = img.naturalHeight * layer.scale;
+
+                if (layer.scale * scaleMultiplier > 1.5) {
+                    ctx.filter = 'blur(' + (layer.scale * scaleMultiplier * 0.7).toFixed(1) + 'px)';
                 }
 
                 if (layer.rotation) {
-                    var cx = layer.x + origW / 2;
-                    var cy = layer.y + origH / 2;
+                    var cx = layer.x + drawW / 2;
+                    var cy = layer.y + drawH / 2;
                     ctx.translate(cx, cy);
                     ctx.rotate(layer.rotation * Math.PI / 180);
                     ctx.drawImage(processed, -drawW / 2, -drawH / 2, drawW, drawH);
                 } else {
-                    ctx.drawImage(processed, offsetX, offsetY, drawW, drawH);
+                    ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
                 }
                 ctx.restore();
             }

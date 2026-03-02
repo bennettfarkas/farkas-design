@@ -129,6 +129,14 @@
             background: #252525; color: #ddd; font-size: 12px;
         }
         .inspector-select select:focus { border-color: #4a9eff; outline: none; }
+        .inspector-btn {
+            width: 100%; padding: 5px 0; margin-top: 2px;
+            border: 1px solid #444; border-radius: 4px;
+            background: #2a2a2a; color: #ccc; cursor: pointer; font-size: 11px;
+            text-align: center;
+        }
+        .inspector-btn:hover { background: #333; border-color: #555; }
+        .inspector-btn.processing { color: #888; cursor: wait; }
         .inspector::-webkit-scrollbar { width: 6px; }
         .inspector::-webkit-scrollbar-track { background: transparent; }
         .inspector::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -244,8 +252,52 @@
     var layers = [];
     var selectedLayerId = null;
     var images = {};           // id -> HTMLImageElement (original JPEGs)
-    var transparentImages = {}; // id -> HTMLImageElement (pre-processed PNGs)
+    var aiProcessedImages = {}; // id -> HTMLImageElement (AI-removed result, cached per session)
+    var aiProcessing = {};      // id -> true (flag while processing)
     var processedCanvases = {}; // id -> { canvas, threshold, bgMode, feather }
+
+    // Lazy-load @imgly/background-removal from CDN
+    var removeBgLib = null;
+    function loadRemoveBg() {
+        if (removeBgLib) return Promise.resolve(removeBgLib);
+        return import('https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.5.11/+esm')
+            .then(function(mod) { removeBgLib = mod; return mod; });
+    }
+
+    function processAiRemoval(layer, callback) {
+        if (aiProcessing[layer.id]) return;
+        aiProcessing[layer.id] = true;
+        updateInspector();
+
+        var srcImg = images[layer.id];
+        if (!srcImg) { delete aiProcessing[layer.id]; return; }
+
+        // Convert source image to blob
+        var offscreen = document.createElement('canvas');
+        offscreen.width = srcImg.naturalWidth;
+        offscreen.height = srcImg.naturalHeight;
+        offscreen.getContext('2d').drawImage(srcImg, 0, 0);
+        offscreen.toBlob(function(blob) {
+            loadRemoveBg().then(function(mod) {
+                return mod.removeBackground(blob);
+            }).then(function(resultBlob) {
+                var url = URL.createObjectURL(resultBlob);
+                var img = new Image();
+                img.onload = function() {
+                    aiProcessedImages[layer.id] = img;
+                    delete aiProcessing[layer.id];
+                    invalidateProcessedCanvas(layer.id);
+                    updateInspector();
+                    if (callback) callback();
+                };
+                img.src = url;
+            }).catch(function(err) {
+                console.error('AI background removal failed:', err);
+                delete aiProcessing[layer.id];
+                updateInspector();
+            });
+        }, 'image/png');
+    }
     var thumbnails = {};       // id -> data URL string
 
     // Viewport
@@ -394,19 +446,7 @@
             });
         });
 
-        return Promise.all(promises).then(function() {
-            // Load transparent PNGs in background for ai mode (non-uploaded only)
-            layers.forEach(function(layer) {
-                if (layer.uploaded) return;
-                var pngName = layer.filename.replace('.jpg', '.png');
-                var img = new Image();
-                img.onload = function() {
-                    transparentImages[layer.id] = img;
-                    invalidateProcessedCanvas(layer.id);
-                };
-                img.src = 'transparent/' + pngName;
-            });
-        });
+        return Promise.all(promises);
     }
 
     // ==========================================================================
@@ -419,8 +459,8 @@
         }
 
         var srcImg;
-        if (layer.bgMode === 'ai' && transparentImages[layer.id]) {
-            srcImg = transparentImages[layer.id];
+        if (layer.bgMode === 'ai' && aiProcessedImages[layer.id]) {
+            srcImg = aiProcessedImages[layer.id];
         } else {
             srcImg = images[layer.id];
         }
@@ -528,7 +568,7 @@
             var processed = getProcessedCanvas(layer);
             if (!processed) continue;
 
-            var img = images[layer.id] || transparentImages[layer.id];
+            var img = images[layer.id] || aiProcessedImages[layer.id];
             if (!img) continue;
 
             ctx.save();
@@ -812,7 +852,8 @@
         pushUndo();
         layers.splice(idx, 1);
         delete images[id];
-        delete transparentImages[id];
+        delete aiProcessedImages[id];
+        delete aiProcessing[id];
         delete processedCanvases[id];
         delete thumbnails[id];
         if (selectedLayerId === id) selectedLayerId = null;
@@ -886,7 +927,7 @@
         var background = makeInspectorGroup('Background');
         var bgModes = [
             { value: 'threshold', label: 'Color Match' },
-            { value: 'ai', label: 'Auto Remove' },
+            { value: 'ai', label: 'AI Remove' },
             { value: 'none', label: 'Original' }
         ];
         var selectRow = document.createElement('div');
@@ -916,6 +957,27 @@
                 layer.threshold = v;
                 invalidateProcessedCanvas(layer.id);
             }));
+        } else if (layer.bgMode === 'ai') {
+            var btn = document.createElement('button');
+            btn.className = 'inspector-btn';
+            if (aiProcessing[layer.id]) {
+                btn.textContent = 'Removing\u2026';
+                btn.classList.add('processing');
+                btn.disabled = true;
+            } else if (aiProcessedImages[layer.id]) {
+                btn.textContent = 'Re-process';
+                btn.addEventListener('click', function() {
+                    delete aiProcessedImages[layer.id];
+                    invalidateProcessedCanvas(layer.id);
+                    processAiRemoval(layer);
+                });
+            } else {
+                btn.textContent = 'Remove Background';
+                btn.addEventListener('click', function() {
+                    processAiRemoval(layer);
+                });
+            }
+            background.appendChild(btn);
         }
         inspector.appendChild(background);
     }
@@ -1261,18 +1323,6 @@
                         if (loaded === toLoad.length) { buildLayerList(); updateInspector(); }
                     };
                     img.src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
-                });
-
-                // Also load transparent PNGs for non-uploaded layers
-                toLoad.forEach(function(layer) {
-                    if (layer.uploaded) return;
-                    var pngName = layer.filename.replace('.jpg', '.png');
-                    var tImg = new Image();
-                    tImg.onload = function() {
-                        transparentImages[layer.id] = tImg;
-                        delete processedCanvases[layer.id];
-                    };
-                    tImg.src = 'transparent/' + pngName;
                 });
 
                 buildLayerList();

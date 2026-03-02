@@ -47,9 +47,8 @@
         .dive-track {
             position: fixed; top: 40px; bottom: 40px; right: 12px; width: 3px;
             background: rgba(0,0,0,0.06); border-radius: 2px; z-index: 10;
-            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+            pointer-events: none;
         }
-        .dive-track.visible { opacity: 1; }
         .dive-pip {
             position: absolute; top: 0; left: -2px; width: 7px; height: 7px;
             background: #5a9; border-radius: 50%;
@@ -66,9 +65,6 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
         }
-
-        canvas.dive-mode { cursor: grab; }
-        canvas.dive-mode.panning { cursor: grabbing; }
     </style>
 </head>
 <body>
@@ -112,18 +108,13 @@
         var isPanning = false;
         var panStartX = 0, panStartY = 0, panStartViewX = 0, panStartViewY = 0;
 
-        // Touch state
-        var lastTouchDist = 0;
-        var lastTouchMidX = 0, lastTouchMidY = 0;
-
-        // Dive mode state
-        var diveMode = false;
+        // Dive state
         var scrollProgress = 0, targetScroll = 0;
         var diveSorted = [], diveLayerCount = 0;
         var SCROLL_LERP = 0.08, SCROLL_SENSITIVITY = 0.003, TOUCH_SENSITIVITY = 0.008;
         var diveTouchLastY = 0;
         var diveHintShown = false;
-        var diveHomeX = 0, diveHomeY = 0;
+        var homeX = 0, homeY = 0;
 
         function resizeCanvas() {
             mainCanvas.width = window.innerWidth * devicePixelRatio;
@@ -138,6 +129,12 @@
             viewZoom = Math.min(scaleX, scaleY) * 0.92;
             viewX = (window.innerWidth - CANVAS_W * viewZoom) / 2;
             viewY = (window.innerHeight - CANVAS_H * viewZoom) / 2;
+        }
+
+        function resetView() {
+            targetScroll = 0;
+            viewX = homeX;
+            viewY = homeY;
         }
 
         // ---- Image processing (same logic as editor) ----
@@ -210,42 +207,8 @@
             return offscreen;
         }
 
-        // ---- Dive mode ----
-        function enterDiveMode() {
-            diveMode = true;
-            diveSorted = layers.filter(function(l) { return l.visible; })
-                .sort(function(a, b) { return b.zIndex - a.zIndex; });
-            diveLayerCount = diveSorted.length;
-            scrollProgress = 0;
-            targetScroll = 0;
-            fitView();
-            diveHomeX = viewX;
-            diveHomeY = viewY;
-            diveTrack.classList.add('visible');
-            mainCanvas.classList.add('dive-mode');
-            diveHintShown = false;
-            diveHint.classList.add('visible');
-        }
-
-        function exitDiveMode() {
-            diveMode = false;
-            diveTrack.classList.remove('visible');
-            diveHint.classList.remove('visible');
-            mainCanvas.classList.remove('dive-mode');
-        }
-
-        function toggleDiveMode() {
-            if (diveMode) exitDiveMode();
-            else enterDiveMode();
-        }
-
-        resetBtn.addEventListener('click', function() {
-            if (diveMode) { targetScroll = 0; viewX = diveHomeX; viewY = diveHomeY; }
-            else fitView();
-        });
-
         // ---- Rendering ----
-        function renderExplore() {
+        function render() {
             var w = mainCanvas.width;
             var h = mainCanvas.height;
             var dpr = devicePixelRatio;
@@ -255,56 +218,8 @@
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, w, h);
 
-            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, viewX * dpr, viewY * dpr);
-
-            // White canvas background
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
-
-            var sorted = layers.slice().sort(function(a, b) { return a.zIndex - b.zIndex; });
-            for (var i = 0; i < sorted.length; i++) {
-                var layer = sorted[i];
-                if (!layer.visible) continue;
-                var processed = getProcessedCanvas(layer);
-                if (!processed) continue;
-
-                var img = images[layer.id] || transparentImages[layer.id];
-                if (!img) continue;
-
-                ctx.save();
-                ctx.globalAlpha = layer.opacity;
-                var drawW = img.naturalWidth * layer.scale;
-                var drawH = img.naturalHeight * layer.scale;
-
-                if (layer.scale > 1.5) {
-                    ctx.filter = 'blur(' + (layer.scale * 0.7).toFixed(1) + 'px)';
-                }
-
-                if (layer.rotation) {
-                    var cx = layer.x + drawW / 2;
-                    var cy = layer.y + drawH / 2;
-                    ctx.translate(cx, cy);
-                    ctx.rotate(layer.rotation * Math.PI / 180);
-                    ctx.drawImage(processed, -drawW / 2, -drawH / 2, drawW, drawH);
-                } else {
-                    ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
-                }
-                ctx.restore();
-            }
-        }
-
-        function renderDive() {
-            var w = mainCanvas.width;
-            var h = mainCanvas.height;
-            var dpr = devicePixelRatio;
-
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
-            ctx.clearRect(0, 0, w, h);
-            ctx.fillStyle = '#ffffff';
-            ctx.fillRect(0, 0, w, h);
-
-            // Base transform uses home position (no user pan)
-            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, diveHomeX * dpr, diveHomeY * dpr);
+            // Base transform uses home position (parallax pan applied per-layer)
+            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, homeX * dpr, homeY * dpr);
 
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
@@ -313,8 +228,8 @@
             var centerY = CANVAS_H / 2;
 
             // Pan offset in canvas units — closer layers shift more
-            var panCX = (viewX - diveHomeX) / viewZoom;
-            var panCY = (viewY - diveHomeY) / viewZoom;
+            var panCX = (viewX - homeX) / viewZoom;
+            var panCY = (viewY - homeY) / viewZoom;
 
             // Draw back-to-front (diveSorted is top-first, so reverse)
             for (var i = diveSorted.length - 1; i >= 0; i--) {
@@ -369,23 +284,17 @@
             }
         }
 
-        function render() {
-            if (diveMode) { renderDive(); return; }
-            renderExplore();
-        }
-
         function renderLoop() {
-            if (diveMode) {
-                scrollProgress += (targetScroll - scrollProgress) * SCROLL_LERP;
-                var maxScroll = diveLayerCount;
-                var pct = maxScroll > 0 ? Math.max(0, Math.min(1, scrollProgress / maxScroll)) : 0;
-                divePip.style.top = (pct * 100) + '%';
+            scrollProgress += (targetScroll - scrollProgress) * SCROLL_LERP;
 
-                if (!diveHintShown && Math.abs(targetScroll) > 0.05) {
-                    diveHintShown = true;
-                    diveHint.classList.remove('visible');
-                }
+            var pct = diveLayerCount > 0 ? Math.max(0, Math.min(1, scrollProgress / diveLayerCount)) : 0;
+            divePip.style.top = (pct * 100) + '%';
+
+            if (!diveHintShown && Math.abs(targetScroll) > 0.05) {
+                diveHintShown = true;
+                diveHint.classList.remove('visible');
             }
+
             render();
             requestAnimationFrame(renderLoop);
         }
@@ -412,70 +321,47 @@
 
         mainCanvas.addEventListener('wheel', function(e) {
             e.preventDefault();
-            if (diveMode) {
-                if (e.ctrlKey) {
-                    // Pinch-to-zoom in dive mode
-                    var mx = e.clientX, my = e.clientY;
-                    var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-                    var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
-                    var r = newZoom / viewZoom;
-                    viewX = mx - (mx - viewX) * r;
-                    viewY = my - (my - viewY) * r;
-                    diveHomeX = mx - (mx - diveHomeX) * r;
-                    diveHomeY = my - (my - diveHomeY) * r;
-                    viewZoom = newZoom;
-                } else {
-                    // Regular scroll drives dive depth
-                    targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + e.deltaY * SCROLL_SENSITIVITY));
-                }
-                return;
+            if (e.ctrlKey) {
+                // Pinch-to-zoom
+                var mx = e.clientX, my = e.clientY;
+                var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+                var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
+                var r = newZoom / viewZoom;
+                viewX = mx - (mx - viewX) * r;
+                viewY = my - (my - viewY) * r;
+                homeX = mx - (mx - homeX) * r;
+                homeY = my - (my - homeY) * r;
+                viewZoom = newZoom;
+            } else {
+                // Scroll drives dive depth
+                targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + e.deltaY * SCROLL_SENSITIVITY));
             }
-            var mx = e.clientX;
-            var my = e.clientY;
-            var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-            var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
-            viewX = mx - (mx - viewX) * (newZoom / viewZoom);
-            viewY = my - (my - viewY) * (newZoom / viewZoom);
-            viewZoom = newZoom;
         }, { passive: false });
 
-        // Touch: pan and pinch-zoom
+        // Touch: single-finger scrolls depth, two-finger pans + zooms
         mainCanvas.addEventListener('touchstart', function(e) {
-            if (diveMode) {
-                if (e.touches.length === 1) {
-                    diveTouchLastY = e.touches[0].clientY;
-                }
-                return;
-            }
             if (e.touches.length === 1) {
-                isPanning = true;
-                panStartX = e.touches[0].clientX;
-                panStartY = e.touches[0].clientY;
-                panStartViewX = viewX;
-                panStartViewY = viewY;
-            } else if (e.touches.length === 2) {
+                diveTouchLastY = e.touches[0].clientY;
                 isPanning = false;
+            } else if (e.touches.length === 2) {
+                isPanning = true;
                 var dx = e.touches[1].clientX - e.touches[0].clientX;
                 var dy = e.touches[1].clientY - e.touches[0].clientY;
                 lastTouchDist = Math.sqrt(dx * dx + dy * dy);
                 lastTouchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
                 lastTouchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                panStartViewX = viewX;
+                panStartViewY = viewY;
             }
         }, { passive: true });
 
         mainCanvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
-            if (diveMode) {
-                if (e.touches.length === 1) {
-                    var deltaY = diveTouchLastY - e.touches[0].clientY;
-                    diveTouchLastY = e.touches[0].clientY;
-                    targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + deltaY * TOUCH_SENSITIVITY));
-                }
-                return;
-            }
-            if (e.touches.length === 1 && isPanning) {
-                viewX = panStartViewX + (e.touches[0].clientX - panStartX);
-                viewY = panStartViewY + (e.touches[0].clientY - panStartY);
+            if (e.touches.length === 1) {
+                // Single finger: scroll dive depth
+                var deltaY = diveTouchLastY - e.touches[0].clientY;
+                diveTouchLastY = e.touches[0].clientY;
+                targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + deltaY * TOUCH_SENSITIVITY));
             } else if (e.touches.length === 2) {
                 var dx = e.touches[1].clientX - e.touches[0].clientX;
                 var dy = e.touches[1].clientY - e.touches[0].clientY;
@@ -486,12 +372,15 @@
                 if (lastTouchDist > 0) {
                     var scale = dist / lastTouchDist;
                     var newZoom = Math.max(0.002, Math.min(10, viewZoom * scale));
-                    viewX = midX - (midX - viewX) * (newZoom / viewZoom);
-                    viewY = midY - (midY - viewY) * (newZoom / viewZoom);
+                    var r = newZoom / viewZoom;
+                    viewX = midX - (midX - viewX) * r;
+                    viewY = midY - (midY - viewY) * r;
+                    homeX = midX - (midX - homeX) * r;
+                    homeY = midY - (midY - homeY) * r;
                     viewZoom = newZoom;
                 }
 
-                // Pan with two fingers
+                // Two-finger pan
                 viewX += midX - lastTouchMidX;
                 viewY += midY - lastTouchMidY;
 
@@ -502,43 +391,37 @@
         }, { passive: false });
 
         mainCanvas.addEventListener('touchend', function() {
-            if (diveMode) { diveTouchLastY = 0; return; }
             isPanning = false;
+            diveTouchLastY = 0;
             lastTouchDist = 0;
         }, { passive: true });
 
-        // Double-click to reset view
-        mainCanvas.addEventListener('dblclick', function() {
-            if (diveMode) { targetScroll = 0; viewX = diveHomeX; viewY = diveHomeY; return; }
-            fitView();
-        });
+        // Double-click to reset
+        mainCanvas.addEventListener('dblclick', resetView);
+
+        // Touch: lastTouchDist for pinch
+        var lastTouchDist = 0;
+        var lastTouchMidX = 0, lastTouchMidY = 0;
+
+        resetBtn.addEventListener('click', resetView);
 
         window.addEventListener('resize', function() {
             resizeCanvas();
-            if (diveMode) {
-                fitView();
-                diveHomeX = viewX;
-                diveHomeY = viewY;
-            }
+            fitView();
+            homeX = viewX;
+            homeY = viewY;
         });
 
         // Keyboard controls
         window.addEventListener('keydown', function(e) {
-            if (e.key === 'j' || e.key === 'J') {
-                toggleDiveMode();
-                return;
-            }
-            if (!diveMode) return;
-            if (e.key === 'Escape') {
-                exitDiveMode();
-            } else if (e.key === 'ArrowDown' || e.key === ' ') {
+            if (e.key === 'ArrowDown' || e.key === ' ') {
                 e.preventDefault();
                 targetScroll = Math.min(diveLayerCount, targetScroll + 0.5);
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 targetScroll = Math.max(0, targetScroll - 0.5);
             } else if (e.key === 'Home') {
-                targetScroll = 0;
+                resetView();
             } else if (e.key === 'End') {
                 targetScroll = diveLayerCount;
             }
@@ -601,8 +484,16 @@
                         img.src = 'transparent/' + pngName;
                     });
 
+                    // Prepare dive-sorted layers and start
+                    diveSorted = layers.filter(function(l) { return l.visible; })
+                        .sort(function(a, b) { return b.zIndex - a.zIndex; });
+                    diveLayerCount = diveSorted.length;
+
                     loadingOverlay.classList.add('hidden');
                     fitView();
+                    homeX = viewX;
+                    homeY = viewY;
+                    diveHint.classList.add('visible');
                     renderLoop();
                 });
             }).catch(function() {

@@ -235,6 +235,7 @@
         if (layer.rotation === undefined) layer.rotation = 0;
         if (layer.feather === undefined) layer.feather = 0;
         if (layer.uploaded === undefined) layer.uploaded = false;
+        if (layer.bgMode === 'ai') layer.bgMode = 'threshold';
     }
     DEFAULT_LAYERS.forEach(ensureLayerDefaults);
 

@@ -33,6 +33,40 @@
             transition: color 0.2s, background 0.2s;
         }
         .edit-link:hover { color: #999; background: rgba(255,255,255,0.1); }
+
+        .mode-toggle {
+            position: fixed; bottom: 16px; right: 70px; z-index: 10;
+            color: #555; font-size: 12px; font-family: inherit;
+            padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.05);
+            border: none; cursor: pointer; transition: color 0.2s, background 0.2s;
+        }
+        .mode-toggle:hover { color: #999; background: rgba(255,255,255,0.1); }
+        .mode-toggle.active { color: #5a9; background: rgba(85,170,153,0.12); }
+
+        .dive-track {
+            position: fixed; top: 40px; bottom: 40px; right: 12px; width: 3px;
+            background: rgba(255,255,255,0.08); border-radius: 2px; z-index: 10;
+            opacity: 0; transition: opacity 0.3s; pointer-events: none;
+        }
+        .dive-track.visible { opacity: 1; }
+        .dive-pip {
+            position: absolute; top: 0; left: -2px; width: 7px; height: 7px;
+            background: #5a9; border-radius: 50%;
+        }
+
+        .dive-hint {
+            position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+            color: #666; font-size: 13px; z-index: 10;
+            opacity: 0; transition: opacity 0.4s; pointer-events: none;
+        }
+        .dive-hint.visible { opacity: 1; }
+        .dive-hint span { animation: hintBounce 2s ease-in-out infinite; display: inline-block; }
+        @keyframes hintBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        canvas.dive-mode { cursor: default; }
     </style>
 </head>
 <body>
@@ -43,6 +77,9 @@
     </div>
 
     <canvas id="mainCanvas"></canvas>
+    <button class="mode-toggle" id="modeToggle">Journey</button>
+    <div class="dive-track" id="diveTrack"><div class="dive-pip" id="divePip"></div></div>
+    <div class="dive-hint" id="diveHint"><span>Scroll to begin</span></div>
     <a class="edit-link" href="/editor">Edit</a>
 
     <script>
@@ -56,6 +93,10 @@
         var loadingOverlay = document.getElementById('loadingOverlay');
         var progressFill = document.getElementById('progressFill');
         var progressText = document.getElementById('progressText');
+        var modeToggle = document.getElementById('modeToggle');
+        var diveTrack = document.getElementById('diveTrack');
+        var divePip = document.getElementById('divePip');
+        var diveHint = document.getElementById('diveHint');
 
         var layers = [];
         var images = {};
@@ -72,6 +113,14 @@
         // Touch state
         var lastTouchDist = 0;
         var lastTouchMidX = 0, lastTouchMidY = 0;
+
+        // Dive mode state
+        var diveMode = false;
+        var scrollProgress = 0, targetScroll = 0;
+        var diveSorted = [], diveLayerCount = 0;
+        var SCROLL_LERP = 0.08, SCROLL_SENSITIVITY = 0.003, TOUCH_SENSITIVITY = 0.008;
+        var diveTouchLastY = 0;
+        var diveHintShown = false;
 
         function resizeCanvas() {
             mainCanvas.width = window.innerWidth * devicePixelRatio;
@@ -158,8 +207,41 @@
             return offscreen;
         }
 
+        // ---- Dive mode ----
+        function enterDiveMode() {
+            diveMode = true;
+            diveSorted = layers.filter(function(l) { return l.visible; })
+                .sort(function(a, b) { return b.zIndex - a.zIndex; });
+            diveLayerCount = diveSorted.length;
+            scrollProgress = 0;
+            targetScroll = 0;
+            fitView();
+            modeToggle.textContent = 'Explore';
+            modeToggle.classList.add('active');
+            diveTrack.classList.add('visible');
+            mainCanvas.classList.add('dive-mode');
+            diveHintShown = false;
+            diveHint.classList.add('visible');
+        }
+
+        function exitDiveMode() {
+            diveMode = false;
+            modeToggle.textContent = 'Journey';
+            modeToggle.classList.remove('active');
+            diveTrack.classList.remove('visible');
+            diveHint.classList.remove('visible');
+            mainCanvas.classList.remove('dive-mode');
+        }
+
+        function toggleDiveMode() {
+            if (diveMode) exitDiveMode();
+            else enterDiveMode();
+        }
+
+        modeToggle.addEventListener('click', toggleDiveMode);
+
         // ---- Rendering ----
-        function render() {
+        function renderExplore() {
             var w = mainCanvas.width;
             var h = mainCanvas.height;
             var dpr = devicePixelRatio;
@@ -207,13 +289,92 @@
             }
         }
 
+        function renderDive() {
+            var w = mainCanvas.width;
+            var h = mainCanvas.height;
+            var dpr = devicePixelRatio;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, viewX * dpr, viewY * dpr);
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+            // Draw back-to-front (diveSorted is top-first, so reverse)
+            for (var i = diveSorted.length - 1; i >= 0; i--) {
+                var layer = diveSorted[i];
+                var phase = scrollProgress - i;
+
+                if (phase >= 1) continue; // fully passed
+
+                var processed = getProcessedCanvas(layer);
+                if (!processed) continue;
+
+                var img = images[layer.id] || transparentImages[layer.id];
+                if (!img) continue;
+
+                ctx.save();
+                var layerOpacity = layer.opacity;
+                var extraScale = 1;
+
+                if (phase > 0 && phase < 1) {
+                    layerOpacity *= (1 - phase);
+                    extraScale = 1 + phase * 1.5;
+                }
+
+                ctx.globalAlpha = layerOpacity;
+                var origW = img.naturalWidth * layer.scale;
+                var origH = img.naturalHeight * layer.scale;
+                var drawW = origW * extraScale;
+                var drawH = origH * extraScale;
+                var offsetX = layer.x - (drawW - origW) / 2;
+                var offsetY = layer.y - (drawH - origH) / 2;
+
+                if (layer.scale * extraScale > 1.5) {
+                    ctx.filter = 'blur(' + (layer.scale * extraScale * 0.7).toFixed(1) + 'px)';
+                }
+
+                if (layer.rotation) {
+                    var cx = layer.x + origW / 2;
+                    var cy = layer.y + origH / 2;
+                    ctx.translate(cx, cy);
+                    ctx.rotate(layer.rotation * Math.PI / 180);
+                    ctx.drawImage(processed, -drawW / 2, -drawH / 2, drawW, drawH);
+                } else {
+                    ctx.drawImage(processed, offsetX, offsetY, drawW, drawH);
+                }
+                ctx.restore();
+            }
+        }
+
+        function render() {
+            if (diveMode) { renderDive(); return; }
+            renderExplore();
+        }
+
         function renderLoop() {
+            if (diveMode) {
+                scrollProgress += (targetScroll - scrollProgress) * SCROLL_LERP;
+                var maxScroll = diveLayerCount;
+                var pct = maxScroll > 0 ? Math.max(0, Math.min(1, scrollProgress / maxScroll)) : 0;
+                divePip.style.top = (pct * 100) + '%';
+
+                if (!diveHintShown && Math.abs(targetScroll) > 0.05) {
+                    diveHintShown = true;
+                    diveHint.classList.remove('visible');
+                }
+            }
             render();
             requestAnimationFrame(renderLoop);
         }
 
         // ---- Interaction ----
         mainCanvas.addEventListener('mousedown', function(e) {
+            if (diveMode) return;
             if (e.button !== 0) return;
             isPanning = true;
             panStartX = e.clientX; panStartY = e.clientY;
@@ -222,6 +383,7 @@
         });
 
         window.addEventListener('mousemove', function(e) {
+            if (diveMode) return;
             if (!isPanning) return;
             viewX = panStartViewX + (e.clientX - panStartX);
             viewY = panStartViewY + (e.clientY - panStartY);
@@ -234,6 +396,10 @@
 
         mainCanvas.addEventListener('wheel', function(e) {
             e.preventDefault();
+            if (diveMode) {
+                targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + e.deltaY * SCROLL_SENSITIVITY));
+                return;
+            }
             var mx = e.clientX;
             var my = e.clientY;
             var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
@@ -245,6 +411,12 @@
 
         // Touch: pan and pinch-zoom
         mainCanvas.addEventListener('touchstart', function(e) {
+            if (diveMode) {
+                if (e.touches.length === 1) {
+                    diveTouchLastY = e.touches[0].clientY;
+                }
+                return;
+            }
             if (e.touches.length === 1) {
                 isPanning = true;
                 panStartX = e.touches[0].clientX;
@@ -263,6 +435,14 @@
 
         mainCanvas.addEventListener('touchmove', function(e) {
             e.preventDefault();
+            if (diveMode) {
+                if (e.touches.length === 1) {
+                    var deltaY = diveTouchLastY - e.touches[0].clientY;
+                    diveTouchLastY = e.touches[0].clientY;
+                    targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + deltaY * TOUCH_SENSITIVITY));
+                }
+                return;
+            }
             if (e.touches.length === 1 && isPanning) {
                 viewX = panStartViewX + (e.touches[0].clientX - panStartX);
                 viewY = panStartViewY + (e.touches[0].clientY - panStartY);
@@ -292,14 +472,43 @@
         }, { passive: false });
 
         mainCanvas.addEventListener('touchend', function() {
+            if (diveMode) { diveTouchLastY = 0; return; }
             isPanning = false;
             lastTouchDist = 0;
         }, { passive: true });
 
         // Double-click to reset view
-        mainCanvas.addEventListener('dblclick', function() { fitView(); });
+        mainCanvas.addEventListener('dblclick', function() {
+            if (diveMode) { targetScroll = 0; return; }
+            fitView();
+        });
 
-        window.addEventListener('resize', function() { resizeCanvas(); });
+        window.addEventListener('resize', function() {
+            resizeCanvas();
+            if (diveMode) fitView();
+        });
+
+        // Keyboard controls
+        window.addEventListener('keydown', function(e) {
+            if (e.key === 'j' || e.key === 'J') {
+                toggleDiveMode();
+                return;
+            }
+            if (!diveMode) return;
+            if (e.key === 'Escape') {
+                exitDiveMode();
+            } else if (e.key === 'ArrowDown' || e.key === ' ') {
+                e.preventDefault();
+                targetScroll = Math.min(diveLayerCount, targetScroll + 0.5);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                targetScroll = Math.max(0, targetScroll - 0.5);
+            } else if (e.key === 'Home') {
+                targetScroll = 0;
+            } else if (e.key === 'End') {
+                targetScroll = diveLayerCount;
+            }
+        });
 
         // ---- Load and start ----
         function loadImage(src) {

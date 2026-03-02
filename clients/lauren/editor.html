@@ -1261,14 +1261,18 @@
     }
 
     function resetToDefaults() {
-        if (!confirm('Reset all layers to default positions?')) return;
-        layers = JSON.parse(JSON.stringify(DEFAULT_LAYERS));
-        layers.forEach(ensureLayerDefaults);
-        processedCanvases = {};
-        selectedLayerId = null;
-        buildLayerList();
-        updateInspector();
-        fitView();
+        if (!confirm('Revert to last published composition?')) return;
+        loadComposition().then(function(loaded) {
+            layers = loaded || JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+            layers.forEach(ensureLayerDefaults);
+            processedCanvases = {};
+            selectedLayerId = null;
+            return loadAllImages();
+        }).then(function() {
+            buildLayerList();
+            updateInspector();
+            fitView();
+        });
     }
 
     // ==========================================================================

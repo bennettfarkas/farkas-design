@@ -122,6 +122,7 @@
         var SCROLL_LERP = 0.08, SCROLL_SENSITIVITY = 0.003, TOUCH_SENSITIVITY = 0.008;
         var diveTouchLastY = 0;
         var diveHintShown = false;
+        var diveHomeX = 0, diveHomeY = 0;
 
         function resizeCanvas() {
             mainCanvas.width = window.innerWidth * devicePixelRatio;
@@ -217,6 +218,8 @@
             scrollProgress = 0;
             targetScroll = 0;
             fitView();
+            diveHomeX = viewX;
+            diveHomeY = viewY;
             modeToggle.textContent = 'Explore';
             modeToggle.classList.add('active');
             diveTrack.classList.add('visible');
@@ -300,13 +303,18 @@
             ctx.fillStyle = '#0a0a0a';
             ctx.fillRect(0, 0, w, h);
 
-            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, viewX * dpr, viewY * dpr);
+            // Base transform uses home position (no user pan)
+            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, diveHomeX * dpr, diveHomeY * dpr);
 
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
 
             var centerX = CANVAS_W / 2;
             var centerY = CANVAS_H / 2;
+
+            // Pan offset in canvas units — closer layers shift more
+            var panCX = (viewX - diveHomeX) / viewZoom;
+            var panCY = (viewY - diveHomeY) / viewZoom;
 
             // Draw back-to-front (diveSorted is top-first, so reverse)
             for (var i = diveSorted.length - 1; i >= 0; i--) {
@@ -336,8 +344,8 @@
                 ctx.save();
                 ctx.globalAlpha = opacity;
 
-                // Apply perspective zoom from composition center
-                ctx.translate(centerX, centerY);
+                // Perspective zoom from center + parallax pan
+                ctx.translate(centerX + panCX * scaleMultiplier, centerY + panCY * scaleMultiplier);
                 ctx.scale(scaleMultiplier, scaleMultiplier);
                 ctx.translate(-centerX, -centerY);
 
@@ -405,7 +413,21 @@
         mainCanvas.addEventListener('wheel', function(e) {
             e.preventDefault();
             if (diveMode) {
-                targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + e.deltaY * SCROLL_SENSITIVITY));
+                if (e.ctrlKey) {
+                    // Pinch-to-zoom in dive mode
+                    var mx = e.clientX, my = e.clientY;
+                    var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+                    var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
+                    var r = newZoom / viewZoom;
+                    viewX = mx - (mx - viewX) * r;
+                    viewY = my - (my - viewY) * r;
+                    diveHomeX = mx - (mx - diveHomeX) * r;
+                    diveHomeY = my - (my - diveHomeY) * r;
+                    viewZoom = newZoom;
+                } else {
+                    // Regular scroll drives dive depth
+                    targetScroll = Math.max(0, Math.min(diveLayerCount, targetScroll + e.deltaY * SCROLL_SENSITIVITY));
+                }
                 return;
             }
             var mx = e.clientX;
@@ -487,13 +509,17 @@
 
         // Double-click to reset view
         mainCanvas.addEventListener('dblclick', function() {
-            if (diveMode) { targetScroll = 0; return; }
+            if (diveMode) { targetScroll = 0; viewX = diveHomeX; viewY = diveHomeY; return; }
             fitView();
         });
 
         window.addEventListener('resize', function() {
             resizeCanvas();
-            if (diveMode) fitView();
+            if (diveMode) {
+                fitView();
+                diveHomeX = viewX;
+                diveHomeY = viewY;
+            }
         });
 
         // Keyboard controls

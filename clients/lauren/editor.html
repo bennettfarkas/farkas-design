@@ -519,13 +519,6 @@
             var drawW = img.naturalWidth * layer.scale;
             var drawH = img.naturalHeight * layer.scale;
 
-            // Soft-focus blur for upscaled layers
-            // Each source pixel spans layer.scale canvas units;
-            // blur ~0.7 of a source pixel to hide the upscale grid
-            if (layer.scale > 1.5) {
-                ctx.filter = 'blur(' + (layer.scale * 0.7).toFixed(1) + 'px)';
-            }
-
             if (layer.rotation) {
                 var cx = layer.x + drawW / 2;
                 var cy = layer.y + drawH / 2;

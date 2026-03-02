@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lauren Compositor</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; background: #1a1a1a; color: #e0e0e0; font-size: 13px; }
+
+        /* Top bar */
+        .topbar {
+            display: flex; align-items: center; justify-content: space-between;
+            height: 40px; padding: 0 12px; background: #222; border-bottom: 1px solid #333;
+        }
+        .topbar-left { display: flex; gap: 8px; }
+        .topbar-right { font-weight: 600; color: #888; letter-spacing: 0.5px; font-size: 12px; text-transform: uppercase; }
+        .topbar button {
+            padding: 4px 12px; border: 1px solid #444; border-radius: 4px;
+            background: #2a2a2a; color: #ccc; cursor: pointer; font-size: 12px;
+        }
+        .topbar button:hover { background: #333; border-color: #555; }
+
+        /* Main layout */
+        .main { display: flex; height: calc(100% - 40px); }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px; min-width: 260px; background: #1e1e1e;
+            border-right: 1px solid #333; display: flex; flex-direction: column;
+        }
+        .sidebar-header {
+            padding: 8px 12px; font-size: 11px; font-weight: 600; color: #666;
+            text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #2a2a2a;
+        }
+        .layer-list { flex: 1; overflow-y: auto; }
+        .layer-item {
+            display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+            border-bottom: 1px solid #252525; cursor: pointer; user-select: none;
+        }
+        .layer-item:hover { background: #252525; }
+        .layer-item.selected { background: #2a3a4a; }
+        .layer-item.hidden-layer { opacity: 0.4; }
+        .layer-eye {
+            width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+            border-radius: 3px; font-size: 14px; flex-shrink: 0;
+        }
+        .layer-eye:hover { background: #333; }
+        .layer-info { flex: 1; min-width: 0; }
+        .layer-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .layer-dims { font-size: 10px; color: #666; }
+        .layer-opacity {
+            width: 60px; height: 4px; -webkit-appearance: none; appearance: none;
+            background: #333; border-radius: 2px; outline: none; flex-shrink: 0;
+        }
+        .layer-opacity::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 10px; height: 10px;
+            background: #888; border-radius: 50%; cursor: pointer;
+        }
+        .layer-opacity::-webkit-slider-thumb:hover { background: #aaa; }
+
+        /* Canvas area */
+        .canvas-area {
+            flex: 1; display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .canvas-wrap { flex: 1; position: relative; overflow: hidden; cursor: grab; }
+        .canvas-wrap.dragging-layer { cursor: move; }
+        .canvas-wrap.panning { cursor: grabbing; }
+        canvas { position: absolute; top: 0; left: 0; }
+
+        /* Bottom panel */
+        .bottom-panel {
+            height: 44px; background: #222; border-top: 1px solid #333;
+            display: flex; align-items: center; gap: 16px; padding: 0 16px; font-size: 12px;
+        }
+        .bottom-panel.empty { justify-content: center; color: #555; }
+        .param-group { display: flex; align-items: center; gap: 4px; }
+        .param-group label { color: #888; font-size: 11px; }
+        .param-group input[type="number"] {
+            width: 64px; padding: 2px 6px; border: 1px solid #444; border-radius: 3px;
+            background: #2a2a2a; color: #ddd; font-size: 12px; font-family: ui-monospace, monospace;
+        }
+        .param-group input[type="range"] { width: 80px; }
+        .param-group select {
+            padding: 2px 6px; border: 1px solid #444; border-radius: 3px;
+            background: #2a2a2a; color: #ddd; font-size: 12px;
+        }
+        .bottom-sep { width: 1px; height: 20px; background: #333; }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed; inset: 0; background: #1a1a1a; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; gap: 16px;
+        }
+        .loading-overlay.hidden { display: none; }
+        .progress-bar { width: 300px; height: 6px; background: #333; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #5a9; border-radius: 3px; transition: width 0.2s; width: 0; }
+        .progress-text { color: #888; font-size: 13px; }
+
+        /* Zoom display */
+        .zoom-display {
+            position: absolute; bottom: 52px; right: 12px;
+            background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px;
+            font-size: 11px; color: #aaa; pointer-events: none;
+        }
+
+        /* Scrollbar */
+        .layer-list::-webkit-scrollbar { width: 6px; }
+        .layer-list::-webkit-scrollbar-track { background: transparent; }
+        .layer-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+
+        /* JSON modal */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center; z-index: 500;
+        }
+        .modal-overlay.hidden { display: none; }
+        .modal {
+            background: #222; border: 1px solid #444; border-radius: 8px;
+            padding: 20px; width: 600px; max-height: 80vh; display: flex; flex-direction: column; gap: 12px;
+        }
+        .modal h3 { font-size: 14px; color: #ccc; }
+        .modal textarea {
+            width: 100%; height: 300px; background: #1a1a1a; border: 1px solid #333;
+            border-radius: 4px; color: #ddd; font-family: ui-monospace, monospace; font-size: 11px;
+            padding: 8px; resize: vertical;
+        }
+        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+        .modal-actions button {
+            padding: 6px 16px; border: 1px solid #444; border-radius: 4px;
+            background: #2a2a2a; color: #ccc; cursor: pointer; font-size: 12px;
+        }
+        .modal-actions button.primary { background: #3a6a4a; border-color: #4a8a5a; }
+        .modal-actions button:hover { opacity: 0.85; }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="font-size: 16px; color: #ccc;">Loading layers...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText">0 / 25</div>
+    </div>
+
+    <!-- JSON modal -->
+    <div class="modal-overlay hidden" id="jsonModal">
+        <div class="modal">
+            <h3>composition.json</h3>
+            <textarea id="jsonTextarea" spellcheck="false"></textarea>
+            <div class="modal-actions">
+                <button id="btnCopy">Copy</button>
+                <button id="btnCloseModal">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top bar -->
+    <div class="topbar">
+        <div class="topbar-left">
+            <button id="btnSave">Save JSON &#x2193;</button>
+            <button id="btnLoadTrigger">Load JSON</button>
+            <input type="file" id="loadInput" accept=".json" style="display:none">
+            <button id="btnView">View JSON</button>
+            <button id="btnReset">Reset</button>
+        </div>
+        <div class="topbar-right">Lauren Compositor</div>
+    </div>
+
+    <!-- Main layout -->
+    <div class="main">
+        <div class="sidebar">
+            <div class="sidebar-header">Layers <span id="layerCount"></span></div>
+            <div class="layer-list" id="layerList"></div>
+        </div>
+        <div class="canvas-area">
+            <div class="canvas-wrap" id="canvasWrap">
+                <canvas id="mainCanvas"></canvas>
+            </div>
+            <div class="zoom-display" id="zoomDisplay">100%</div>
+            <div class="bottom-panel empty" id="bottomPanel">Select a layer</div>
+        </div>
+    </div>
+
+    <script>
+    // ==========================================================================
+    // DEFAULT LAYER DATA (extracted from PDF layout)
+    // ==========================================================================
+    var CANVAS_W = 28800;
+    var CANVAS_H = 16200;
+
+    var DEFAULT_LAYERS = [
+        { id: "23", filename: "23-294A5879-60E9-425A-8C1A-5C2732BBCE9B.jpg", visible: true,  opacity: 1.0, x: 9600,  y: 4248,  scale: 3.0028,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 0 },
+        { id: "22", filename: "22-E717651B-C2A6-4E86-BAE9-2AE1CA19B6D8.jpg", visible: true,  opacity: 1.0, x: 7666,  y: 900,   scale: 5.2038,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 1 },
+        { id: "11", filename: "11-68C67CA1-73A6-4CCE-9567-98C94254A47C.jpg", visible: true,  opacity: 1.0, x: 3294,  y: -544,  scale: 5.9679,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 2 },
+        { id: "19", filename: "19-C53EFEC3-DA3B-4493-99AA-A26ADA1868F1.jpg", visible: true,  opacity: 1.0, x: 13302, y: 8094,  scale: 0.3181,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 3 },
+        { id: "14", filename: "14-8F1B5158-466D-488B-B9C3-63C8124915FE.jpg", visible: true,  opacity: 1.0, x: 12876, y: 8070,  scale: 0.535,   threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 4 },
+        { id: "9",  filename: "9-A9E40275-B18F-4216-A052-E363497FCE00.jpg",  visible: true,  opacity: 1.0, x: 12476, y: 8332,  scale: 1.3913,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 5 },
+        { id: "3",  filename: "3-E6E6CF23-72C6-499F-AA0A-CA5DFA8F9BBE.jpg",  visible: true,  opacity: 1.0, x: 9420,  y: 7070,  scale: 2.4598,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 6 },
+        { id: "6",  filename: "6-D0ACF022-3551-4715-833D-0286B56142D3.jpg",  visible: true,  opacity: 1.0, x: 11640, y: 6752,  scale: 3.3583,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 7 },
+        { id: "8",  filename: "8-D855A4F3-DEB2-4553-A721-F41B4833C3AE.jpg",  visible: true,  opacity: 1.0, x: 12612, y: 6798,  scale: 0.6101,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 8 },
+        { id: "12", filename: "12-F6682304-45B3-4529-92F5-9E0A32C27375.jpg", visible: true,  opacity: 1.0, x: 11188, y: 3000,  scale: 1.7393,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 9 },
+        { id: "15", filename: "15-D80C3CCE-0BBE-4ECE-8519-03ADF3FD8312.jpg", visible: true,  opacity: 1.0, x: 13072, y: 8072,  scale: 1.6038,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 10 },
+        { id: "4",  filename: "4-8EE9FD54-101B-47DB-9B98-94073D5588B7.jpg",  visible: true,  opacity: 1.0, x: 13034, y: 7834,  scale: 0.7955,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 11 },
+        { id: "1",  filename: "1-9E1A6DD9-2608-4028-B873-4BBE04B4177C.jpg",  visible: true,  opacity: 1.0, x: 10062, y: 3650,  scale: 6.8441,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 12 },
+        { id: "20", filename: "20-IMG_1559.jpg",                              visible: true,  opacity: 1.0, x: 13224, y: 7956,  scale: 0.343,   threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 13 },
+        { id: "10", filename: "10-61150FFD-B19F-4FB4-9D9C-0FBA414B1803.jpg", visible: true,  opacity: 1.0, x: 11782, y: 5060,  scale: 2.3541,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 14 },
+        { id: "7",  filename: "7-62ACA3AB-4946-4E86-B94F-F563DAE9F7A3.jpg",  visible: true,  opacity: 1.0, x: 9622,  y: 5594,  scale: 17.5856, threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 15 },
+        { id: "5",  filename: "5-memory+map+SM.jpg",                          visible: true,  opacity: 1.0, x: 13582, y: 8340,  scale: 0.9722,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 16 },
+        { id: "13", filename: "13-37669304-16E6-43D5-A5BB-B11B6247F8CC.jpg", visible: true,  opacity: 1.0, x: 12880, y: 7904,  scale: 0.6334,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 17 },
+        { id: "17", filename: "17-6AC02502-CC74-40B9-91ED-188C1BD5FCCC.jpg", visible: true,  opacity: 1.0, x: 12958, y: 7478,  scale: 0.599,   threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 18 },
+        { id: "2",  filename: "2-F5BBB7EF-1959-4AD4-927A-5D022E25B27A.jpg",  visible: true,  opacity: 1.0, x: 11198, y: 5526,  scale: 3.1199,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 19 },
+        { id: "18", filename: "18-35C1393B-1712-4973-B1EB-5A132F19780A.jpg", visible: true,  opacity: 1.0, x: 9430,  y: 7004,  scale: 2.9569,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 20 },
+        { id: "16", filename: "16-4614F665-9B32-4736-8A64-B3BB039D75FF.jpg", visible: true,  opacity: 1.0, x: 13470, y: 7940,  scale: 0.2683,  threshold: 200, bgColor: [255,255,255], bgMode: "ai",        zIndex: 21 },
+        { id: "25", filename: "25-IMG_5181.jpg",                              visible: true,  opacity: 1.0, x: 13652, y: 8214,  scale: 0.0597,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 22 },
+        { id: "24", filename: "24-IMG_1577.jpg",                              visible: true,  opacity: 1.0, x: 11974, y: 5654,  scale: 1.5542,  threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 23 },
+        { id: "21", filename: "21-6BEA37AA-9CF5-4849-889B-58E5C0DDD875.jpg", visible: false, opacity: 1.0, x: 0,     y: 0,     scale: 1.0,     threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 24 }
+    ];
+
+    // ==========================================================================
+    // STATE
+    // ==========================================================================
+    var layers = [];
+    var selectedLayerId = null;
+    var images = {};           // id -> HTMLImageElement (original JPEGs)
+    var transparentImages = {}; // id -> HTMLImageElement (pre-processed PNGs)
+    var processedCanvases = {}; // id -> { canvas, threshold, bgMode }
+
+    // Viewport
+    var viewX = 0, viewY = 0, viewZoom = 0.04;
+
+    // Interaction
+    var isPanning = false, isDragging = false, spaceDown = false;
+    var dragStartX = 0, dragStartY = 0, dragLayerStartX = 0, dragLayerStartY = 0;
+    var panStartX = 0, panStartY = 0, panStartViewX = 0, panStartViewY = 0;
+
+    // DOM
+    var mainCanvas = document.getElementById('mainCanvas');
+    var ctx = mainCanvas.getContext('2d');
+    var canvasWrap = document.getElementById('canvasWrap');
+    var layerListEl = document.getElementById('layerList');
+    var bottomPanel = document.getElementById('bottomPanel');
+    var zoomDisplay = document.getElementById('zoomDisplay');
+    var loadingOverlay = document.getElementById('loadingOverlay');
+    var progressFill = document.getElementById('progressFill');
+    var progressText = document.getElementById('progressText');
+
+    var MAX_PREVIEW_DIM = 2000;
+
+    // ==========================================================================
+    // UNDO / REDO
+    // ==========================================================================
+    var undoStack = [];
+    var redoStack = [];
+    var MAX_UNDO = 80;
+
+    function snapshotLayers() {
+        return JSON.stringify(layers.map(function(l) {
+            return { id: l.id, filename: l.filename, visible: l.visible, opacity: l.opacity,
+                x: l.x, y: l.y, scale: l.scale, threshold: l.threshold,
+                bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex };
+        }));
+    }
+
+    function pushUndo() {
+        var snap = snapshotLayers();
+        if (undoStack.length && undoStack[undoStack.length - 1] === snap) return; // no change
+        undoStack.push(snap);
+        if (undoStack.length > MAX_UNDO) undoStack.shift();
+        redoStack.length = 0;
+    }
+
+    function restoreSnapshot(snap) {
+        var parsed = JSON.parse(snap);
+        parsed.forEach(function(s) {
+            var layer = layers.find(function(l) { return l.id === s.id; });
+            if (!layer) return;
+            var oldThreshold = layer.threshold;
+            var oldBgMode = layer.bgMode;
+            Object.keys(s).forEach(function(k) { layer[k] = s[k]; });
+            if (layer.threshold !== oldThreshold || layer.bgMode !== oldBgMode) {
+                invalidateProcessedCanvas(layer.id);
+            }
+        });
+        buildLayerList();
+        updateBottomPanel();
+    }
+
+    function undo() {
+        if (!undoStack.length) return;
+        redoStack.push(snapshotLayers());
+        restoreSnapshot(undoStack.pop());
+    }
+
+    function redo() {
+        if (!redoStack.length) return;
+        undoStack.push(snapshotLayers());
+        restoreSnapshot(redoStack.pop());
+    }
+
+    // ==========================================================================
+    // INIT
+    // ==========================================================================
+    function init() {
+        loadComposition().then(function(loaded) {
+            layers = loaded || JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+            return loadAllImages();
+        }).then(function() {
+            loadingOverlay.classList.add('hidden');
+            fitView();
+            buildLayerList();
+            resizeCanvas();
+            requestAnimationFrame(renderLoop);
+        });
+    }
+
+    function loadComposition() {
+        return fetch('composition.json').then(function(resp) {
+            if (!resp.ok) return null;
+            return resp.json();
+        }).then(function(data) {
+            if (data && data.version && data.layers) return data.layers;
+            return null;
+        }).catch(function() { return null; });
+    }
+
+    function loadAllImages() {
+        var total = layers.length;
+        var loaded = 0;
+
+        var promises = layers.map(function(layer) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() {
+                    images[layer.id] = img;
+                    loaded++;
+                    progressFill.style.width = (loaded / total * 100) + '%';
+                    progressText.textContent = loaded + ' / ' + total;
+                    resolve();
+                };
+                img.onerror = function() {
+                    loaded++;
+                    progressFill.style.width = (loaded / total * 100) + '%';
+                    progressText.textContent = loaded + ' / ' + total;
+                    resolve();
+                };
+                img.src = 'originals/' + layer.filename;
+            });
+        });
+
+        return Promise.all(promises).then(function() {
+            // Load transparent PNGs in background for ai mode
+            layers.forEach(function(layer) {
+                var pngName = layer.filename.replace('.jpg', '.png');
+                var img = new Image();
+                img.onload = function() {
+                    transparentImages[layer.id] = img;
+                    invalidateProcessedCanvas(layer.id);
+                };
+                img.src = 'transparent/' + pngName;
+            });
+        });
+    }
+
+    // ==========================================================================
+    // IMAGE PROCESSING
+    // ==========================================================================
+    function getProcessedCanvas(layer) {
+        var cached = processedCanvases[layer.id];
+        if (cached && cached.threshold === layer.threshold && cached.bgMode === layer.bgMode) {
+            return cached.canvas;
+        }
+
+        var srcImg;
+        if (layer.bgMode === 'ai' && transparentImages[layer.id]) {
+            srcImg = transparentImages[layer.id];
+        } else if (layer.bgMode === 'none') {
+            srcImg = images[layer.id];
+        } else {
+            srcImg = images[layer.id];
+        }
+        if (!srcImg) return null;
+
+        var w = srcImg.naturalWidth, h = srcImg.naturalHeight;
+        if (Math.max(w, h) > MAX_PREVIEW_DIM) {
+            var ratio = MAX_PREVIEW_DIM / Math.max(w, h);
+            w = Math.round(w * ratio);
+            h = Math.round(h * ratio);
+        }
+
+        var offscreen = document.createElement('canvas');
+        offscreen.width = w;
+        offscreen.height = h;
+        var octx = offscreen.getContext('2d');
+        octx.drawImage(srcImg, 0, 0, w, h);
+
+        if (layer.bgMode === 'threshold') {
+            var imageData = octx.getImageData(0, 0, w, h);
+            var data = imageData.data;
+            var bg = layer.bgColor || [255, 255, 255];
+            var thresh = layer.threshold;
+
+            for (var i = 0; i < data.length; i += 4) {
+                var dr = data[i] - bg[0];
+                var dg = data[i+1] - bg[1];
+                var db = data[i+2] - bg[2];
+                var dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                if (dist < thresh) {
+                    var alpha = dist < thresh * 0.6 ? 0 : Math.round(255 * (dist - thresh * 0.6) / (thresh * 0.4));
+                    data[i+3] = alpha;
+                }
+            }
+            octx.putImageData(imageData, 0, 0);
+        }
+
+        processedCanvases[layer.id] = { canvas: offscreen, threshold: layer.threshold, bgMode: layer.bgMode };
+        return offscreen;
+    }
+
+    function invalidateProcessedCanvas(id) {
+        delete processedCanvases[id];
+    }
+
+    // ==========================================================================
+    // RENDERING
+    // ==========================================================================
+    function resizeCanvas() {
+        var rect = canvasWrap.getBoundingClientRect();
+        mainCanvas.width = rect.width * devicePixelRatio;
+        mainCanvas.height = rect.height * devicePixelRatio;
+        mainCanvas.style.width = rect.width + 'px';
+        mainCanvas.style.height = rect.height + 'px';
+    }
+
+    function renderLoop() {
+        render();
+        requestAnimationFrame(renderLoop);
+    }
+
+    function render() {
+        var w = mainCanvas.width;
+        var h = mainCanvas.height;
+        var dpr = devicePixelRatio;
+
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#2a2a2a';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, viewX * dpr, viewY * dpr);
+
+        // Canvas bounds (white)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+        // Layers sorted by zIndex
+        var sorted = layers.slice().sort(function(a, b) { return a.zIndex - b.zIndex; });
+        for (var i = 0; i < sorted.length; i++) {
+            var layer = sorted[i];
+            if (!layer.visible) continue;
+            var processed = getProcessedCanvas(layer);
+            if (!processed) continue;
+
+            var img = images[layer.id] || transparentImages[layer.id];
+            if (!img) continue;
+
+            ctx.save();
+            ctx.globalAlpha = layer.opacity;
+            var drawW = img.naturalWidth * layer.scale;
+            var drawH = img.naturalHeight * layer.scale;
+            ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
+            ctx.restore();
+        }
+
+        // Selection box
+        if (selectedLayerId) {
+            var sel = layers.find(function(l) { return l.id === selectedLayerId; });
+            if (sel && sel.visible && images[sel.id]) {
+                var selImg = images[sel.id];
+                var sw = selImg.naturalWidth * sel.scale;
+                var sh = selImg.naturalHeight * sel.scale;
+
+                ctx.save();
+                ctx.strokeStyle = '#4a9eff';
+                ctx.lineWidth = 2 / viewZoom;
+                ctx.setLineDash([6 / viewZoom, 4 / viewZoom]);
+                ctx.strokeRect(sel.x, sel.y, sw, sh);
+                ctx.setLineDash([]);
+
+                var hs = 6 / viewZoom;
+                ctx.fillStyle = '#4a9eff';
+                var corners = [[sel.x, sel.y], [sel.x + sw, sel.y], [sel.x, sel.y + sh], [sel.x + sw, sel.y + sh]];
+                for (var c = 0; c < corners.length; c++) {
+                    ctx.fillRect(corners[c][0] - hs/2, corners[c][1] - hs/2, hs, hs);
+                }
+                ctx.restore();
+            }
+        }
+
+        zoomDisplay.textContent = Math.round(viewZoom * 100) + '%';
+    }
+
+    function fitView() {
+        var rect = canvasWrap.getBoundingClientRect();
+        var scaleX = rect.width / CANVAS_W;
+        var scaleY = rect.height / CANVAS_H;
+        viewZoom = Math.min(scaleX, scaleY) * 0.9;
+        viewX = (rect.width - CANVAS_W * viewZoom) / 2;
+        viewY = (rect.height - CANVAS_H * viewZoom) / 2;
+    }
+
+    // ==========================================================================
+    // SIDEBAR
+    // ==========================================================================
+    function buildLayerList() {
+        var sorted = layers.slice().sort(function(a, b) { return b.zIndex - a.zIndex; });
+        while (layerListEl.firstChild) layerListEl.removeChild(layerListEl.firstChild);
+        document.getElementById('layerCount').textContent = '(' + layers.length + ')';
+
+        sorted.forEach(function(layer) {
+            var el = document.createElement('div');
+            el.className = 'layer-item';
+            if (layer.id === selectedLayerId) el.className += ' selected';
+            if (!layer.visible) el.className += ' hidden-layer';
+            el.dataset.id = layer.id;
+
+            var eye = document.createElement('span');
+            eye.className = 'layer-eye';
+            eye.textContent = layer.visible ? '\uD83D\uDC41' : '\u25CB';
+            eye.addEventListener('click', function(e) {
+                e.stopPropagation();
+                pushUndo();
+                layer.visible = !layer.visible;
+                buildLayerList();
+                updateBottomPanel();
+            });
+
+            var info = document.createElement('div');
+            info.className = 'layer-info';
+
+            var name = document.createElement('div');
+            name.className = 'layer-name';
+            name.textContent = 'Layer ' + layer.id;
+
+            var dims = document.createElement('div');
+            dims.className = 'layer-dims';
+            var img = images[layer.id];
+            dims.textContent = (img ? img.naturalWidth + '\u00D7' + img.naturalHeight : '') + ' \u00B7 z' + layer.zIndex;
+
+            info.appendChild(name);
+            info.appendChild(dims);
+
+            var slider = document.createElement('input');
+            slider.type = 'range';
+            slider.className = 'layer-opacity';
+            slider.min = '0';
+            slider.max = '1';
+            slider.step = '0.01';
+            slider.value = String(layer.opacity);
+            (function(lyr) {
+                var opacityUndoPushed = false;
+                slider.addEventListener('mousedown', function() { pushUndo(); opacityUndoPushed = true; });
+                slider.addEventListener('input', function(e) {
+                    e.stopPropagation();
+                    lyr.opacity = parseFloat(e.target.value);
+                });
+                slider.addEventListener('change', function() { opacityUndoPushed = false; });
+            })(layer);
+            slider.addEventListener('click', function(e) { e.stopPropagation(); });
+
+            el.addEventListener('click', function() {
+                selectedLayerId = layer.id;
+                buildLayerList();
+                updateBottomPanel();
+            });
+
+            el.appendChild(eye);
+            el.appendChild(info);
+            el.appendChild(slider);
+            layerListEl.appendChild(el);
+        });
+    }
+
+    function updateBottomPanel() {
+        var layer = layers.find(function(l) { return l.id === selectedLayerId; });
+        while (bottomPanel.firstChild) bottomPanel.removeChild(bottomPanel.firstChild);
+
+        if (!layer) {
+            bottomPanel.className = 'bottom-panel empty';
+            bottomPanel.textContent = 'Select a layer';
+            return;
+        }
+
+        bottomPanel.className = 'bottom-panel';
+
+        // Label
+        var label = document.createElement('strong');
+        label.style.color = '#4a9eff';
+        label.textContent = 'Layer ' + layer.id;
+        bottomPanel.appendChild(label);
+        bottomPanel.appendChild(makeSep());
+
+        // X
+        bottomPanel.appendChild(makeNumberParam('X', Math.round(layer.x), function(v) { layer.x = v; }));
+        // Y
+        bottomPanel.appendChild(makeNumberParam('Y', Math.round(layer.y), function(v) { layer.y = v; }));
+        // Scale
+        bottomPanel.appendChild(makeNumberParam('Scale', layer.scale, function(v) { layer.scale = v; }, 0.01, 4));
+        bottomPanel.appendChild(makeSep());
+
+        // Threshold
+        var threshGroup = document.createElement('div');
+        threshGroup.className = 'param-group';
+        var threshLabel = document.createElement('label');
+        threshLabel.textContent = 'Threshold';
+        var threshSlider = document.createElement('input');
+        threshSlider.type = 'range';
+        threshSlider.min = '0';
+        threshSlider.max = '442';
+        threshSlider.value = String(layer.threshold);
+        threshSlider.style.width = '100px';
+        var threshVal = document.createElement('span');
+        threshVal.style.cssText = 'color:#888;min-width:28px';
+        threshVal.textContent = String(layer.threshold);
+        var threshUndoPushed = false;
+        threshSlider.addEventListener('mousedown', function() { if (!threshUndoPushed) { pushUndo(); threshUndoPushed = true; } });
+        threshSlider.addEventListener('input', function(e) {
+            layer.threshold = parseInt(e.target.value, 10);
+            threshVal.textContent = String(layer.threshold);
+            invalidateProcessedCanvas(layer.id);
+        });
+        threshSlider.addEventListener('change', function() { threshUndoPushed = false; });
+        threshGroup.appendChild(threshLabel);
+        threshGroup.appendChild(threshSlider);
+        threshGroup.appendChild(threshVal);
+        bottomPanel.appendChild(threshGroup);
+        bottomPanel.appendChild(makeSep());
+
+        // bgMode
+        var bgGroup = document.createElement('div');
+        bgGroup.className = 'param-group';
+        var bgLabel = document.createElement('label');
+        bgLabel.textContent = 'BG';
+        var bgSelect = document.createElement('select');
+        ['threshold', 'ai', 'none'].forEach(function(mode) {
+            var opt = document.createElement('option');
+            opt.value = mode;
+            opt.textContent = mode === 'ai' ? 'AI (rembg)' : mode.charAt(0).toUpperCase() + mode.slice(1);
+            if (layer.bgMode === mode) opt.selected = true;
+            bgSelect.appendChild(opt);
+        });
+        bgSelect.addEventListener('change', function(e) {
+            pushUndo();
+            layer.bgMode = e.target.value;
+            invalidateProcessedCanvas(layer.id);
+        });
+        bgGroup.appendChild(bgLabel);
+        bgGroup.appendChild(bgSelect);
+        bottomPanel.appendChild(bgGroup);
+    }
+
+    function makeNumberParam(labelText, value, onChange, step, decimals) {
+        var group = document.createElement('div');
+        group.className = 'param-group';
+        var lbl = document.createElement('label');
+        lbl.textContent = labelText;
+        var input = document.createElement('input');
+        input.type = 'number';
+        input.value = decimals ? value.toFixed(decimals) : String(value);
+        if (step) input.step = String(step);
+        input.addEventListener('change', function(e) {
+            var v = parseFloat(e.target.value);
+            if (!isNaN(v)) { pushUndo(); onChange(v); }
+        });
+        group.appendChild(lbl);
+        group.appendChild(input);
+        return group;
+    }
+
+    function makeSep() {
+        var sep = document.createElement('div');
+        sep.className = 'bottom-sep';
+        return sep;
+    }
+
+    // ==========================================================================
+    // CANVAS INTERACTION
+    // ==========================================================================
+    function screenToCanvas(sx, sy) {
+        return { x: (sx - viewX) / viewZoom, y: (sy - viewY) / viewZoom };
+    }
+
+    function hitTestLayer(cx, cy) {
+        var sorted = layers.slice().sort(function(a, b) { return b.zIndex - a.zIndex; });
+        for (var i = 0; i < sorted.length; i++) {
+            var layer = sorted[i];
+            if (!layer.visible) continue;
+            var img = images[layer.id];
+            if (!img) continue;
+            var w = img.naturalWidth * layer.scale;
+            var h = img.naturalHeight * layer.scale;
+            if (cx >= layer.x && cx <= layer.x + w && cy >= layer.y && cy <= layer.y + h) return layer;
+        }
+        return null;
+    }
+
+    canvasWrap.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return;
+        var rect = canvasWrap.getBoundingClientRect();
+        var sx = e.clientX - rect.left;
+        var sy = e.clientY - rect.top;
+
+        if (spaceDown) {
+            isPanning = true;
+            panStartX = e.clientX; panStartY = e.clientY;
+            panStartViewX = viewX; panStartViewY = viewY;
+            canvasWrap.classList.add('panning');
+            return;
+        }
+
+        var pt = screenToCanvas(sx, sy);
+        var hit = hitTestLayer(pt.x, pt.y);
+
+        if (hit) {
+            pushUndo();
+            selectedLayerId = hit.id;
+            isDragging = true;
+            dragStartX = pt.x; dragStartY = pt.y;
+            dragLayerStartX = hit.x; dragLayerStartY = hit.y;
+            canvasWrap.classList.add('dragging-layer');
+            buildLayerList();
+            updateBottomPanel();
+        } else {
+            isPanning = true;
+            panStartX = e.clientX; panStartY = e.clientY;
+            panStartViewX = viewX; panStartViewY = viewY;
+            canvasWrap.classList.add('panning');
+        }
+    });
+
+    window.addEventListener('mousemove', function(e) {
+        if (isPanning) {
+            viewX = panStartViewX + (e.clientX - panStartX);
+            viewY = panStartViewY + (e.clientY - panStartY);
+        }
+        if (isDragging && selectedLayerId) {
+            var rect = canvasWrap.getBoundingClientRect();
+            var pt = screenToCanvas(e.clientX - rect.left, e.clientY - rect.top);
+            var layer = layers.find(function(l) { return l.id === selectedLayerId; });
+            if (layer) {
+                layer.x = dragLayerStartX + (pt.x - dragStartX);
+                layer.y = dragLayerStartY + (pt.y - dragStartY);
+                updateBottomPanel();
+            }
+        }
+    });
+
+    window.addEventListener('mouseup', function() {
+        isPanning = false;
+        isDragging = false;
+        canvasWrap.classList.remove('panning', 'dragging-layer');
+    });
+
+    canvasWrap.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        var rect = canvasWrap.getBoundingClientRect();
+        var mx = e.clientX - rect.left;
+        var my = e.clientY - rect.top;
+        var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+        var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
+        viewX = mx - (mx - viewX) * (newZoom / viewZoom);
+        viewY = my - (my - viewY) * (newZoom / viewZoom);
+        viewZoom = newZoom;
+    }, { passive: false });
+
+    window.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.code === 'KeyZ') {
+            e.preventDefault();
+            if (e.shiftKey) { redo(); } else { undo(); }
+            return;
+        }
+        if (e.code === 'Space' && !e.repeat) {
+            e.preventDefault();
+            spaceDown = true;
+            canvasWrap.style.cursor = 'grab';
+        }
+        if (e.code === 'Escape') {
+            selectedLayerId = null;
+            buildLayerList();
+            updateBottomPanel();
+        }
+        if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            fitView();
+        }
+    });
+
+    window.addEventListener('keyup', function(e) {
+        if (e.code === 'Space') {
+            spaceDown = false;
+            canvasWrap.style.cursor = '';
+        }
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // ==========================================================================
+    // SAVE / LOAD
+    // ==========================================================================
+    function getCompositionJson() {
+        return JSON.stringify({
+            version: 1,
+            canvas: { width: CANVAS_W, height: CANVAS_H },
+            layers: layers.map(function(l) {
+                return {
+                    id: l.id, filename: l.filename, visible: l.visible, opacity: l.opacity,
+                    x: Math.round(l.x * 100) / 100, y: Math.round(l.y * 100) / 100,
+                    scale: Math.round(l.scale * 10000) / 10000,
+                    threshold: l.threshold, bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex
+                };
+            })
+        }, null, 2);
+    }
+
+    function saveJson() {
+        var json = getCompositionJson();
+        var blob = new Blob([json], { type: 'application/json' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'composition.json'; a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    function showJson() {
+        document.getElementById('jsonTextarea').value = getCompositionJson();
+        document.getElementById('jsonModal').classList.remove('hidden');
+    }
+
+    function loadJsonFile(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                var data = JSON.parse(e.target.result);
+                if (data.layers) {
+                    layers = data.layers;
+                    processedCanvases = {};
+                    selectedLayerId = null;
+                    buildLayerList();
+                    updateBottomPanel();
+                }
+            } catch (err) {
+                alert('Invalid JSON: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    function resetToDefaults() {
+        if (!confirm('Reset all layers to default positions?')) return;
+        layers = JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+        processedCanvases = {};
+        selectedLayerId = null;
+        buildLayerList();
+        updateBottomPanel();
+        fitView();
+    }
+
+    // Wire up top bar buttons
+    document.getElementById('btnSave').addEventListener('click', saveJson);
+    document.getElementById('btnLoadTrigger').addEventListener('click', function() {
+        document.getElementById('loadInput').click();
+    });
+    document.getElementById('loadInput').addEventListener('change', loadJsonFile);
+    document.getElementById('btnView').addEventListener('click', showJson);
+    document.getElementById('btnReset').addEventListener('click', resetToDefaults);
+    document.getElementById('btnCopy').addEventListener('click', function() {
+        var ta = document.getElementById('jsonTextarea');
+        ta.select();
+        navigator.clipboard.writeText(ta.value);
+    });
+    document.getElementById('btnCloseModal').addEventListener('click', function() {
+        document.getElementById('jsonModal').classList.add('hidden');
+    });
+
+    // ==========================================================================
+    // START
+    // ==========================================================================
+    init();
+    </script>
+</body>
+</html>

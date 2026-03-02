@@ -2,42 +2,38 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lauren Farkas</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background: #0a0a0a;
-            color: #e0e0e0;
-            font-family: system-ui, -apple-system, sans-serif;
-            min-height: 100dvh;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .canvas-frame {
-            position: fixed;
-            inset: 0;
-        }
-
-        .canvas-frame iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
+        html, body { height: 100%; overflow: hidden; }
+        body { background: #0a0a0a; }
+        #viewer { width: 100%; height: 100%; }
+        #viewer canvas { image-rendering: auto; }
     </style>
 </head>
 <body>
-    <main>
-        <div class="canvas-frame">
-            <iframe
-                loading="lazy"
-                src="https://www.canva.com/design/DAHCwI3hdBc/ae4SSK8SgkbF1YxVTZbdLA/view?embed"
-                allowfullscreen="allowfullscreen"
-                allow="fullscreen"
-            ></iframe>
-        </div>
-    </main>
+    <div id="viewer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/openseadragon@5.0/build/openseadragon/openseadragon.min.js"></script>
+    <script>
+        OpenSeadragon({
+            id: 'viewer',
+            tileSources: 'tiles/artwork.dzi',
+            defaultZoomLevel: 0,
+            minZoomLevel: 0.8,
+            maxZoomLevel: 40,
+            smoothTileEdgesMinZoom: Infinity,
+            imageSmoothingEnabled: true,
+            visibilityRatio: 0.3,
+            constrainDuringPan: false,
+            animationTime: 0.3,
+            springStiffness: 10,
+            gestureSettingsMouse: { scrollToZoom: true, clickToZoom: true, dblClickToZoom: true },
+            gestureSettingsTouch: { pinchToZoom: true, flickEnabled: true },
+            showNavigationControl: false,
+            showNavigator: false,
+            background: '#0a0a0a',
+        });
+    </script>
 </body>
 </html>

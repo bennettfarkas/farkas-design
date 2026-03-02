@@ -101,8 +101,11 @@
         var transparentImages = {};
         var processedCanvases = {};
 
-        // Viewport
+        // Viewport (current + animation targets)
         var viewX = 0, viewY = 0, viewZoom = 0.04;
+        var targetViewX = 0, targetViewY = 0, targetZoom = 0.04;
+        var animating = false;
+        var VIEW_LERP = 0.1;
 
         // Pan state
         var isPanning = false;
@@ -133,9 +136,18 @@
 
         function resetView() {
             targetScroll = 0;
-            fitView();
-            homeX = viewX;
-            homeY = viewY;
+            // Compute fitted values and animate toward them
+            var scaleX = window.innerWidth / CANVAS_W;
+            var scaleY = window.innerHeight / CANVAS_H;
+            var fitZoom = Math.min(scaleX, scaleY) * 0.92;
+            var fitX = (window.innerWidth - CANVAS_W * fitZoom) / 2;
+            var fitY = (window.innerHeight - CANVAS_H * fitZoom) / 2;
+            targetZoom = fitZoom;
+            targetViewX = fitX;
+            targetViewY = fitY;
+            homeX = fitX;
+            homeY = fitY;
+            animating = true;
         }
 
         // ---- Image processing (same logic as editor) ----
@@ -288,6 +300,16 @@
         function renderLoop() {
             scrollProgress += (targetScroll - scrollProgress) * SCROLL_LERP;
 
+            if (animating) {
+                viewX += (targetViewX - viewX) * VIEW_LERP;
+                viewY += (targetViewY - viewY) * VIEW_LERP;
+                viewZoom += (targetZoom - viewZoom) * VIEW_LERP;
+                if (Math.abs(viewX - targetViewX) < 0.5 && Math.abs(viewY - targetViewY) < 0.5 && Math.abs(viewZoom - targetZoom) < 0.0001) {
+                    viewX = targetViewX; viewY = targetViewY; viewZoom = targetZoom;
+                    animating = false;
+                }
+            }
+
             var pct = diveLayerCount > 0 ? Math.max(0, Math.min(1, scrollProgress / diveLayerCount)) : 0;
             divePip.style.top = (pct * 100) + '%';
 
@@ -303,6 +325,7 @@
         // ---- Interaction ----
         mainCanvas.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
+            animating = false;
             isPanning = true;
             panStartX = e.clientX; panStartY = e.clientY;
             panStartViewX = viewX; panStartViewY = viewY;

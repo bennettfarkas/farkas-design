@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lauren Farkas</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-frame {
+            position: fixed;
+            inset: 0;
+        }
+
+        .canvas-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <div class="canvas-frame">
+            <iframe
+                loading="lazy"
+                src="https://www.canva.com/design/DAHCwI3hdBc/ae4SSK8SgkbF1YxVTZbdLA/view?embed"
+                allowfullscreen="allowfullscreen"
+                allow="fullscreen"
+            ></iframe>
+        </div>
+    </main>
+</body>
+</html>

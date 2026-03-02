@@ -133,8 +133,9 @@
 
         function resetView() {
             targetScroll = 0;
-            viewX = homeX;
-            viewY = homeY;
+            fitView();
+            homeX = viewX;
+            homeY = viewY;
         }
 
         // ---- Image processing (same logic as editor) ----

@@ -6,34 +6,373 @@
     <title>Lauren Farkas</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body { height: 100%; overflow: hidden; }
+        html, body { height: 100%; overflow: hidden; font-family: system-ui, -apple-system, sans-serif; }
         body { background: #0a0a0a; }
-        #viewer { width: 100%; height: 100%; }
-        #viewer canvas { image-rendering: auto; }
+        canvas { position: absolute; top: 0; left: 0; cursor: grab; }
+        canvas.panning { cursor: grabbing; }
+
+        .loading-overlay {
+            position: fixed; inset: 0; background: #0a0a0a; display: flex;
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1000; gap: 16px; transition: opacity 0.4s;
+        }
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+        .progress-bar { width: 300px; height: 4px; background: #222; border-radius: 2px; overflow: hidden; }
+        .progress-fill { height: 100%; background: #5a9; border-radius: 2px; transition: width 0.2s; width: 0; }
+        .progress-text { color: #666; font-size: 13px; }
+
+        .empty-state {
+            position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+            color: #555; font-size: 15px;
+        }
+
+        .edit-link {
+            position: fixed; bottom: 16px; right: 16px; z-index: 10;
+            color: #555; font-size: 12px; text-decoration: none;
+            padding: 4px 10px; border-radius: 4px; background: rgba(255,255,255,0.05);
+            transition: color 0.2s, background 0.2s;
+        }
+        .edit-link:hover { color: #999; background: rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
-    <div id="viewer"></div>
-    <script src="https://cdn.jsdelivr.net/npm/openseadragon@5.0/build/openseadragon/openseadragon.min.js"></script>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div style="color: #888; font-size: 14px;">Loading composition...</div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-text" id="progressText"></div>
+    </div>
+
+    <canvas id="mainCanvas"></canvas>
+    <a class="edit-link" href="/editor">Edit</a>
+
     <script>
-        OpenSeadragon({
-            id: 'viewer',
-            tileSources: 'tiles/artwork.dzi',
-            defaultZoomLevel: 0,
-            minZoomLevel: 0.8,
-            maxZoomLevel: 40,
-            smoothTileEdgesMinZoom: Infinity,
-            imageSmoothingEnabled: true,
-            visibilityRatio: 0.3,
-            constrainDuringPan: false,
-            animationTime: 0.3,
-            springStiffness: 10,
-            gestureSettingsMouse: { scrollToZoom: true, clickToZoom: true, dblClickToZoom: true },
-            gestureSettingsTouch: { pinchToZoom: true, flickEnabled: true },
-            showNavigationControl: false,
-            showNavigator: false,
-            background: '#0a0a0a',
+    (function() {
+        var CANVAS_W = 28800;
+        var CANVAS_H = 16200;
+        var MAX_PREVIEW_DIM = 2000;
+
+        var mainCanvas = document.getElementById('mainCanvas');
+        var ctx = mainCanvas.getContext('2d');
+        var loadingOverlay = document.getElementById('loadingOverlay');
+        var progressFill = document.getElementById('progressFill');
+        var progressText = document.getElementById('progressText');
+
+        var layers = [];
+        var images = {};
+        var transparentImages = {};
+        var processedCanvases = {};
+
+        // Viewport
+        var viewX = 0, viewY = 0, viewZoom = 0.04;
+
+        // Pan state
+        var isPanning = false;
+        var panStartX = 0, panStartY = 0, panStartViewX = 0, panStartViewY = 0;
+
+        // Touch state
+        var lastTouchDist = 0;
+        var lastTouchMidX = 0, lastTouchMidY = 0;
+
+        function resizeCanvas() {
+            mainCanvas.width = window.innerWidth * devicePixelRatio;
+            mainCanvas.height = window.innerHeight * devicePixelRatio;
+            mainCanvas.style.width = window.innerWidth + 'px';
+            mainCanvas.style.height = window.innerHeight + 'px';
+        }
+
+        function fitView() {
+            var scaleX = window.innerWidth / CANVAS_W;
+            var scaleY = window.innerHeight / CANVAS_H;
+            viewZoom = Math.min(scaleX, scaleY) * 0.92;
+            viewX = (window.innerWidth - CANVAS_W * viewZoom) / 2;
+            viewY = (window.innerHeight - CANVAS_H * viewZoom) / 2;
+        }
+
+        // ---- Image processing (same logic as editor) ----
+        function getProcessedCanvas(layer) {
+            var cached = processedCanvases[layer.id];
+            if (cached && cached.threshold === layer.threshold && cached.bgMode === layer.bgMode && cached.feather === (layer.feather || 0)) {
+                return cached.canvas;
+            }
+
+            var srcImg;
+            if (layer.bgMode === 'ai' && transparentImages[layer.id]) {
+                srcImg = transparentImages[layer.id];
+            } else {
+                srcImg = images[layer.id];
+            }
+            if (!srcImg) return null;
+
+            var w = srcImg.naturalWidth, h = srcImg.naturalHeight;
+            if (Math.max(w, h) > MAX_PREVIEW_DIM) {
+                var ratio = MAX_PREVIEW_DIM / Math.max(w, h);
+                w = Math.round(w * ratio);
+                h = Math.round(h * ratio);
+            }
+
+            var offscreen = document.createElement('canvas');
+            offscreen.width = w;
+            offscreen.height = h;
+            var octx = offscreen.getContext('2d');
+            octx.drawImage(srcImg, 0, 0, w, h);
+
+            var needPixelOps = (layer.bgMode === 'threshold') || ((layer.feather || 0) > 0);
+            if (needPixelOps) {
+                var imageData = octx.getImageData(0, 0, w, h);
+                var data = imageData.data;
+
+                if (layer.bgMode === 'threshold') {
+                    var bg = layer.bgColor || [255, 255, 255];
+                    var thresh = layer.threshold;
+                    for (var i = 0; i < data.length; i += 4) {
+                        var dr = data[i] - bg[0];
+                        var dg = data[i+1] - bg[1];
+                        var db = data[i+2] - bg[2];
+                        var dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                        if (dist < thresh) {
+                            var alpha = dist < thresh * 0.6 ? 0 : Math.round(255 * (dist - thresh * 0.6) / (thresh * 0.4));
+                            data[i+3] = alpha;
+                        }
+                    }
+                }
+
+                var feather = layer.feather || 0;
+                if (feather > 0) {
+                    var effectiveFeather = feather * (w / srcImg.naturalWidth);
+                    if (effectiveFeather > 0.5) {
+                        for (var j = 0; j < data.length; j += 4) {
+                            var px = (j / 4) % w;
+                            var py = Math.floor((j / 4) / w);
+                            var edgeDist = Math.min(px, py, w - 1 - px, h - 1 - py);
+                            if (edgeDist < effectiveFeather) {
+                                data[j+3] = Math.round(data[j+3] * (edgeDist / effectiveFeather));
+                            }
+                        }
+                    }
+                }
+
+                octx.putImageData(imageData, 0, 0);
+            }
+
+            processedCanvases[layer.id] = { canvas: offscreen, threshold: layer.threshold, bgMode: layer.bgMode, feather: layer.feather || 0 };
+            return offscreen;
+        }
+
+        // ---- Rendering ----
+        function render() {
+            var w = mainCanvas.width;
+            var h = mainCanvas.height;
+            var dpr = devicePixelRatio;
+
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.setTransform(viewZoom * dpr, 0, 0, viewZoom * dpr, viewX * dpr, viewY * dpr);
+
+            // White canvas background
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+            var sorted = layers.slice().sort(function(a, b) { return a.zIndex - b.zIndex; });
+            for (var i = 0; i < sorted.length; i++) {
+                var layer = sorted[i];
+                if (!layer.visible) continue;
+                var processed = getProcessedCanvas(layer);
+                if (!processed) continue;
+
+                var img = images[layer.id] || transparentImages[layer.id];
+                if (!img) continue;
+
+                ctx.save();
+                ctx.globalAlpha = layer.opacity;
+                var drawW = img.naturalWidth * layer.scale;
+                var drawH = img.naturalHeight * layer.scale;
+
+                if (layer.scale > 1.5) {
+                    ctx.filter = 'blur(' + (layer.scale * 0.7).toFixed(1) + 'px)';
+                }
+
+                if (layer.rotation) {
+                    var cx = layer.x + drawW / 2;
+                    var cy = layer.y + drawH / 2;
+                    ctx.translate(cx, cy);
+                    ctx.rotate(layer.rotation * Math.PI / 180);
+                    ctx.drawImage(processed, -drawW / 2, -drawH / 2, drawW, drawH);
+                } else {
+                    ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
+                }
+                ctx.restore();
+            }
+        }
+
+        function renderLoop() {
+            render();
+            requestAnimationFrame(renderLoop);
+        }
+
+        // ---- Interaction ----
+        mainCanvas.addEventListener('mousedown', function(e) {
+            if (e.button !== 0) return;
+            isPanning = true;
+            panStartX = e.clientX; panStartY = e.clientY;
+            panStartViewX = viewX; panStartViewY = viewY;
+            mainCanvas.classList.add('panning');
         });
+
+        window.addEventListener('mousemove', function(e) {
+            if (!isPanning) return;
+            viewX = panStartViewX + (e.clientX - panStartX);
+            viewY = panStartViewY + (e.clientY - panStartY);
+        });
+
+        window.addEventListener('mouseup', function() {
+            isPanning = false;
+            mainCanvas.classList.remove('panning');
+        });
+
+        mainCanvas.addEventListener('wheel', function(e) {
+            e.preventDefault();
+            var mx = e.clientX;
+            var my = e.clientY;
+            var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+            var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
+            viewX = mx - (mx - viewX) * (newZoom / viewZoom);
+            viewY = my - (my - viewY) * (newZoom / viewZoom);
+            viewZoom = newZoom;
+        }, { passive: false });
+
+        // Touch: pan and pinch-zoom
+        mainCanvas.addEventListener('touchstart', function(e) {
+            if (e.touches.length === 1) {
+                isPanning = true;
+                panStartX = e.touches[0].clientX;
+                panStartY = e.touches[0].clientY;
+                panStartViewX = viewX;
+                panStartViewY = viewY;
+            } else if (e.touches.length === 2) {
+                isPanning = false;
+                var dx = e.touches[1].clientX - e.touches[0].clientX;
+                var dy = e.touches[1].clientY - e.touches[0].clientY;
+                lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+                lastTouchMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                lastTouchMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            }
+        }, { passive: true });
+
+        mainCanvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            if (e.touches.length === 1 && isPanning) {
+                viewX = panStartViewX + (e.touches[0].clientX - panStartX);
+                viewY = panStartViewY + (e.touches[0].clientY - panStartY);
+            } else if (e.touches.length === 2) {
+                var dx = e.touches[1].clientX - e.touches[0].clientX;
+                var dy = e.touches[1].clientY - e.touches[0].clientY;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                var midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+                if (lastTouchDist > 0) {
+                    var scale = dist / lastTouchDist;
+                    var newZoom = Math.max(0.002, Math.min(10, viewZoom * scale));
+                    viewX = midX - (midX - viewX) * (newZoom / viewZoom);
+                    viewY = midY - (midY - viewY) * (newZoom / viewZoom);
+                    viewZoom = newZoom;
+                }
+
+                // Pan with two fingers
+                viewX += midX - lastTouchMidX;
+                viewY += midY - lastTouchMidY;
+
+                lastTouchDist = dist;
+                lastTouchMidX = midX;
+                lastTouchMidY = midY;
+            }
+        }, { passive: false });
+
+        mainCanvas.addEventListener('touchend', function() {
+            isPanning = false;
+            lastTouchDist = 0;
+        }, { passive: true });
+
+        // Double-click to reset view
+        mainCanvas.addEventListener('dblclick', function() { fitView(); });
+
+        window.addEventListener('resize', function() { resizeCanvas(); });
+
+        // ---- Load and start ----
+        function loadImage(src) {
+            return new Promise(function(resolve) {
+                var img = new Image();
+                img.onload = function() { resolve(img); };
+                img.onerror = function() { resolve(null); };
+                img.src = src;
+            });
+        }
+
+        function init() {
+            resizeCanvas();
+
+            fetch('/api/composition').then(function(resp) {
+                if (!resp.ok) return null;
+                return resp.json();
+            }).then(function(data) {
+                if (!data || !data.layers || !data.layers.length) {
+                    loadingOverlay.classList.add('hidden');
+                    var empty = document.createElement('div');
+                    empty.className = 'empty-state';
+                    empty.textContent = 'No composition published yet';
+                    document.body.appendChild(empty);
+                    return;
+                }
+
+                layers = data.layers;
+                var total = layers.length;
+                var loaded = 0;
+
+                function tick() {
+                    loaded++;
+                    progressFill.style.width = (loaded / total * 100) + '%';
+                    progressText.textContent = loaded + ' / ' + total;
+                }
+
+                var promises = layers.map(function(layer) {
+                    var src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
+                    return loadImage(src).then(function(img) {
+                        if (img) images[layer.id] = img;
+                        tick();
+                    });
+                });
+
+                Promise.all(promises).then(function() {
+                    // Load transparent PNGs in background for ai-mode layers (non-uploaded only)
+                    layers.forEach(function(layer) {
+                        if (layer.uploaded) return;
+                        var pngName = layer.filename.replace('.jpg', '.png');
+                        var img = new Image();
+                        img.onload = function() {
+                            transparentImages[layer.id] = img;
+                            delete processedCanvases[layer.id];
+                        };
+                        img.src = 'transparent/' + pngName;
+                    });
+
+                    loadingOverlay.classList.add('hidden');
+                    fitView();
+                    renderLoop();
+                });
+            }).catch(function() {
+                loadingOverlay.classList.add('hidden');
+                var empty = document.createElement('div');
+                empty.className = 'empty-state';
+                empty.textContent = 'Failed to load composition';
+                document.body.appendChild(empty);
+            });
+        }
+
+        init();
+    })();
     </script>
 </body>
 </html>

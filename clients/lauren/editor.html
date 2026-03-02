@@ -20,13 +20,19 @@
             background: #2a2a2a; color: #ccc; cursor: pointer; font-size: 12px;
         }
         .topbar button:hover { background: #333; border-color: #555; }
+        .topbar button.add-layer { border-color: #4a9eff55; color: #4a9eff; }
+        .topbar button.add-layer:hover { background: #4a9eff22; border-color: #4a9eff88; }
+        .topbar button.publish { border-color: #3a8a4a; color: #5cb85c; }
+        .topbar button.publish:hover { background: #2a5a2a; border-color: #4a9a5a; }
+        .topbar button.publish.publishing { color: #888; cursor: wait; }
+        .topbar button.publish.published { border-color: #5cb85c; color: #5cb85c; background: #2a5a2a; }
 
         /* Main layout */
         .main { display: flex; height: calc(100% - 40px); }
 
         /* Sidebar */
         .sidebar {
-            width: 260px; min-width: 260px; background: #1e1e1e;
+            width: 280px; min-width: 280px; background: #1e1e1e;
             border-right: 1px solid #333; display: flex; flex-direction: column;
         }
         .sidebar-header {
@@ -41,6 +47,10 @@
         .layer-item:hover { background: #252525; }
         .layer-item.selected { background: #2a3a4a; }
         .layer-item.hidden-layer { opacity: 0.4; }
+        .layer-thumb {
+            width: 36px; height: 28px; border-radius: 3px; border: 1px solid #333;
+            object-fit: cover; flex-shrink: 0; background: #111;
+        }
         .layer-eye {
             width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
             border-radius: 3px; font-size: 14px; flex-shrink: 0;
@@ -49,8 +59,13 @@
         .layer-info { flex: 1; min-width: 0; }
         .layer-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .layer-dims { font-size: 10px; color: #666; }
+        .layer-name-input {
+            width: 100%; border: 1px solid #4a9eff; border-radius: 2px;
+            background: #1a1a1a; color: #ddd; font-size: 12px; padding: 1px 4px;
+            outline: none; font-family: inherit;
+        }
         .layer-opacity {
-            width: 60px; height: 4px; -webkit-appearance: none; appearance: none;
+            width: 50px; height: 4px; -webkit-appearance: none; appearance: none;
             background: #333; border-radius: 2px; outline: none; flex-shrink: 0;
         }
         .layer-opacity::-webkit-slider-thumb {
@@ -58,6 +73,9 @@
             background: #888; border-radius: 50%; cursor: pointer;
         }
         .layer-opacity::-webkit-slider-thumb:hover { background: #aaa; }
+        .layer-item.drag-over-above { box-shadow: inset 0 2px 0 #4a9eff; }
+        .layer-item.drag-over-below { box-shadow: inset 0 -2px 0 #4a9eff; }
+        .layer-item.dragging-row { opacity: 0.3; }
 
         /* Canvas area */
         .canvas-area {
@@ -163,6 +181,9 @@
             <input type="file" id="loadInput" accept=".json" style="display:none">
             <button id="btnView">View JSON</button>
             <button id="btnReset">Reset</button>
+            <button class="publish" id="btnPublish">Publish</button>
+            <button class="add-layer" id="btnAddLayer">Add Layer +</button>
+            <input type="file" id="imageInput" accept=".jpg,.jpeg,.png,.webp" style="display:none">
         </div>
         <div class="topbar-right">Lauren Compositor</div>
     </div>
@@ -217,6 +238,14 @@
         { id: "21", filename: "21-6BEA37AA-9CF5-4849-889B-58E5C0DDD875.jpg", visible: false, opacity: 1.0, x: 0,     y: 0,     scale: 1.0,     threshold: 200, bgColor: [255,255,255], bgMode: "threshold", zIndex: 24 }
     ];
 
+    function ensureLayerDefaults(layer) {
+        if (!layer.name) layer.name = 'Layer ' + layer.id;
+        if (layer.rotation === undefined) layer.rotation = 0;
+        if (layer.feather === undefined) layer.feather = 0;
+        if (layer.uploaded === undefined) layer.uploaded = false;
+    }
+    DEFAULT_LAYERS.forEach(ensureLayerDefaults);
+
     // ==========================================================================
     // STATE
     // ==========================================================================
@@ -224,15 +253,20 @@
     var selectedLayerId = null;
     var images = {};           // id -> HTMLImageElement (original JPEGs)
     var transparentImages = {}; // id -> HTMLImageElement (pre-processed PNGs)
-    var processedCanvases = {}; // id -> { canvas, threshold, bgMode }
+    var processedCanvases = {}; // id -> { canvas, threshold, bgMode, feather }
+    var thumbnails = {};       // id -> data URL string
 
     // Viewport
     var viewX = 0, viewY = 0, viewZoom = 0.04;
 
     // Interaction
-    var isPanning = false, isDragging = false, spaceDown = false;
+    var isPanning = false, isDragging = false, isRotating = false, isResizing = false;
+    var spaceDown = false;
     var dragStartX = 0, dragStartY = 0, dragLayerStartX = 0, dragLayerStartY = 0;
     var panStartX = 0, panStartY = 0, panStartViewX = 0, panStartViewY = 0;
+    var rotateStartAngle = 0, rotateStartRotation = 0, rotateCenterX = 0, rotateCenterY = 0;
+    var resizeStartDist = 0, resizeStartScale = 0, resizeCenterX = 0, resizeCenterY = 0;
+    var reorderDragId = null; // layer id being dragged in sidebar
 
     // DOM
     var mainCanvas = document.getElementById('mainCanvas');
@@ -256,15 +290,16 @@
 
     function snapshotLayers() {
         return JSON.stringify(layers.map(function(l) {
-            return { id: l.id, filename: l.filename, visible: l.visible, opacity: l.opacity,
-                x: l.x, y: l.y, scale: l.scale, threshold: l.threshold,
-                bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex };
+            return { id: l.id, filename: l.filename, name: l.name, visible: l.visible, opacity: l.opacity,
+                x: l.x, y: l.y, scale: l.scale, rotation: l.rotation, threshold: l.threshold,
+                feather: l.feather, bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex,
+                uploaded: l.uploaded || false };
         }));
     }
 
     function pushUndo() {
         var snap = snapshotLayers();
-        if (undoStack.length && undoStack[undoStack.length - 1] === snap) return; // no change
+        if (undoStack.length && undoStack[undoStack.length - 1] === snap) return;
         undoStack.push(snap);
         if (undoStack.length > MAX_UNDO) undoStack.shift();
         redoStack.length = 0;
@@ -272,16 +307,19 @@
 
     function restoreSnapshot(snap) {
         var parsed = JSON.parse(snap);
+        // Check which processed canvases need invalidation
         parsed.forEach(function(s) {
-            var layer = layers.find(function(l) { return l.id === s.id; });
-            if (!layer) return;
-            var oldThreshold = layer.threshold;
-            var oldBgMode = layer.bgMode;
-            Object.keys(s).forEach(function(k) { layer[k] = s[k]; });
-            if (layer.threshold !== oldThreshold || layer.bgMode !== oldBgMode) {
-                invalidateProcessedCanvas(layer.id);
+            var existing = layers.find(function(l) { return l.id === s.id; });
+            if (existing && (existing.threshold !== s.threshold || existing.bgMode !== s.bgMode || (existing.feather || 0) !== (s.feather || 0))) {
+                invalidateProcessedCanvas(s.id);
             }
         });
+        // Replace full layers array (handles add/remove from uploads)
+        layers = parsed;
+        layers.forEach(ensureLayerDefaults);
+        if (selectedLayerId && !layers.find(function(l) { return l.id === selectedLayerId; })) {
+            selectedLayerId = null;
+        }
         buildLayerList();
         updateBottomPanel();
     }
@@ -304,6 +342,7 @@
     function init() {
         loadComposition().then(function(loaded) {
             layers = loaded || JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+            layers.forEach(ensureLayerDefaults);
             return loadAllImages();
         }).then(function() {
             loadingOverlay.classList.add('hidden');
@@ -315,13 +354,27 @@
     }
 
     function loadComposition() {
-        return fetch('composition.json').then(function(resp) {
+        return fetch('/api/composition').then(function(resp) {
             if (!resp.ok) return null;
             return resp.json();
         }).then(function(data) {
             if (data && data.version && data.layers) return data.layers;
             return null;
         }).catch(function() { return null; });
+    }
+
+    function generateThumbnail(id) {
+        var img = images[id];
+        if (!img) return;
+        var c = document.createElement('canvas');
+        c.width = 36;
+        c.height = 28;
+        var tctx = c.getContext('2d');
+        var s = Math.max(36 / img.naturalWidth, 28 / img.naturalHeight);
+        var sw = img.naturalWidth * s;
+        var sh = img.naturalHeight * s;
+        tctx.drawImage(img, (36 - sw) / 2, (28 - sh) / 2, sw, sh);
+        thumbnails[id] = c.toDataURL('image/jpeg', 0.6);
     }
 
     function loadAllImages() {
@@ -333,6 +386,7 @@
                 var img = new Image();
                 img.onload = function() {
                     images[layer.id] = img;
+                    generateThumbnail(layer.id);
                     loaded++;
                     progressFill.style.width = (loaded / total * 100) + '%';
                     progressText.textContent = loaded + ' / ' + total;
@@ -344,13 +398,14 @@
                     progressText.textContent = loaded + ' / ' + total;
                     resolve();
                 };
-                img.src = 'originals/' + layer.filename;
+                img.src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
             });
         });
 
         return Promise.all(promises).then(function() {
-            // Load transparent PNGs in background for ai mode
+            // Load transparent PNGs in background for ai mode (non-uploaded only)
             layers.forEach(function(layer) {
+                if (layer.uploaded) return;
                 var pngName = layer.filename.replace('.jpg', '.png');
                 var img = new Image();
                 img.onload = function() {
@@ -367,25 +422,24 @@
     // ==========================================================================
     function getProcessedCanvas(layer) {
         var cached = processedCanvases[layer.id];
-        if (cached && cached.threshold === layer.threshold && cached.bgMode === layer.bgMode) {
+        if (cached && cached.threshold === layer.threshold && cached.bgMode === layer.bgMode && cached.feather === (layer.feather || 0)) {
             return cached.canvas;
         }
 
         var srcImg;
         if (layer.bgMode === 'ai' && transparentImages[layer.id]) {
             srcImg = transparentImages[layer.id];
-        } else if (layer.bgMode === 'none') {
-            srcImg = images[layer.id];
         } else {
             srcImg = images[layer.id];
         }
         if (!srcImg) return null;
 
         var w = srcImg.naturalWidth, h = srcImg.naturalHeight;
+        var downscaleRatio = 1;
         if (Math.max(w, h) > MAX_PREVIEW_DIM) {
-            var ratio = MAX_PREVIEW_DIM / Math.max(w, h);
-            w = Math.round(w * ratio);
-            h = Math.round(h * ratio);
+            downscaleRatio = MAX_PREVIEW_DIM / Math.max(w, h);
+            w = Math.round(w * downscaleRatio);
+            h = Math.round(h * downscaleRatio);
         }
 
         var offscreen = document.createElement('canvas');
@@ -394,26 +448,47 @@
         var octx = offscreen.getContext('2d');
         octx.drawImage(srcImg, 0, 0, w, h);
 
-        if (layer.bgMode === 'threshold') {
+        var needPixelOps = (layer.bgMode === 'threshold') || ((layer.feather || 0) > 0);
+        if (needPixelOps) {
             var imageData = octx.getImageData(0, 0, w, h);
             var data = imageData.data;
-            var bg = layer.bgColor || [255, 255, 255];
-            var thresh = layer.threshold;
 
-            for (var i = 0; i < data.length; i += 4) {
-                var dr = data[i] - bg[0];
-                var dg = data[i+1] - bg[1];
-                var db = data[i+2] - bg[2];
-                var dist = Math.sqrt(dr*dr + dg*dg + db*db);
-                if (dist < thresh) {
-                    var alpha = dist < thresh * 0.6 ? 0 : Math.round(255 * (dist - thresh * 0.6) / (thresh * 0.4));
-                    data[i+3] = alpha;
+            // Threshold bg removal
+            if (layer.bgMode === 'threshold') {
+                var bg = layer.bgColor || [255, 255, 255];
+                var thresh = layer.threshold;
+                for (var i = 0; i < data.length; i += 4) {
+                    var dr = data[i] - bg[0];
+                    var dg = data[i+1] - bg[1];
+                    var db = data[i+2] - bg[2];
+                    var dist = Math.sqrt(dr*dr + dg*dg + db*db);
+                    if (dist < thresh) {
+                        var alpha = dist < thresh * 0.6 ? 0 : Math.round(255 * (dist - thresh * 0.6) / (thresh * 0.4));
+                        data[i+3] = alpha;
+                    }
                 }
             }
+
+            // Edge feathering
+            var feather = layer.feather || 0;
+            if (feather > 0) {
+                var effectiveFeather = feather * (w / srcImg.naturalWidth);
+                if (effectiveFeather > 0.5) {
+                    for (var j = 0; j < data.length; j += 4) {
+                        var px = (j / 4) % w;
+                        var py = Math.floor((j / 4) / w);
+                        var edgeDist = Math.min(px, py, w - 1 - px, h - 1 - py);
+                        if (edgeDist < effectiveFeather) {
+                            data[j+3] = Math.round(data[j+3] * (edgeDist / effectiveFeather));
+                        }
+                    }
+                }
+            }
+
             octx.putImageData(imageData, 0, 0);
         }
 
-        processedCanvases[layer.id] = { canvas: offscreen, threshold: layer.threshold, bgMode: layer.bgMode };
+        processedCanvases[layer.id] = { canvas: offscreen, threshold: layer.threshold, bgMode: layer.bgMode, feather: layer.feather || 0 };
         return offscreen;
     }
 
@@ -468,32 +543,76 @@
             ctx.globalAlpha = layer.opacity;
             var drawW = img.naturalWidth * layer.scale;
             var drawH = img.naturalHeight * layer.scale;
-            ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
+
+            // Soft-focus blur for upscaled layers
+            // Each source pixel spans layer.scale canvas units;
+            // blur ~0.7 of a source pixel to hide the upscale grid
+            if (layer.scale > 1.5) {
+                ctx.filter = 'blur(' + (layer.scale * 0.7).toFixed(1) + 'px)';
+            }
+
+            if (layer.rotation) {
+                var cx = layer.x + drawW / 2;
+                var cy = layer.y + drawH / 2;
+                ctx.translate(cx, cy);
+                ctx.rotate(layer.rotation * Math.PI / 180);
+                ctx.drawImage(processed, -drawW / 2, -drawH / 2, drawW, drawH);
+            } else {
+                ctx.drawImage(processed, layer.x, layer.y, drawW, drawH);
+            }
             ctx.restore();
         }
 
         // Selection box
         if (selectedLayerId) {
             var sel = layers.find(function(l) { return l.id === selectedLayerId; });
-            if (sel && sel.visible && images[sel.id]) {
+            if (sel && sel.visible) {
                 var selImg = images[sel.id];
-                var sw = selImg.naturalWidth * sel.scale;
-                var sh = selImg.naturalHeight * sel.scale;
+                if (selImg) {
+                    var sw = selImg.naturalWidth * sel.scale;
+                    var sh = selImg.naturalHeight * sel.scale;
+                    var scx = sel.x + sw / 2;
+                    var scy = sel.y + sh / 2;
 
-                ctx.save();
-                ctx.strokeStyle = '#4a9eff';
-                ctx.lineWidth = 2 / viewZoom;
-                ctx.setLineDash([6 / viewZoom, 4 / viewZoom]);
-                ctx.strokeRect(sel.x, sel.y, sw, sh);
-                ctx.setLineDash([]);
+                    ctx.save();
+                    ctx.translate(scx, scy);
+                    ctx.rotate((sel.rotation || 0) * Math.PI / 180);
 
-                var hs = 6 / viewZoom;
-                ctx.fillStyle = '#4a9eff';
-                var corners = [[sel.x, sel.y], [sel.x + sw, sel.y], [sel.x, sel.y + sh], [sel.x + sw, sel.y + sh]];
-                for (var c = 0; c < corners.length; c++) {
-                    ctx.fillRect(corners[c][0] - hs/2, corners[c][1] - hs/2, hs, hs);
+                    // Dashed rect
+                    ctx.strokeStyle = '#4a9eff';
+                    ctx.lineWidth = 2 / viewZoom;
+                    ctx.setLineDash([6 / viewZoom, 4 / viewZoom]);
+                    ctx.strokeRect(-sw / 2, -sh / 2, sw, sh);
+                    ctx.setLineDash([]);
+
+                    // Corner handles
+                    var hs = 6 / viewZoom;
+                    ctx.fillStyle = '#4a9eff';
+                    var corners = [[-sw/2, -sh/2], [sw/2, -sh/2], [-sw/2, sh/2], [sw/2, sh/2]];
+                    for (var c = 0; c < corners.length; c++) {
+                        ctx.fillRect(corners[c][0] - hs/2, corners[c][1] - hs/2, hs, hs);
+                    }
+
+                    // Rotation handle — line from top center up
+                    var rotOffset = 30 / viewZoom;
+                    ctx.beginPath();
+                    ctx.moveTo(0, -sh / 2);
+                    ctx.lineTo(0, -sh / 2 - rotOffset);
+                    ctx.strokeStyle = '#4a9eff';
+                    ctx.lineWidth = 1.5 / viewZoom;
+                    ctx.stroke();
+
+                    // Rotation handle — circle
+                    ctx.beginPath();
+                    ctx.arc(0, -sh / 2 - rotOffset, 4 / viewZoom, 0, Math.PI * 2);
+                    ctx.fillStyle = '#fff';
+                    ctx.fill();
+                    ctx.strokeStyle = '#4a9eff';
+                    ctx.lineWidth = 1.5 / viewZoom;
+                    ctx.stroke();
+
+                    ctx.restore();
                 }
-                ctx.restore();
             }
         }
 
@@ -524,6 +643,15 @@
             if (!layer.visible) el.className += ' hidden-layer';
             el.dataset.id = layer.id;
 
+            // Thumbnail
+            if (thumbnails[layer.id]) {
+                var thumbImg = document.createElement('img');
+                thumbImg.className = 'layer-thumb';
+                thumbImg.src = thumbnails[layer.id];
+                el.appendChild(thumbImg);
+            }
+
+            // Eye toggle
             var eye = document.createElement('span');
             eye.className = 'layer-eye';
             eye.textContent = layer.visible ? '\uD83D\uDC41' : '\u25CB';
@@ -535,12 +663,48 @@
                 updateBottomPanel();
             });
 
+            // Info
             var info = document.createElement('div');
             info.className = 'layer-info';
 
             var name = document.createElement('div');
             name.className = 'layer-name';
-            name.textContent = 'Layer ' + layer.id;
+            name.textContent = layer.name;
+
+            // Double-click to rename
+            name.addEventListener('dblclick', function(e) {
+                e.stopPropagation();
+                var input = document.createElement('input');
+                input.type = 'text';
+                input.className = 'layer-name-input';
+                input.value = layer.name;
+
+                function confirmRename() {
+                    var newName = input.value.trim();
+                    if (newName && newName !== layer.name) {
+                        pushUndo();
+                        layer.name = newName;
+                    }
+                    buildLayerList();
+                    updateBottomPanel();
+                }
+
+                input.addEventListener('blur', confirmRename);
+                input.addEventListener('keydown', function(ev) {
+                    ev.stopPropagation();
+                    if (ev.key === 'Enter') { ev.preventDefault(); input.blur(); }
+                    if (ev.key === 'Escape') {
+                        ev.preventDefault();
+                        input.removeEventListener('blur', confirmRename);
+                        buildLayerList();
+                    }
+                });
+
+                name.textContent = '';
+                name.appendChild(input);
+                input.focus();
+                input.select();
+            });
 
             var dims = document.createElement('div');
             dims.className = 'layer-dims';
@@ -550,6 +714,7 @@
             info.appendChild(name);
             info.appendChild(dims);
 
+            // Opacity slider
             var slider = document.createElement('input');
             slider.type = 'range';
             slider.className = 'layer-opacity';
@@ -568,8 +733,83 @@
             })(layer);
             slider.addEventListener('click', function(e) { e.stopPropagation(); });
 
+            // Click to select
             el.addEventListener('click', function() {
                 selectedLayerId = layer.id;
+                buildLayerList();
+                updateBottomPanel();
+            });
+
+            // Drag-to-reorder
+            el.draggable = true;
+            el.addEventListener('dragstart', function(e) {
+                reorderDragId = layer.id;
+                el.classList.add('dragging-row');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            el.addEventListener('dragend', function() {
+                reorderDragId = null;
+                el.classList.remove('dragging-row');
+                // Clean up indicators
+                var items = layerListEl.querySelectorAll('.layer-item');
+                for (var k = 0; k < items.length; k++) {
+                    items[k].classList.remove('drag-over-above', 'drag-over-below');
+                }
+            });
+            el.addEventListener('dragover', function(e) {
+                if (!reorderDragId || reorderDragId === layer.id) return;
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                var rect = el.getBoundingClientRect();
+                var midY = rect.top + rect.height / 2;
+                // Clean up sibling indicators
+                var items = layerListEl.querySelectorAll('.layer-item');
+                for (var k = 0; k < items.length; k++) {
+                    items[k].classList.remove('drag-over-above', 'drag-over-below');
+                }
+                if (e.clientY < midY) {
+                    el.classList.add('drag-over-above');
+                } else {
+                    el.classList.add('drag-over-below');
+                }
+            });
+            el.addEventListener('dragleave', function() {
+                el.classList.remove('drag-over-above', 'drag-over-below');
+            });
+            el.addEventListener('drop', function(e) {
+                e.preventDefault();
+                if (!reorderDragId || reorderDragId === layer.id) return;
+                pushUndo();
+
+                // Sidebar is sorted high-zIndex first (top of list = front)
+                // Build the current visual order
+                var visualOrder = layers.slice().sort(function(a, b) { return b.zIndex - a.zIndex; });
+                var dragIdx = -1, dropIdx = -1;
+                for (var k = 0; k < visualOrder.length; k++) {
+                    if (visualOrder[k].id === reorderDragId) dragIdx = k;
+                    if (visualOrder[k].id === layer.id) dropIdx = k;
+                }
+                if (dragIdx < 0 || dropIdx < 0) return;
+
+                // Remove dragged item
+                var moved = visualOrder.splice(dragIdx, 1)[0];
+                // Recalculate dropIdx after removal
+                dropIdx = -1;
+                for (var k = 0; k < visualOrder.length; k++) {
+                    if (visualOrder[k].id === layer.id) { dropIdx = k; break; }
+                }
+
+                // Insert above or below based on mouse position
+                var rect = el.getBoundingClientRect();
+                var insertIdx = e.clientY < rect.top + rect.height / 2 ? dropIdx : dropIdx + 1;
+                visualOrder.splice(insertIdx, 0, moved);
+
+                // Reassign zIndex: first in visual order = highest zIndex
+                for (var k = 0; k < visualOrder.length; k++) {
+                    visualOrder[k].zIndex = visualOrder.length - 1 - k;
+                }
+
+                reorderDragId = null;
                 buildLayerList();
                 updateBottomPanel();
             });
@@ -593,10 +833,10 @@
 
         bottomPanel.className = 'bottom-panel';
 
-        // Label
+        // Name label
         var label = document.createElement('strong');
         label.style.color = '#4a9eff';
-        label.textContent = 'Layer ' + layer.id;
+        label.textContent = layer.name;
         bottomPanel.appendChild(label);
         bottomPanel.appendChild(makeSep());
 
@@ -606,6 +846,8 @@
         bottomPanel.appendChild(makeNumberParam('Y', Math.round(layer.y), function(v) { layer.y = v; }));
         // Scale
         bottomPanel.appendChild(makeNumberParam('Scale', layer.scale, function(v) { layer.scale = v; }, 0.01, 4));
+        // Rotation
+        bottomPanel.appendChild(makeNumberParam('Rot', Math.round(layer.rotation * 10) / 10, function(v) { layer.rotation = v; }, 1, 1));
         bottomPanel.appendChild(makeSep());
 
         // Threshold
@@ -634,6 +876,33 @@
         threshGroup.appendChild(threshSlider);
         threshGroup.appendChild(threshVal);
         bottomPanel.appendChild(threshGroup);
+
+        // Feather
+        var featherGroup = document.createElement('div');
+        featherGroup.className = 'param-group';
+        var featherLabel = document.createElement('label');
+        featherLabel.textContent = 'Feather';
+        var featherSlider = document.createElement('input');
+        featherSlider.type = 'range';
+        featherSlider.min = '0';
+        featherSlider.max = '200';
+        featherSlider.value = String(layer.feather || 0);
+        featherSlider.style.width = '80px';
+        var featherVal = document.createElement('span');
+        featherVal.style.cssText = 'color:#888;min-width:28px';
+        featherVal.textContent = String(layer.feather || 0);
+        var featherUndoPushed = false;
+        featherSlider.addEventListener('mousedown', function() { if (!featherUndoPushed) { pushUndo(); featherUndoPushed = true; } });
+        featherSlider.addEventListener('input', function(e) {
+            layer.feather = parseInt(e.target.value, 10);
+            featherVal.textContent = String(layer.feather);
+            invalidateProcessedCanvas(layer.id);
+        });
+        featherSlider.addEventListener('change', function() { featherUndoPushed = false; });
+        featherGroup.appendChild(featherLabel);
+        featherGroup.appendChild(featherSlider);
+        featherGroup.appendChild(featherVal);
+        bottomPanel.appendChild(featherGroup);
         bottomPanel.appendChild(makeSep());
 
         // bgMode
@@ -690,18 +959,24 @@
         return { x: (sx - viewX) / viewZoom, y: (sy - viewY) / viewZoom };
     }
 
-    function hitTestLayer(cx, cy) {
-        var sorted = layers.slice().sort(function(a, b) { return b.zIndex - a.zIndex; });
-        for (var i = 0; i < sorted.length; i++) {
-            var layer = sorted[i];
-            if (!layer.visible) continue;
-            var img = images[layer.id];
-            if (!img) continue;
-            var w = img.naturalWidth * layer.scale;
-            var h = img.naturalHeight * layer.scale;
-            if (cx >= layer.x && cx <= layer.x + w && cy >= layer.y && cy <= layer.y + h) return layer;
-        }
-        return null;
+    // Transform a canvas-space point into a layer's local coordinate space
+    // Returns { x, y } relative to layer center, plus halfW/halfH
+    function canvasToLocal(canvasX, canvasY, layer) {
+        var img = images[layer.id];
+        if (!img) return null;
+        var w = img.naturalWidth * layer.scale;
+        var h = img.naturalHeight * layer.scale;
+        var centerX = layer.x + w / 2;
+        var centerY = layer.y + h / 2;
+        var rad = -(layer.rotation || 0) * Math.PI / 180;
+        var dx = canvasX - centerX;
+        var dy = canvasY - centerY;
+        return {
+            x: dx * Math.cos(rad) - dy * Math.sin(rad),
+            y: dx * Math.sin(rad) + dy * Math.cos(rad),
+            halfW: w / 2,
+            halfH: h / 2
+        };
     }
 
     canvasWrap.addEventListener('mousedown', function(e) {
@@ -719,23 +994,70 @@
         }
 
         var pt = screenToCanvas(sx, sy);
-        var hit = hitTestLayer(pt.x, pt.y);
 
-        if (hit) {
-            pushUndo();
-            selectedLayerId = hit.id;
-            isDragging = true;
-            dragStartX = pt.x; dragStartY = pt.y;
-            dragLayerStartX = hit.x; dragLayerStartY = hit.y;
-            canvasWrap.classList.add('dragging-layer');
-            buildLayerList();
-            updateBottomPanel();
-        } else {
-            isPanning = true;
-            panStartX = e.clientX; panStartY = e.clientY;
-            panStartViewX = viewX; panStartViewY = viewY;
-            canvasWrap.classList.add('panning');
+        // If a layer is selected, check handles and body
+        if (selectedLayerId) {
+            var sel = layers.find(function(l) { return l.id === selectedLayerId; });
+            if (sel && sel.visible && images[sel.id]) {
+                var local = canvasToLocal(pt.x, pt.y, sel);
+                if (local) {
+                    var handleDist = 10 / viewZoom;
+                    var rotOffset = 30 / viewZoom;
+
+                    // Rotation handle
+                    if (Math.abs(local.x) < handleDist && Math.abs(local.y - (-local.halfH - rotOffset)) < handleDist) {
+                        pushUndo();
+                        isRotating = true;
+                        var img = images[sel.id];
+                        var w = img.naturalWidth * sel.scale;
+                        var h = img.naturalHeight * sel.scale;
+                        rotateCenterX = sel.x + w / 2;
+                        rotateCenterY = sel.y + h / 2;
+                        rotateStartAngle = Math.atan2(pt.y - rotateCenterY, pt.x - rotateCenterX);
+                        rotateStartRotation = sel.rotation || 0;
+                        return;
+                    }
+
+                    // Corner resize handles
+                    var cornerPositions = [
+                        { x: -local.halfW, y: -local.halfH },
+                        { x:  local.halfW, y: -local.halfH },
+                        { x: -local.halfW, y:  local.halfH },
+                        { x:  local.halfW, y:  local.halfH }
+                    ];
+                    for (var c = 0; c < cornerPositions.length; c++) {
+                        if (Math.abs(local.x - cornerPositions[c].x) < handleDist && Math.abs(local.y - cornerPositions[c].y) < handleDist) {
+                            pushUndo();
+                            isResizing = true;
+                            resizeStartDist = Math.sqrt(local.x * local.x + local.y * local.y);
+                            resizeStartScale = sel.scale;
+                            var img2 = images[sel.id];
+                            var w2 = img2.naturalWidth * sel.scale;
+                            var h2 = img2.naturalHeight * sel.scale;
+                            resizeCenterX = sel.x + w2 / 2;
+                            resizeCenterY = sel.y + h2 / 2;
+                            return;
+                        }
+                    }
+
+                    // Layer body — drag to move
+                    if (Math.abs(local.x) <= local.halfW && Math.abs(local.y) <= local.halfH) {
+                        pushUndo();
+                        isDragging = true;
+                        dragStartX = pt.x; dragStartY = pt.y;
+                        dragLayerStartX = sel.x; dragLayerStartY = sel.y;
+                        canvasWrap.classList.add('dragging-layer');
+                        return;
+                    }
+                }
+            }
         }
+
+        // Nothing hit — pan
+        isPanning = true;
+        panStartX = e.clientX; panStartY = e.clientY;
+        panStartViewX = viewX; panStartViewY = viewY;
+        canvasWrap.classList.add('panning');
     });
 
     window.addEventListener('mousemove', function(e) {
@@ -753,11 +1075,41 @@
                 updateBottomPanel();
             }
         }
+        if (isRotating && selectedLayerId) {
+            var rect = canvasWrap.getBoundingClientRect();
+            var pt = screenToCanvas(e.clientX - rect.left, e.clientY - rect.top);
+            var angle = Math.atan2(pt.y - rotateCenterY, pt.x - rotateCenterX);
+            var delta = (angle - rotateStartAngle) * 180 / Math.PI;
+            var layer = layers.find(function(l) { return l.id === selectedLayerId; });
+            if (layer) {
+                layer.rotation = rotateStartRotation + delta;
+                updateBottomPanel();
+            }
+        }
+        if (isResizing && selectedLayerId) {
+            var rect = canvasWrap.getBoundingClientRect();
+            var pt = screenToCanvas(e.clientX - rect.left, e.clientY - rect.top);
+            var layer = layers.find(function(l) { return l.id === selectedLayerId; });
+            if (layer && images[layer.id] && resizeStartDist > 0) {
+                var dist = Math.sqrt(Math.pow(pt.x - resizeCenterX, 2) + Math.pow(pt.y - resizeCenterY, 2));
+                var ratio = dist / resizeStartDist;
+                layer.scale = Math.max(0.001, resizeStartScale * ratio);
+                // Keep center stable
+                var img = images[layer.id];
+                var newW = img.naturalWidth * layer.scale;
+                var newH = img.naturalHeight * layer.scale;
+                layer.x = resizeCenterX - newW / 2;
+                layer.y = resizeCenterY - newH / 2;
+                updateBottomPanel();
+            }
+        }
     });
 
     window.addEventListener('mouseup', function() {
         isPanning = false;
         isDragging = false;
+        isRotating = false;
+        isResizing = false;
         canvasWrap.classList.remove('panning', 'dragging-layer');
     });
 
@@ -784,7 +1136,7 @@
             spaceDown = true;
             canvasWrap.style.cursor = 'grab';
         }
-        if (e.code === 'Escape') {
+        if (e.code === 'Escape' && document.activeElement.tagName !== 'INPUT') {
             selectedLayerId = null;
             buildLayerList();
             updateBottomPanel();
@@ -812,10 +1164,14 @@
             canvas: { width: CANVAS_W, height: CANVAS_H },
             layers: layers.map(function(l) {
                 return {
-                    id: l.id, filename: l.filename, visible: l.visible, opacity: l.opacity,
+                    id: l.id, filename: l.filename, name: l.name,
+                    visible: l.visible, opacity: l.opacity,
                     x: Math.round(l.x * 100) / 100, y: Math.round(l.y * 100) / 100,
                     scale: Math.round(l.scale * 10000) / 10000,
-                    threshold: l.threshold, bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex
+                    rotation: Math.round((l.rotation || 0) * 100) / 100,
+                    feather: l.feather || 0,
+                    threshold: l.threshold, bgColor: l.bgColor, bgMode: l.bgMode, zIndex: l.zIndex,
+                    uploaded: l.uploaded || false
                 };
             })
         }, null, 2);
@@ -844,6 +1200,7 @@
                 var data = JSON.parse(e.target.result);
                 if (data.layers) {
                     layers = data.layers;
+                    layers.forEach(ensureLayerDefaults);
                     processedCanvases = {};
                     selectedLayerId = null;
                     buildLayerList();
@@ -860,6 +1217,7 @@
     function resetToDefaults() {
         if (!confirm('Reset all layers to default positions?')) return;
         layers = JSON.parse(JSON.stringify(DEFAULT_LAYERS));
+        layers.forEach(ensureLayerDefaults);
         processedCanvases = {};
         selectedLayerId = null;
         buildLayerList();
@@ -867,7 +1225,126 @@
         fitView();
     }
 
-    // Wire up top bar buttons
+    // ==========================================================================
+    // UPLOAD
+    // ==========================================================================
+    function handleUploadImage(event) {
+        var file = event.target.files[0];
+        if (!file) return;
+
+        // Upload to R2 first
+        var token = getPublishToken();
+        if (!token) { event.target.value = ''; return; }
+
+        var formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token },
+            body: formData
+        }).then(function(resp) {
+            if (!resp.ok) throw new Error('Upload failed (status ' + resp.status + ')');
+            return resp.json();
+        }).then(function(result) {
+            var objectUrl = URL.createObjectURL(file);
+            var img = new Image();
+            img.onload = function() {
+                var maxId = 0;
+                layers.forEach(function(l) {
+                    var n = parseInt(l.id, 10);
+                    if (!isNaN(n) && n > maxId) maxId = n;
+                });
+                var newId = String(maxId + 1);
+                var maxZ = 0;
+                layers.forEach(function(l) { if (l.zIndex > maxZ) maxZ = l.zIndex; });
+
+                var newLayer = {
+                    id: newId,
+                    filename: result.key,
+                    name: file.name.replace(/\.[^.]+$/, ''),
+                    visible: true,
+                    opacity: 1.0,
+                    x: CANVAS_W / 2 - img.naturalWidth / 2,
+                    y: CANVAS_H / 2 - img.naturalHeight / 2,
+                    scale: 1.0,
+                    rotation: 0,
+                    feather: 0,
+                    threshold: 200,
+                    bgColor: [255, 255, 255],
+                    bgMode: 'none',
+                    zIndex: maxZ + 1,
+                    uploaded: true
+                };
+
+                pushUndo();
+                layers.push(newLayer);
+                images[newId] = img;
+                generateThumbnail(newId);
+                selectedLayerId = newId;
+                buildLayerList();
+                updateBottomPanel();
+            };
+            img.src = objectUrl;
+        }).catch(function(err) {
+            alert('Upload failed: ' + err.message);
+        });
+
+        event.target.value = '';
+    }
+
+    // ==========================================================================
+    // AUTH + PUBLISH
+    // ==========================================================================
+    function getPublishToken() {
+        var token = localStorage.getItem('lauren-publish-token');
+        if (!token) {
+            token = prompt('Enter publish token:');
+            if (token) localStorage.setItem('lauren-publish-token', token);
+        }
+        return token;
+    }
+
+    function publish() {
+        var token = getPublishToken();
+        if (!token) return;
+
+        var btn = document.getElementById('btnPublish');
+        btn.textContent = 'Publishing...';
+        btn.classList.add('publishing');
+
+        fetch('/api/publish', {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            },
+            body: getCompositionJson()
+        }).then(function(resp) {
+            if (resp.status === 401) {
+                localStorage.removeItem('lauren-publish-token');
+                throw new Error('Invalid token');
+            }
+            if (!resp.ok) throw new Error('Publish failed (status ' + resp.status + ')');
+            return resp.json();
+        }).then(function() {
+            btn.textContent = 'Published!';
+            btn.classList.remove('publishing');
+            btn.classList.add('published');
+            setTimeout(function() {
+                btn.textContent = 'Publish';
+                btn.classList.remove('published');
+            }, 2000);
+        }).catch(function(err) {
+            btn.textContent = 'Publish';
+            btn.classList.remove('publishing');
+            alert('Publish failed: ' + err.message);
+        });
+    }
+
+    // ==========================================================================
+    // WIRE UP BUTTONS
+    // ==========================================================================
     document.getElementById('btnSave').addEventListener('click', saveJson);
     document.getElementById('btnLoadTrigger').addEventListener('click', function() {
         document.getElementById('loadInput').click();
@@ -875,6 +1352,11 @@
     document.getElementById('loadInput').addEventListener('change', loadJsonFile);
     document.getElementById('btnView').addEventListener('click', showJson);
     document.getElementById('btnReset').addEventListener('click', resetToDefaults);
+    document.getElementById('btnPublish').addEventListener('click', publish);
+    document.getElementById('btnAddLayer').addEventListener('click', function() {
+        document.getElementById('imageInput').click();
+    });
+    document.getElementById('imageInput').addEventListener('change', handleUploadImage);
     document.getElementById('btnCopy').addEventListener('click', function() {
         var ta = document.getElementById('jsonTextarea');
         ta.select();

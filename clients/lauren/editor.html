@@ -39,7 +39,7 @@
             padding: 8px 12px; font-size: 11px; font-weight: 600; color: #666;
             text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #2a2a2a;
         }
-        .layer-list { flex: 1; overflow-y: auto; }
+        .layer-list { flex: 1; overflow-y: auto; min-height: 0; }
         .layer-item {
             display: flex; align-items: center; gap: 8px; padding: 6px 12px;
             border-bottom: 1px solid #252525; cursor: pointer; user-select: none;
@@ -56,6 +56,11 @@
             border-radius: 3px; font-size: 14px; flex-shrink: 0;
         }
         .layer-eye:hover { background: #333; }
+        .layer-delete {
+            width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+            border-radius: 3px; font-size: 12px; flex-shrink: 0; color: #555;
+        }
+        .layer-delete:hover { background: #4a2020; color: #e55; }
         .layer-info { flex: 1; min-width: 0; }
         .layer-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .layer-dims { font-size: 10px; color: #666; }
@@ -64,15 +69,6 @@
             background: #1a1a1a; color: #ddd; font-size: 12px; padding: 1px 4px;
             outline: none; font-family: inherit;
         }
-        .layer-opacity {
-            width: 50px; height: 4px; -webkit-appearance: none; appearance: none;
-            background: #333; border-radius: 2px; outline: none; flex-shrink: 0;
-        }
-        .layer-opacity::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 10px; height: 10px;
-            background: #888; border-radius: 50%; cursor: pointer;
-        }
-        .layer-opacity::-webkit-slider-thumb:hover { background: #aaa; }
         .layer-item.drag-over-above { box-shadow: inset 0 2px 0 #4a9eff; }
         .layer-item.drag-over-below { box-shadow: inset 0 -2px 0 #4a9eff; }
         .layer-item.dragging-row { opacity: 0.3; }
@@ -86,24 +82,56 @@
         .canvas-wrap.panning { cursor: grabbing; }
         canvas { position: absolute; top: 0; left: 0; }
 
-        /* Bottom panel */
-        .bottom-panel {
-            height: 44px; background: #222; border-top: 1px solid #333;
-            display: flex; align-items: center; gap: 16px; padding: 0 16px; font-size: 12px;
+        /* Inspector */
+        .inspector { border-top: 1px solid #333; overflow-y: auto; max-height: 50%; flex-shrink: 0; }
+        .inspector.empty { display: none; }
+        .inspector-name {
+            padding: 8px 12px; font-size: 12px; font-weight: 600; color: #4a9eff;
+            border-bottom: 1px solid #2a2a2a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .bottom-panel.empty { justify-content: center; color: #555; }
-        .param-group { display: flex; align-items: center; gap: 4px; }
-        .param-group label { color: #888; font-size: 11px; }
-        .param-group input[type="number"] {
-            width: 64px; padding: 2px 6px; border: 1px solid #444; border-radius: 3px;
-            background: #2a2a2a; color: #ddd; font-size: 12px; font-family: ui-monospace, monospace;
+        .inspector-group {
+            padding: 8px 12px;
+            border-bottom: 1px solid #2a2a2a;
         }
-        .param-group input[type="range"] { width: 80px; }
-        .param-group select {
-            padding: 2px 6px; border: 1px solid #444; border-radius: 3px;
-            background: #2a2a2a; color: #ddd; font-size: 12px;
+        .inspector-group-label {
+            font-size: 10px; font-weight: 600; color: #555; text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 6px;
         }
-        .bottom-sep { width: 1px; height: 20px; background: #333; }
+        .inspector-row {
+            display: flex; gap: 8px; align-items: center; margin-bottom: 4px;
+        }
+        .inspector-row:last-child { margin-bottom: 0; }
+        .inspector-field { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
+        .inspector-field label { font-size: 11px; color: #888; width: 12px; flex-shrink: 0; }
+        .inspector-field input[type="number"] {
+            width: 100%; padding: 3px 6px; border: 1px solid #333; border-radius: 3px;
+            background: #252525; color: #ddd; font-size: 12px; font-family: ui-monospace, monospace;
+        }
+        .inspector-field input[type="number"]:focus { border-color: #4a9eff; outline: none; }
+        .inspector-slider { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .inspector-slider:last-child { margin-bottom: 0; }
+        .inspector-slider label { font-size: 11px; color: #888; width: 52px; flex-shrink: 0; }
+        .inspector-slider input[type="range"] {
+            flex: 1; height: 4px; -webkit-appearance: none; appearance: none;
+            background: #333; border-radius: 2px; outline: none;
+        }
+        .inspector-slider input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 12px; height: 12px;
+            background: #888; border-radius: 50%; cursor: pointer;
+        }
+        .inspector-slider input[type="range"]::-webkit-slider-thumb:hover { background: #aaa; }
+        .inspector-slider .slider-value { font-size: 11px; color: #888; width: 32px; text-align: right; flex-shrink: 0; }
+        .inspector-select { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .inspector-select:last-child { margin-bottom: 0; }
+        .inspector-select label { font-size: 11px; color: #888; width: 52px; flex-shrink: 0; }
+        .inspector-select select {
+            flex: 1; padding: 3px 6px; border: 1px solid #333; border-radius: 3px;
+            background: #252525; color: #ddd; font-size: 12px;
+        }
+        .inspector-select select:focus { border-color: #4a9eff; outline: none; }
+        .inspector::-webkit-scrollbar { width: 6px; }
+        .inspector::-webkit-scrollbar-track { background: transparent; }
+        .inspector::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
         /* Loading overlay */
         .loading-overlay {
@@ -118,7 +146,7 @@
 
         /* Zoom display */
         .zoom-display {
-            position: absolute; bottom: 52px; right: 12px;
+            position: absolute; bottom: 12px; right: 12px;
             background: rgba(0,0,0,0.6); padding: 3px 8px; border-radius: 4px;
             font-size: 11px; color: #aaa; pointer-events: none;
         }
@@ -128,29 +156,6 @@
         .layer-list::-webkit-scrollbar-track { background: transparent; }
         .layer-list::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 
-        /* JSON modal */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            display: flex; align-items: center; justify-content: center; z-index: 500;
-        }
-        .modal-overlay.hidden { display: none; }
-        .modal {
-            background: #222; border: 1px solid #444; border-radius: 8px;
-            padding: 20px; width: 600px; max-height: 80vh; display: flex; flex-direction: column; gap: 12px;
-        }
-        .modal h3 { font-size: 14px; color: #ccc; }
-        .modal textarea {
-            width: 100%; height: 300px; background: #1a1a1a; border: 1px solid #333;
-            border-radius: 4px; color: #ddd; font-family: ui-monospace, monospace; font-size: 11px;
-            padding: 8px; resize: vertical;
-        }
-        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
-        .modal-actions button {
-            padding: 6px 16px; border: 1px solid #444; border-radius: 4px;
-            background: #2a2a2a; color: #ccc; cursor: pointer; font-size: 12px;
-        }
-        .modal-actions button.primary { background: #3a6a4a; border-color: #4a8a5a; }
-        .modal-actions button:hover { opacity: 0.85; }
     </style>
 </head>
 <body>
@@ -161,25 +166,12 @@
         <div class="progress-text" id="progressText">0 / 25</div>
     </div>
 
-    <!-- JSON modal -->
-    <div class="modal-overlay hidden" id="jsonModal">
-        <div class="modal">
-            <h3>composition.json</h3>
-            <textarea id="jsonTextarea" spellcheck="false"></textarea>
-            <div class="modal-actions">
-                <button id="btnCopy">Copy</button>
-                <button id="btnCloseModal">Close</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Top bar -->
     <div class="topbar">
         <div class="topbar-left">
-            <button id="btnSave">Save JSON &#x2193;</button>
-            <button id="btnLoadTrigger">Load JSON</button>
+            <button id="btnSave">Save Version</button>
+            <button id="btnLoadTrigger">Load Version</button>
             <input type="file" id="loadInput" accept=".json" style="display:none">
-            <button id="btnView">View JSON</button>
             <button id="btnReset">Reset</button>
             <button class="publish" id="btnPublish">Publish</button>
             <button class="add-layer" id="btnAddLayer">Add Layer +</button>
@@ -193,13 +185,13 @@
         <div class="sidebar">
             <div class="sidebar-header">Layers <span id="layerCount"></span></div>
             <div class="layer-list" id="layerList"></div>
+            <div class="inspector empty" id="inspector"></div>
         </div>
         <div class="canvas-area">
             <div class="canvas-wrap" id="canvasWrap">
                 <canvas id="mainCanvas"></canvas>
             </div>
             <div class="zoom-display" id="zoomDisplay">100%</div>
-            <div class="bottom-panel empty" id="bottomPanel">Select a layer</div>
         </div>
     </div>
 
@@ -273,7 +265,7 @@
     var ctx = mainCanvas.getContext('2d');
     var canvasWrap = document.getElementById('canvasWrap');
     var layerListEl = document.getElementById('layerList');
-    var bottomPanel = document.getElementById('bottomPanel');
+    var inspector = document.getElementById('inspector');
     var zoomDisplay = document.getElementById('zoomDisplay');
     var loadingOverlay = document.getElementById('loadingOverlay');
     var progressFill = document.getElementById('progressFill');
@@ -321,7 +313,7 @@
             selectedLayerId = null;
         }
         buildLayerList();
-        updateBottomPanel();
+        updateInspector();
     }
 
     function undo() {
@@ -660,7 +652,7 @@
                 pushUndo();
                 layer.visible = !layer.visible;
                 buildLayerList();
-                updateBottomPanel();
+                updateInspector();
             });
 
             // Info
@@ -686,7 +678,7 @@
                         layer.name = newName;
                     }
                     buildLayerList();
-                    updateBottomPanel();
+                    updateInspector();
                 }
 
                 input.addEventListener('blur', confirmRename);
@@ -714,30 +706,11 @@
             info.appendChild(name);
             info.appendChild(dims);
 
-            // Opacity slider
-            var slider = document.createElement('input');
-            slider.type = 'range';
-            slider.className = 'layer-opacity';
-            slider.min = '0';
-            slider.max = '1';
-            slider.step = '0.01';
-            slider.value = String(layer.opacity);
-            (function(lyr) {
-                var opacityUndoPushed = false;
-                slider.addEventListener('mousedown', function() { pushUndo(); opacityUndoPushed = true; });
-                slider.addEventListener('input', function(e) {
-                    e.stopPropagation();
-                    lyr.opacity = parseFloat(e.target.value);
-                });
-                slider.addEventListener('change', function() { opacityUndoPushed = false; });
-            })(layer);
-            slider.addEventListener('click', function(e) { e.stopPropagation(); });
-
             // Click to select
             el.addEventListener('click', function() {
                 selectedLayerId = layer.id;
                 buildLayerList();
-                updateBottomPanel();
+                updateInspector();
             });
 
             // Drag-to-reorder
@@ -811,126 +784,155 @@
 
                 reorderDragId = null;
                 buildLayerList();
-                updateBottomPanel();
+                updateInspector();
             });
 
-            el.appendChild(eye);
+            // Delete button
+            var del = document.createElement('span');
+            del.className = 'layer-delete';
+            del.textContent = '\u2715';
+            del.title = 'Delete layer';
+            (function(lyr) {
+                del.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    deleteLayer(lyr.id);
+                });
+            })(layer);
+
             el.appendChild(info);
-            el.appendChild(slider);
+            el.appendChild(eye);
+            el.appendChild(del);
             layerListEl.appendChild(el);
         });
     }
 
-    function updateBottomPanel() {
+    function deleteLayer(id) {
+        var idx = layers.findIndex(function(l) { return l.id === id; });
+        if (idx < 0) return;
+        pushUndo();
+        layers.splice(idx, 1);
+        delete images[id];
+        delete transparentImages[id];
+        delete processedCanvases[id];
+        delete thumbnails[id];
+        if (selectedLayerId === id) selectedLayerId = null;
+        buildLayerList();
+        updateInspector();
+    }
+
+    var inspectorRefs = {};  // live input references for in-place updates
+
+    function refreshInspectorValues() {
         var layer = layers.find(function(l) { return l.id === selectedLayerId; });
-        while (bottomPanel.firstChild) bottomPanel.removeChild(bottomPanel.firstChild);
+        if (!layer || !inspectorRefs.x) return;
+        inspectorRefs.x.value = String(Math.round(layer.x));
+        inspectorRefs.y.value = String(Math.round(layer.y));
+        inspectorRefs.scale.value = layer.scale.toFixed(4);
+        inspectorRefs.rotation.value = (Math.round(layer.rotation * 10) / 10).toFixed(1);
+    }
+
+    function updateInspector() {
+        var layer = layers.find(function(l) { return l.id === selectedLayerId; });
+        while (inspector.firstChild) inspector.removeChild(inspector.firstChild);
+        inspectorRefs = {};
 
         if (!layer) {
-            bottomPanel.className = 'bottom-panel empty';
-            bottomPanel.textContent = 'Select a layer';
+            inspector.className = 'inspector empty';
             return;
         }
 
-        bottomPanel.className = 'bottom-panel';
+        inspector.className = 'inspector';
 
-        // Name label
-        var label = document.createElement('strong');
-        label.style.color = '#4a9eff';
-        label.textContent = layer.name;
-        bottomPanel.appendChild(label);
-        bottomPanel.appendChild(makeSep());
+        // Name
+        var nameEl = document.createElement('div');
+        nameEl.className = 'inspector-name';
+        nameEl.textContent = layer.name;
+        inspector.appendChild(nameEl);
 
-        // X
-        bottomPanel.appendChild(makeNumberParam('X', Math.round(layer.x), function(v) { layer.x = v; }));
-        // Y
-        bottomPanel.appendChild(makeNumberParam('Y', Math.round(layer.y), function(v) { layer.y = v; }));
-        // Scale
-        bottomPanel.appendChild(makeNumberParam('Scale', layer.scale, function(v) { layer.scale = v; }, 0.01, 4));
-        // Rotation
-        bottomPanel.appendChild(makeNumberParam('Rot', Math.round(layer.rotation * 10) / 10, function(v) { layer.rotation = v; }, 1, 1));
-        bottomPanel.appendChild(makeSep());
+        // Transform group
+        var transform = makeInspectorGroup('Transform');
+        var row1 = document.createElement('div');
+        row1.className = 'inspector-row';
+        var xField = makeNumberField('X', Math.round(layer.x), function(v) { layer.x = v; });
+        var yField = makeNumberField('Y', Math.round(layer.y), function(v) { layer.y = v; });
+        inspectorRefs.x = xField.querySelector('input');
+        inspectorRefs.y = yField.querySelector('input');
+        row1.appendChild(xField);
+        row1.appendChild(yField);
+        transform.appendChild(row1);
+        var row2 = document.createElement('div');
+        row2.className = 'inspector-row';
+        var sField = makeNumberField('S', layer.scale, function(v) { layer.scale = v; }, 0.01, 4);
+        var rField = makeNumberField('R', Math.round(layer.rotation * 10) / 10, function(v) { layer.rotation = v; }, 1, 1);
+        inspectorRefs.scale = sField.querySelector('input');
+        inspectorRefs.rotation = rField.querySelector('input');
+        row2.appendChild(sField);
+        row2.appendChild(rField);
+        transform.appendChild(row2);
+        inspector.appendChild(transform);
 
-        // Threshold
-        var threshGroup = document.createElement('div');
-        threshGroup.className = 'param-group';
-        var threshLabel = document.createElement('label');
-        threshLabel.textContent = 'Threshold';
-        var threshSlider = document.createElement('input');
-        threshSlider.type = 'range';
-        threshSlider.min = '0';
-        threshSlider.max = '442';
-        threshSlider.value = String(layer.threshold);
-        threshSlider.style.width = '100px';
-        var threshVal = document.createElement('span');
-        threshVal.style.cssText = 'color:#888;min-width:28px';
-        threshVal.textContent = String(layer.threshold);
-        var threshUndoPushed = false;
-        threshSlider.addEventListener('mousedown', function() { if (!threshUndoPushed) { pushUndo(); threshUndoPushed = true; } });
-        threshSlider.addEventListener('input', function(e) {
-            layer.threshold = parseInt(e.target.value, 10);
-            threshVal.textContent = String(layer.threshold);
+        // Appearance group
+        var appearance = makeInspectorGroup('Appearance');
+        appearance.appendChild(makeSliderField('Opacity', 0, 1, 0.01, layer.opacity, function(v) {
+            layer.opacity = v;
+        }, function(v) { return Math.round(v * 100) + '%'; }));
+        appearance.appendChild(makeSliderField('Feather', 0, 200, 1, layer.feather || 0, function(v) {
+            layer.feather = v;
             invalidateProcessedCanvas(layer.id);
-        });
-        threshSlider.addEventListener('change', function() { threshUndoPushed = false; });
-        threshGroup.appendChild(threshLabel);
-        threshGroup.appendChild(threshSlider);
-        threshGroup.appendChild(threshVal);
-        bottomPanel.appendChild(threshGroup);
+        }));
+        inspector.appendChild(appearance);
 
-        // Feather
-        var featherGroup = document.createElement('div');
-        featherGroup.className = 'param-group';
-        var featherLabel = document.createElement('label');
-        featherLabel.textContent = 'Feather';
-        var featherSlider = document.createElement('input');
-        featherSlider.type = 'range';
-        featherSlider.min = '0';
-        featherSlider.max = '200';
-        featherSlider.value = String(layer.feather || 0);
-        featherSlider.style.width = '80px';
-        var featherVal = document.createElement('span');
-        featherVal.style.cssText = 'color:#888;min-width:28px';
-        featherVal.textContent = String(layer.feather || 0);
-        var featherUndoPushed = false;
-        featherSlider.addEventListener('mousedown', function() { if (!featherUndoPushed) { pushUndo(); featherUndoPushed = true; } });
-        featherSlider.addEventListener('input', function(e) {
-            layer.feather = parseInt(e.target.value, 10);
-            featherVal.textContent = String(layer.feather);
-            invalidateProcessedCanvas(layer.id);
-        });
-        featherSlider.addEventListener('change', function() { featherUndoPushed = false; });
-        featherGroup.appendChild(featherLabel);
-        featherGroup.appendChild(featherSlider);
-        featherGroup.appendChild(featherVal);
-        bottomPanel.appendChild(featherGroup);
-        bottomPanel.appendChild(makeSep());
-
-        // bgMode
-        var bgGroup = document.createElement('div');
-        bgGroup.className = 'param-group';
-        var bgLabel = document.createElement('label');
-        bgLabel.textContent = 'BG';
+        // Background group
+        var background = makeInspectorGroup('Background');
+        var bgModes = [
+            { value: 'threshold', label: 'Color Match' },
+            { value: 'ai', label: 'Auto Remove' },
+            { value: 'none', label: 'Original' }
+        ];
+        var selectRow = document.createElement('div');
+        selectRow.className = 'inspector-select';
+        var selectLabel = document.createElement('label');
+        selectLabel.textContent = 'Mode';
         var bgSelect = document.createElement('select');
-        ['threshold', 'ai', 'none'].forEach(function(mode) {
+        bgModes.forEach(function(m) {
             var opt = document.createElement('option');
-            opt.value = mode;
-            opt.textContent = mode === 'ai' ? 'AI (rembg)' : mode.charAt(0).toUpperCase() + mode.slice(1);
-            if (layer.bgMode === mode) opt.selected = true;
+            opt.value = m.value;
+            opt.textContent = m.label;
+            if (layer.bgMode === m.value) opt.selected = true;
             bgSelect.appendChild(opt);
         });
         bgSelect.addEventListener('change', function(e) {
             pushUndo();
             layer.bgMode = e.target.value;
             invalidateProcessedCanvas(layer.id);
+            updateInspector();
         });
-        bgGroup.appendChild(bgLabel);
-        bgGroup.appendChild(bgSelect);
-        bottomPanel.appendChild(bgGroup);
+        selectRow.appendChild(selectLabel);
+        selectRow.appendChild(bgSelect);
+        background.appendChild(selectRow);
+
+        if (layer.bgMode === 'threshold') {
+            background.appendChild(makeSliderField('Strength', 0, 442, 1, layer.threshold, function(v) {
+                layer.threshold = v;
+                invalidateProcessedCanvas(layer.id);
+            }));
+        }
+        inspector.appendChild(background);
     }
 
-    function makeNumberParam(labelText, value, onChange, step, decimals) {
+    function makeInspectorGroup(title) {
         var group = document.createElement('div');
-        group.className = 'param-group';
+        group.className = 'inspector-group';
+        var label = document.createElement('div');
+        label.className = 'inspector-group-label';
+        label.textContent = title;
+        group.appendChild(label);
+        return group;
+    }
+
+    function makeNumberField(labelText, value, onChange, step, decimals) {
+        var field = document.createElement('div');
+        field.className = 'inspector-field';
         var lbl = document.createElement('label');
         lbl.textContent = labelText;
         var input = document.createElement('input');
@@ -941,15 +943,39 @@
             var v = parseFloat(e.target.value);
             if (!isNaN(v)) { pushUndo(); onChange(v); }
         });
-        group.appendChild(lbl);
-        group.appendChild(input);
-        return group;
+        input.addEventListener('keydown', function(e) { e.stopPropagation(); });
+        field.appendChild(lbl);
+        field.appendChild(input);
+        return field;
     }
 
-    function makeSep() {
-        var sep = document.createElement('div');
-        sep.className = 'bottom-sep';
-        return sep;
+    function makeSliderField(labelText, min, max, step, value, onChange, formatFn) {
+        var row = document.createElement('div');
+        row.className = 'inspector-slider';
+        var lbl = document.createElement('label');
+        lbl.textContent = labelText;
+        var slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = String(min);
+        slider.max = String(max);
+        slider.step = String(step);
+        slider.value = String(value);
+        var val = document.createElement('span');
+        val.className = 'slider-value';
+        val.textContent = formatFn ? formatFn(value) : String(Math.round(value));
+        var undoPushed = false;
+        slider.addEventListener('mousedown', function() { if (!undoPushed) { pushUndo(); undoPushed = true; } });
+        slider.addEventListener('input', function(e) {
+            var v = parseFloat(e.target.value);
+            val.textContent = formatFn ? formatFn(v) : String(Math.round(v));
+            onChange(v);
+        });
+        slider.addEventListener('change', function() { undoPushed = false; });
+        slider.addEventListener('click', function(e) { e.stopPropagation(); });
+        row.appendChild(lbl);
+        row.appendChild(slider);
+        row.appendChild(val);
+        return row;
     }
 
     // ==========================================================================
@@ -1053,7 +1079,12 @@
             }
         }
 
-        // Nothing hit — pan
+        // Nothing hit — deselect and pan
+        if (selectedLayerId) {
+            selectedLayerId = null;
+            buildLayerList();
+            updateInspector();
+        }
         isPanning = true;
         panStartX = e.clientX; panStartY = e.clientY;
         panStartViewX = viewX; panStartViewY = viewY;
@@ -1072,7 +1103,7 @@
             if (layer) {
                 layer.x = dragLayerStartX + (pt.x - dragStartX);
                 layer.y = dragLayerStartY + (pt.y - dragStartY);
-                updateBottomPanel();
+                refreshInspectorValues();
             }
         }
         if (isRotating && selectedLayerId) {
@@ -1083,7 +1114,7 @@
             var layer = layers.find(function(l) { return l.id === selectedLayerId; });
             if (layer) {
                 layer.rotation = rotateStartRotation + delta;
-                updateBottomPanel();
+                refreshInspectorValues();
             }
         }
         if (isResizing && selectedLayerId) {
@@ -1100,7 +1131,7 @@
                 var newH = img.naturalHeight * layer.scale;
                 layer.x = resizeCenterX - newW / 2;
                 layer.y = resizeCenterY - newH / 2;
-                updateBottomPanel();
+                refreshInspectorValues();
             }
         }
     });
@@ -1139,10 +1170,14 @@
         if (e.code === 'Escape' && document.activeElement.tagName !== 'INPUT') {
             selectedLayerId = null;
             buildLayerList();
-            updateBottomPanel();
+            updateInspector();
         }
         if (e.code === 'KeyF' && !e.ctrlKey && !e.metaKey && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             fitView();
+        }
+        if ((e.code === 'Delete' || e.code === 'Backspace') && selectedLayerId && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            deleteLayer(selectedLayerId);
         }
     });
 
@@ -1181,14 +1216,11 @@
         var json = getCompositionJson();
         var blob = new Blob([json], { type: 'application/json' });
         var url = URL.createObjectURL(blob);
+        var d = new Date();
+        var dateStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
         var a = document.createElement('a');
-        a.href = url; a.download = 'composition.json'; a.click();
+        a.href = url; a.download = 'lauren-artwork-' + dateStr + '.json'; a.click();
         URL.revokeObjectURL(url);
-    }
-
-    function showJson() {
-        document.getElementById('jsonTextarea').value = getCompositionJson();
-        document.getElementById('jsonModal').classList.remove('hidden');
     }
 
     function loadJsonFile(event) {
@@ -1198,16 +1230,55 @@
         reader.onload = function(e) {
             try {
                 var data = JSON.parse(e.target.result);
-                if (data.layers) {
-                    layers = data.layers;
-                    layers.forEach(ensureLayerDefaults);
-                    processedCanvases = {};
-                    selectedLayerId = null;
-                    buildLayerList();
-                    updateBottomPanel();
+                if (!data.layers) {
+                    alert('This file doesn\u2019t look like a saved version.');
+                    return;
                 }
+                pushUndo();
+                layers = data.layers;
+                layers.forEach(ensureLayerDefaults);
+                processedCanvases = {};
+                selectedLayerId = null;
+
+                // Reload images for any layers not already loaded
+                var toLoad = layers.filter(function(l) { return !images[l.id]; });
+                var loaded = 0;
+                if (toLoad.length === 0) {
+                    buildLayerList();
+                    updateInspector();
+                    return;
+                }
+                toLoad.forEach(function(layer) {
+                    var img = new Image();
+                    img.onload = function() {
+                        images[layer.id] = img;
+                        generateThumbnail(layer.id);
+                        loaded++;
+                        if (loaded === toLoad.length) { buildLayerList(); updateInspector(); }
+                    };
+                    img.onerror = function() {
+                        loaded++;
+                        if (loaded === toLoad.length) { buildLayerList(); updateInspector(); }
+                    };
+                    img.src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
+                });
+
+                // Also load transparent PNGs for non-uploaded layers
+                toLoad.forEach(function(layer) {
+                    if (layer.uploaded) return;
+                    var pngName = layer.filename.replace('.jpg', '.png');
+                    var tImg = new Image();
+                    tImg.onload = function() {
+                        transparentImages[layer.id] = tImg;
+                        delete processedCanvases[layer.id];
+                    };
+                    tImg.src = 'transparent/' + pngName;
+                });
+
+                buildLayerList();
+                updateInspector();
             } catch (err) {
-                alert('Invalid JSON: ' + err.message);
+                alert('Couldn\u2019t read this file. Make sure it\u2019s a saved version.');
             }
         };
         reader.readAsText(file);
@@ -1221,7 +1292,7 @@
         processedCanvases = {};
         selectedLayerId = null;
         buildLayerList();
-        updateBottomPanel();
+        updateInspector();
         fitView();
     }
 
@@ -1283,7 +1354,7 @@
                 generateThumbnail(newId);
                 selectedLayerId = newId;
                 buildLayerList();
-                updateBottomPanel();
+                updateInspector();
             };
             img.src = objectUrl;
         }).catch(function(err) {
@@ -1350,21 +1421,12 @@
         document.getElementById('loadInput').click();
     });
     document.getElementById('loadInput').addEventListener('change', loadJsonFile);
-    document.getElementById('btnView').addEventListener('click', showJson);
     document.getElementById('btnReset').addEventListener('click', resetToDefaults);
     document.getElementById('btnPublish').addEventListener('click', publish);
     document.getElementById('btnAddLayer').addEventListener('click', function() {
         document.getElementById('imageInput').click();
     });
     document.getElementById('imageInput').addEventListener('change', handleUploadImage);
-    document.getElementById('btnCopy').addEventListener('click', function() {
-        var ta = document.getElementById('jsonTextarea');
-        ta.select();
-        navigator.clipboard.writeText(ta.value);
-    });
-    document.getElementById('btnCloseModal').addEventListener('click', function() {
-        document.getElementById('jsonModal').classList.add('hidden');
-    });
 
     // ==========================================================================
     // START

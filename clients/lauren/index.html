@@ -212,7 +212,7 @@
             var cy = portrait ? coreCY : contentCY;
             var scaleX = window.innerWidth / w;
             var scaleY = window.innerHeight / h;
-            var zoom = Math.min(scaleX, scaleY) * 1.18;
+            var zoom = Math.min(scaleX, scaleY) * (portrait ? 0.92 : 1.18);
             var nx = portrait ? 0 : VIEW_NUDGE_X;
             var ny = portrait ? -0.02 : VIEW_NUDGE_Y;
             var vx = window.innerWidth / 2 - cx * zoom + window.innerWidth * nx;

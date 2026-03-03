@@ -50,13 +50,16 @@
 
         .reset-btn {
             position: fixed; bottom: 16px; left: 16px; z-index: 10;
-            width: 28px; height: 28px; border: none; border-radius: 4px;
+            border: none; border-radius: 4px; padding: 5px 10px;
             background: rgba(0,0,0,0.04); cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: background 0.2s;
+            display: flex; align-items: center; gap: 5px;
+            font-size: 12px; color: #999; font-family: system-ui, -apple-system, sans-serif;
+            opacity: 0; pointer-events: none;
+            transition: background 0.2s, opacity 0.4s;
         }
+        .reset-btn.visible { opacity: 1; pointer-events: auto; }
         .reset-btn:hover { background: rgba(0,0,0,0.08); }
-        .reset-btn svg { width: 14px; height: 14px; }
+        .reset-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
 
         .dive-track {
             position: fixed; top: 40px; bottom: 40px; right: 12px; width: 3px;
@@ -101,7 +104,7 @@
     </div>
 
     <canvas id="mainCanvas"></canvas>
-    <button class="reset-btn" id="resetBtn" title="Reset view"><svg viewBox="0 0 16 16" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"><path d="M2 2h4M2 2v4M14 14h-4M14 14v-4M14 2h-4M14 2v4M2 14h4M2 14v-4"/></svg></button>
+    <button class="reset-btn" id="resetBtn" title="Reset view"><svg viewBox="0 0 16 16" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"><path d="M2 2h4M2 2v4M14 14h-4M14 14v-4M14 2h-4M14 2v4M2 14h4M2 14v-4"/></svg>Reset</button>
     <div class="dive-track" id="diveTrack"><div class="dive-pip" id="divePip"></div></div>
     <div class="dive-hint" id="diveHint"><span>Scroll to dive</span></div>
     <a class="edit-link" id="editLink" href="/editor">Edit</a>
@@ -392,8 +395,7 @@
             divePip.style.top = (pct * 100) + '%';
 
             if (!diveHintShown && Math.abs(targetScroll) > 0.05) {
-                diveHintShown = true;
-                diveHint.classList.remove('visible');
+                showResetBtn();
             }
 
             render();
@@ -401,9 +403,18 @@
         }
 
         // ---- Interaction ----
+        function showResetBtn() {
+            if (!diveHintShown) {
+                diveHintShown = true;
+                diveHint.classList.remove('visible');
+            }
+            resetBtn.classList.add('visible');
+        }
+
         mainCanvas.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
             animating = false;
+            showResetBtn();
             isPanning = true;
             panStartX = e.clientX; panStartY = e.clientY;
             panStartViewX = viewX; panStartViewY = viewY;
@@ -423,6 +434,7 @@
 
         mainCanvas.addEventListener('wheel', function(e) {
             e.preventDefault();
+            showResetBtn();
             if (e.ctrlKey) {
                 // Pinch-to-zoom
                 var mx = e.clientX, my = e.clientY;
@@ -442,6 +454,7 @@
 
         // Touch: single-finger scrolls depth, two-finger pans + zooms
         mainCanvas.addEventListener('touchstart', function(e) {
+            showResetBtn();
             if (e.touches.length === 1) {
                 diveTouchLastY = e.touches[0].clientY;
                 isPanning = false;

@@ -4,7 +4,9 @@ compatibility_date = "2024-12-01"
 
 routes = [
   { pattern = "lauren.farkas.design/api/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" },
-  { pattern = "lauren.farkas.design/uploads/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" }
+  { pattern = "lauren.farkas.design/uploads/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" },
+  { pattern = "marchmap.farkas.design/api/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" },
+  { pattern = "marchmap.farkas.design/uploads/*", zone_id = "c160d4aa24b5f1e08ba5958cc8e7cd3d" }
 ]
 
 [[r2_buckets]]

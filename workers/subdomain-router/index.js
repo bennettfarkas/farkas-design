@@ -14,11 +14,15 @@ export default {
     const path = url.pathname === '/' ? '/index.html' : url.pathname;
     const query = url.search;
 
+    // Subdomain aliases: serve content from another client's folder
+    const aliases = { marchmap: 'lauren' };
+    const folder = aliases[subdomain] || subdomain;
+
     // Shared assets resolve to site root, not the client folder
     const isShared = path.startsWith('/shared/');
     const originUrl = isShared
       ? `https://farkas.design${path}${query}`
-      : `https://farkas.design/clients/${subdomain}${path}${query}`;
+      : `https://farkas.design/clients/${folder}${path}${query}`;
     const originResponse = await fetch(originUrl, {
       headers: {
         'User-Agent': 'farkas-design-subdomain-router',

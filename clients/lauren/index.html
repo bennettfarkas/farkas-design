@@ -78,10 +78,15 @@
     <button class="reset-btn" id="resetBtn" title="Reset view"><svg viewBox="0 0 16 16" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"><path d="M2 2h4M2 2v4M14 14h-4M14 14v-4M14 2h-4M14 2v4M2 14h4M2 14v-4"/></svg></button>
     <div class="dive-track" id="diveTrack"><div class="dive-pip" id="divePip"></div></div>
     <div class="dive-hint" id="diveHint"><span>Scroll to begin</span></div>
-    <a class="edit-link" href="/editor">Edit</a>
+    <a class="edit-link" id="editLink" href="/editor">Edit</a>
 
     <script>
     (function() {
+        // Hide editor link on public-facing subdomain
+        if (location.hostname !== 'lauren.farkas.design') {
+            document.getElementById('editLink').style.display = 'none';
+        }
+
         var CANVAS_W = 28800;
         var CANVAS_H = 16200;
         var MAX_PREVIEW_DIM = 2000;

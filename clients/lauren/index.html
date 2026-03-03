@@ -176,13 +176,14 @@
             contentH = maxY - minY;
         }
 
+        var VIEW_NUDGE_X = 0.03;  // shift right by 3% of viewport width
         var VIEW_NUDGE_Y = -0.06; // shift up by 6% of viewport height
 
         function fitView() {
             var scaleX = window.innerWidth / contentW;
             var scaleY = window.innerHeight / contentH;
             viewZoom = Math.min(scaleX, scaleY) * 1.18;
-            viewX = window.innerWidth / 2 - contentCX * viewZoom;
+            viewX = window.innerWidth / 2 - contentCX * viewZoom + window.innerWidth * VIEW_NUDGE_X;
             viewY = window.innerHeight / 2 - contentCY * viewZoom + window.innerHeight * VIEW_NUDGE_Y;
         }
 
@@ -191,7 +192,7 @@
             var scaleX = window.innerWidth / contentW;
             var scaleY = window.innerHeight / contentH;
             var fitZoom = Math.min(scaleX, scaleY) * 1.18;
-            var fitX = window.innerWidth / 2 - contentCX * fitZoom;
+            var fitX = window.innerWidth / 2 - contentCX * fitZoom + window.innerWidth * VIEW_NUDGE_X;
             var fitY = window.innerHeight / 2 - contentCY * fitZoom + window.innerHeight * VIEW_NUDGE_Y;
             targetZoom = fitZoom;
             targetViewX = fitX;

@@ -498,35 +498,31 @@
                 layers = data.layers;
                 var total = layers.length;
                 var loaded = 0;
-                var started = false;
-
-                // Prepare dive sort immediately so rendering can begin
-                diveSorted = layers.filter(function(l) { return l.visible; })
-                    .sort(function(a, b) { return b.zIndex - a.zIndex; });
-                diveLayerCount = diveSorted.length;
 
                 function tick() {
                     loaded++;
                     progressText.textContent = loaded + ' / ' + total;
-
-                    // Start rendering after first image loads
-                    if (!started) {
-                        started = true;
-                        loadingOverlay.classList.add('hidden');
-                        fitView();
-                        homeX = viewX;
-                        homeY = viewY;
-                        diveHint.classList.add('visible');
-                        renderLoop();
-                    }
                 }
 
-                layers.forEach(function(layer) {
+                var promises = layers.map(function(layer) {
                     var src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
-                    loadImage(src).then(function(img) {
+                    return loadImage(src).then(function(img) {
                         if (img) images[layer.id] = img;
                         tick();
                     });
+                });
+
+                Promise.all(promises).then(function() {
+                    diveSorted = layers.filter(function(l) { return l.visible; })
+                        .sort(function(a, b) { return b.zIndex - a.zIndex; });
+                    diveLayerCount = diveSorted.length;
+
+                    fitView();
+                    homeX = viewX;
+                    homeY = viewY;
+                    loadingOverlay.classList.add('hidden');
+                    diveHint.classList.add('visible');
+                    renderLoop();
                 });
             }).catch(function() {
                 loadingOverlay.classList.add('hidden');

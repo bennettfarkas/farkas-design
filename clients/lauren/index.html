@@ -156,52 +156,83 @@
         }
 
         // Content bounds (computed after layers load)
+        // Full bounds (desktop) and core bounds (mobile — excludes outlier layers)
         var contentCX = CANVAS_W / 2, contentCY = CANVAS_H / 2;
         var contentW = CANVAS_W, contentH = CANVAS_H;
+        var coreCX = contentCX, coreCY = contentCY;
+        var coreW = contentW, coreH = contentH;
 
         function computeContentBounds() {
             var visible = layers.filter(function(l) { return l.visible; });
             if (!visible.length) return;
             var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            var x1s = [], x2s = [], y1s = [], y2s = [];
             visible.forEach(function(l) {
                 var img = images[l.id];
                 if (!img) return;
-                var x2 = l.x + img.naturalWidth * l.scale;
-                var y2 = l.y + img.naturalHeight * l.scale;
+                var lx2 = l.x + img.naturalWidth * l.scale;
+                var ly2 = l.y + img.naturalHeight * l.scale;
                 if (l.x < minX) minX = l.x;
                 if (l.y < minY) minY = l.y;
-                if (x2 > maxX) maxX = x2;
-                if (y2 > maxY) maxY = y2;
+                if (lx2 > maxX) maxX = lx2;
+                if (ly2 > maxY) maxY = ly2;
+                x1s.push(l.x); x2s.push(lx2);
+                y1s.push(l.y); y2s.push(ly2);
             });
             contentCX = (minX + maxX) / 2;
             contentCY = (minY + maxY) / 2;
             contentW = maxX - minX;
             contentH = maxY - minY;
+
+            // Core bounds: 10th/90th percentile edges (excludes outlier layers)
+            var ns = function(a, b) { return a - b; };
+            x1s.sort(ns); x2s.sort(ns); y1s.sort(ns); y2s.sort(ns);
+            var n = x1s.length;
+            if (n >= 5) {
+                var lo = Math.floor(n * 0.1);
+                var hi = Math.min(n - 1, Math.floor(n * 0.9));
+                coreW = x2s[hi] - x1s[lo];
+                coreH = y2s[hi] - y1s[lo];
+                coreCX = (x1s[lo] + x2s[hi]) / 2;
+                coreCY = (y1s[lo] + y2s[hi]) / 2;
+            } else {
+                coreW = contentW; coreH = contentH;
+                coreCX = contentCX; coreCY = contentCY;
+            }
         }
 
-        var VIEW_NUDGE_X = 0.015; // shift right by 1.5% of viewport width
-        var VIEW_NUDGE_Y = -0.06; // shift up by 6% of viewport height
+        var VIEW_NUDGE_X = 0.015;
+        var VIEW_NUDGE_Y = -0.06;
+
+        function calcFit() {
+            var portrait = window.innerHeight > window.innerWidth * 1.2;
+            var w = portrait ? coreW : contentW;
+            var h = portrait ? coreH : contentH;
+            var cx = portrait ? coreCX : contentCX;
+            var cy = portrait ? coreCY : contentCY;
+            var scaleX = window.innerWidth / w;
+            var scaleY = window.innerHeight / h;
+            var zoom = Math.min(scaleX, scaleY) * 1.18;
+            var nx = portrait ? 0 : VIEW_NUDGE_X;
+            var ny = portrait ? -0.02 : VIEW_NUDGE_Y;
+            var vx = window.innerWidth / 2 - cx * zoom + window.innerWidth * nx;
+            var vy = window.innerHeight / 2 - cy * zoom + window.innerHeight * ny;
+            return { zoom: zoom, x: vx, y: vy };
+        }
 
         function fitView() {
-            var scaleX = window.innerWidth / contentW;
-            var scaleY = window.innerHeight / contentH;
-            viewZoom = Math.min(scaleX, scaleY) * 1.18;
-            viewX = window.innerWidth / 2 - contentCX * viewZoom + window.innerWidth * VIEW_NUDGE_X;
-            viewY = window.innerHeight / 2 - contentCY * viewZoom + window.innerHeight * VIEW_NUDGE_Y;
+            var f = calcFit();
+            viewZoom = f.zoom; viewX = f.x; viewY = f.y;
         }
 
         function resetView() {
             targetScroll = 0;
-            var scaleX = window.innerWidth / contentW;
-            var scaleY = window.innerHeight / contentH;
-            var fitZoom = Math.min(scaleX, scaleY) * 1.18;
-            var fitX = window.innerWidth / 2 - contentCX * fitZoom + window.innerWidth * VIEW_NUDGE_X;
-            var fitY = window.innerHeight / 2 - contentCY * fitZoom + window.innerHeight * VIEW_NUDGE_Y;
-            targetZoom = fitZoom;
-            targetViewX = fitX;
-            targetViewY = fitY;
-            homeX = fitX;
-            homeY = fitY;
+            var f = calcFit();
+            targetZoom = f.zoom;
+            targetViewX = f.x;
+            targetViewY = f.y;
+            homeX = f.x;
+            homeY = f.y;
             animating = true;
         }
 

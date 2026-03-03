@@ -152,22 +152,46 @@
             mainCanvas.style.height = window.innerHeight + 'px';
         }
 
+        // Content bounds (computed after layers load)
+        var contentCX = CANVAS_W / 2, contentCY = CANVAS_H / 2;
+        var contentW = CANVAS_W, contentH = CANVAS_H;
+
+        function computeContentBounds() {
+            var visible = layers.filter(function(l) { return l.visible; });
+            if (!visible.length) return;
+            var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+            visible.forEach(function(l) {
+                var img = images[l.id];
+                if (!img) return;
+                var x2 = l.x + img.naturalWidth * l.scale;
+                var y2 = l.y + img.naturalHeight * l.scale;
+                if (l.x < minX) minX = l.x;
+                if (l.y < minY) minY = l.y;
+                if (x2 > maxX) maxX = x2;
+                if (y2 > maxY) maxY = y2;
+            });
+            contentCX = (minX + maxX) / 2;
+            contentCY = (minY + maxY) / 2;
+            contentW = maxX - minX;
+            contentH = maxY - minY;
+        }
+
         function fitView() {
-            var scaleX = window.innerWidth / CANVAS_W;
-            var scaleY = window.innerHeight / CANVAS_H;
+            var scaleX = window.innerWidth / contentW;
+            var scaleY = window.innerHeight / contentH;
             viewZoom = Math.min(scaleX, scaleY) * 0.92;
-            viewX = (window.innerWidth - CANVAS_W * viewZoom) / 2;
-            viewY = (window.innerHeight - CANVAS_H * viewZoom) / 2;
+            // Center the content center in the viewport
+            viewX = window.innerWidth / 2 - contentCX * viewZoom;
+            viewY = window.innerHeight / 2 - contentCY * viewZoom;
         }
 
         function resetView() {
             targetScroll = 0;
-            // Compute fitted values and animate toward them
-            var scaleX = window.innerWidth / CANVAS_W;
-            var scaleY = window.innerHeight / CANVAS_H;
+            var scaleX = window.innerWidth / contentW;
+            var scaleY = window.innerHeight / contentH;
             var fitZoom = Math.min(scaleX, scaleY) * 0.92;
-            var fitX = (window.innerWidth - CANVAS_W * fitZoom) / 2;
-            var fitY = (window.innerHeight - CANVAS_H * fitZoom) / 2;
+            var fitX = window.innerWidth / 2 - contentCX * fitZoom;
+            var fitY = window.innerHeight / 2 - contentCY * fitZoom;
             targetZoom = fitZoom;
             targetViewX = fitX;
             targetViewY = fitY;
@@ -513,6 +537,7 @@
                 });
 
                 Promise.all(promises).then(function() {
+                    computeContentBounds();
                     diveSorted = layers.filter(function(l) { return l.visible; })
                         .sort(function(a, b) { return b.zIndex - a.zIndex; });
                     diveLayerCount = diveSorted.length;

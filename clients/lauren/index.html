@@ -82,6 +82,37 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-4px); }
         }
+
+        .statement-link {
+            position: fixed; top: 16px; left: 16px; z-index: 10;
+            color: #999; font-size: 12px; cursor: pointer;
+            transition: color 0.2s;
+        }
+        .statement-link:hover { color: #333; }
+
+        .statement-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: #fff; overflow-y: auto;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .statement-overlay.visible { opacity: 1; pointer-events: auto; }
+        .statement-close {
+            position: fixed; top: 16px; right: 20px; z-index: 2001;
+            color: #999; font-size: 20px; cursor: pointer; line-height: 1;
+            transition: color 0.2s;
+        }
+        .statement-close:hover { color: #333; }
+        .statement-body {
+            max-width: 600px; margin: 0 auto; padding: 60px 24px 80px;
+            font-size: 15px; line-height: 1.7; color: #333;
+        }
+        .statement-body h1 {
+            font-size: 15px; font-weight: 600; margin-bottom: 1.5em;
+            letter-spacing: 0.02em;
+        }
+        .statement-body p { margin-bottom: 1em; }
+        .statement-body p:last-child { margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -107,6 +138,20 @@
     <button class="reset-btn" id="resetBtn" title="Reset view"><svg viewBox="0 0 16 16" fill="none" stroke="#999" stroke-width="1.5" stroke-linecap="round"><path d="M2 2h4M2 2v4M14 14h-4M14 14v-4M14 2h-4M14 2v4M2 14h4M2 14v-4"/></svg>Reset</button>
     <div class="dive-track" id="diveTrack"><div class="dive-pip" id="divePip"></div></div>
     <div class="dive-hint" id="diveHint"><span>Scroll to dive</span></div>
+    <span class="statement-link" id="statementLink" onclick="document.getElementById('statementOverlay').classList.add('visible')">Artist Statement</span>
+    <div class="statement-overlay" id="statementOverlay">
+        <span class="statement-close" onclick="document.getElementById('statementOverlay').classList.remove('visible')">&times;</span>
+        <div class="statement-body">
+            <h1>March 2026 First Friday Memory Map</h1>
+            <p>For the past three years, I have created a monthly map for First Friday art events, using a range of materials and processes to represent the layout of Knoxville's art scene in a way that invites participation and acts as a catalyst for conversation.</p>
+            <p>This month, I am thinking about how we create mental models of the spaces we navigate through. I tasked myself and willing friends, colleagues, and students to draw what they could of Knoxville from memory only, without referencing a map. This zoomable composite is a collection of 25 mental models, scaled and placed as correctly as possible against a geographically accurate aerial map. Pinch to zoom in and alter the distance between layers, and then scroll to move through them.</p>
+            <p>I wondered: Does a map have to be geographically accurate to be useful? How similar or different are our working mental models of our city? Are we more accurate together, or would our errors compound and reinforce inaccuracies? Does accuracy matter as much as legibility? How would maps vary across age groups? Across commuting style?</p>
+            <p>I found that seeing my friends' maps was a delightful window into their minds; though very few were objectively accurate, all were subjectively representational. To me, the process of memory mapping felt like trying to see in the dark- squinting to make out shapes in the dim of past experiences. You'd perhaps think that because mapping Knoxville is, like, what I DO, that this would be a piece of cake for me. I found it just as hard as everyone else&mdash; and everyone underscored how challenging it was. I dare you to try it.</p>
+            <p>Thank you so very much to my Memory Map Contributors, in layer order, with mine at the top: Landin Eldridge, Karly Jean Kainz, Arthur Collins, Lucy Bolin, Faye Nixon, Chelsie B. Nunn, Ash Sunbird Dawn, Steven Friedlander, Lauren Adams, Sandy Lanzoni, Kit Buckley, Kyle Cottier, Risa Hricovsky, Lynne Marinelli Ghenov, Bella Thomas-Wilson, Ashton Ludden, Kelsie Conley, Julie Lohnes, Ezra Purdy, Sarah McFalls, Sarah Heizenroth, Kelly Sullivan, Cara Pfennigwerth, Elysia Mann.</p>
+            <p>I hope this gets you thinking about how you relate to the space you move through. And maybe something about how we are all having our own subjective experiences etc etc&hellip;</p>
+            <p>Cheers, spatial beings,<br>&mdash;Farkas</p>
+        </div>
+    </div>
     <a class="edit-link" id="editLink" href="/editor">Edit</a>
 
     <script>
@@ -529,7 +574,12 @@
         });
 
         // Keyboard controls
+        var statementOverlay = document.getElementById('statementOverlay');
         window.addEventListener('keydown', function(e) {
+            if (statementOverlay.classList.contains('visible')) {
+                if (e.key === 'Escape') statementOverlay.classList.remove('visible');
+                return;
+            }
             if (e.key === 'ArrowDown' || e.key === ' ') {
                 e.preventDefault();
                 targetScroll = Math.min(diveLayerCount, targetScroll + 0.5);

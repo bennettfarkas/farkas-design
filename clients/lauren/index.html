@@ -534,18 +534,29 @@
         function loadImage(src) {
             return new Promise(function(resolve) {
                 var img = new Image();
-                var done = false;
-                var timer = setTimeout(function() {
-                    if (!done) { done = true; resolve(null); }
-                }, 30000);
-                img.onload = function() {
-                    if (!done) { done = true; clearTimeout(timer); resolve(img); }
-                };
-                img.onerror = function() {
-                    if (!done) { done = true; clearTimeout(timer); resolve(null); }
-                };
+                img.onload = function() { resolve(img); };
+                img.onerror = function() { resolve(null); };
                 img.src = src;
             });
+        }
+
+        // Load images in batches to avoid saturating mobile connections
+        function loadAllImages(layerList, onProgress) {
+            var BATCH = 6;
+            var idx = 0;
+            function nextBatch() {
+                if (idx >= layerList.length) return Promise.resolve();
+                var batch = layerList.slice(idx, idx + BATCH);
+                idx += BATCH;
+                return Promise.all(batch.map(function(layer) {
+                    var src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
+                    return loadImage(src).then(function(img) {
+                        if (img) images[layer.id] = img;
+                        onProgress();
+                    });
+                })).then(nextBatch);
+            }
+            return nextBatch();
         }
 
         function init() {
@@ -573,15 +584,7 @@
                     progressText.textContent = loaded + ' / ' + total;
                 }
 
-                var promises = layers.map(function(layer) {
-                    var src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
-                    return loadImage(src).then(function(img) {
-                        if (img) images[layer.id] = img;
-                        tick();
-                    });
-                });
-
-                Promise.all(promises).then(function() {
+                loadAllImages(layers, tick).then(function() {
                     computeContentBounds();
                     diveSorted = layers.filter(function(l) { return l.visible; })
                         .sort(function(a, b) { return b.zIndex - a.zIndex; });

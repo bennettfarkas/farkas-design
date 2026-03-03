@@ -500,8 +500,16 @@
         function loadImage(src) {
             return new Promise(function(resolve) {
                 var img = new Image();
-                img.onload = function() { resolve(img); };
-                img.onerror = function() { resolve(null); };
+                var done = false;
+                var timer = setTimeout(function() {
+                    if (!done) { done = true; resolve(null); }
+                }, 8000);
+                img.onload = function() {
+                    if (!done) { done = true; clearTimeout(timer); resolve(img); }
+                };
+                img.onerror = function() {
+                    if (!done) { done = true; clearTimeout(timer); resolve(null); }
+                };
                 img.src = src;
             });
         }
@@ -522,7 +530,7 @@
                     return;
                 }
 
-                layers = data.layers;
+                layers = data.layers.filter(function(l) { return l.visible; });
                 var total = layers.length;
                 var loaded = 0;
 

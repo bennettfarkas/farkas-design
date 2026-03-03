@@ -390,7 +390,7 @@
             if (e.ctrlKey) {
                 // Pinch-to-zoom
                 var mx = e.clientX, my = e.clientY;
-                var zoomFactor = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+                var zoomFactor = e.deltaY < 0 ? 1.03 : 1 / 1.03;
                 var newZoom = Math.max(0.002, Math.min(10, viewZoom * zoomFactor));
                 var r = newZoom / viewZoom;
                 viewX = mx - (mx - viewX) * r;
@@ -436,7 +436,8 @@
                 var midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
                 if (lastTouchDist > 0) {
-                    var scale = dist / lastTouchDist;
+                    var rawScale = dist / lastTouchDist;
+                    var scale = 1 + (rawScale - 1) * 0.4;
                     var newZoom = Math.max(0.002, Math.min(10, viewZoom * scale));
                     var r = newZoom / viewZoom;
                     viewX = midX - (midX - viewX) * r;

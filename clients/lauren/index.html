@@ -144,7 +144,7 @@
         <div class="statement-body">
             <h1>March 2026 First Friday Memory Map</h1>
             <p>For the past three years, I have created a monthly map for First Friday art events, using a range of materials and processes to represent the layout of Knoxville's art scene in a way that invites participation and acts as a catalyst for conversation.</p>
-            <p>This month, I am thinking about how we create mental models of the spaces we navigate through. I tasked myself and willing friends, colleagues, and students to draw what they could of Knoxville from memory only, without referencing a map. This zoomable composite is a collection of 25 mental models, scaled and placed as correctly as possible against a geographically accurate aerial map. Pinch to zoom in and alter the distance between layers, and then scroll to move through them.</p>
+            <p>This month, I am thinking about how we create mental models of the spaces we navigate through. I tasked myself and willing friends, colleagues, and students to draw what they could of Knoxville from memory only, without referencing a map. This zoomable composite is a collection of 25 mental models, scaled and placed as correctly as possible against a geographically accurate aerial map. Scroll to dive through the layers, pinch to zoom in, and use two fingers to pan.</p>
             <p>I wondered: Does a map have to be geographically accurate to be useful? How similar or different are our working mental models of our city? Are we more accurate together, or would our errors compound and reinforce inaccuracies? Does accuracy matter as much as legibility? How would maps vary across age groups? Across commuting style?</p>
             <p>I found that seeing my friends' maps was a delightful window into their minds; though very few were objectively accurate, all were subjectively representational. To me, the process of memory mapping felt like trying to see in the dark- squinting to make out shapes in the dim of past experiences. You'd perhaps think that because mapping Knoxville is, like, what I DO, that this would be a piece of cake for me. I found it just as hard as everyone else&mdash; and everyone underscored how challenging it was. I dare you to try it.</p>
             <p>Thank you so very much to my Memory Map Contributors, in layer order, with mine at the top: Landin Eldridge, Karly Jean Kainz, Arthur Collins, Lucy Bolin, Faye Nixon, Chelsie B. Nunn, Ash Sunbird Dawn, Steven Friedlander, Lauren Adams, Sandy Lanzoni, Kit Buckley, Kyle Cottier, Risa Hricovsky, Lynne Marinelli Ghenov, Bella Thomas-Wilson, Ashton Ludden, Kelsie Conley, Julie Lohnes, Ezra Purdy, Sarah McFalls, Sarah Heizenroth, Kelly Sullivan, Cara Pfennigwerth, Elysia Mann.</p>
@@ -552,10 +552,16 @@
             }
         }, { passive: false });
 
-        mainCanvas.addEventListener('touchend', function() {
+        mainCanvas.addEventListener('touchend', function(e) {
             isPanning = false;
-            diveTouchLastY = 0;
             lastTouchDist = 0;
+            // When lifting one finger after a two-finger gesture, re-seed
+            // the single-finger Y so the dive scroll doesn't jump
+            if (e.touches.length === 1) {
+                diveTouchLastY = e.touches[0].clientY;
+            } else {
+                diveTouchLastY = 0;
+            }
         }, { passive: true });
 
         // Double-click to reset

@@ -89,7 +89,7 @@
 
         var CANVAS_W = 28800;
         var CANVAS_H = 16200;
-        var MAX_PREVIEW_DIM = 2000;
+        var MAX_PREVIEW_DIM = 4000;
 
         var mainCanvas = document.getElementById('mainCanvas');
         var ctx = mainCanvas.getContext('2d');
@@ -476,33 +476,36 @@
                 layers = data.layers;
                 var total = layers.length;
                 var loaded = 0;
+                var started = false;
+
+                // Prepare dive sort immediately so rendering can begin
+                diveSorted = layers.filter(function(l) { return l.visible; })
+                    .sort(function(a, b) { return b.zIndex - a.zIndex; });
+                diveLayerCount = diveSorted.length;
 
                 function tick() {
                     loaded++;
                     progressFill.style.width = (loaded / total * 100) + '%';
                     progressText.textContent = loaded + ' / ' + total;
+
+                    // Start rendering after first image loads
+                    if (!started) {
+                        started = true;
+                        loadingOverlay.classList.add('hidden');
+                        fitView();
+                        homeX = viewX;
+                        homeY = viewY;
+                        diveHint.classList.add('visible');
+                        renderLoop();
+                    }
                 }
 
-                var promises = layers.map(function(layer) {
+                layers.forEach(function(layer) {
                     var src = layer.uploaded ? ('/' + layer.filename) : ('originals/' + layer.filename);
-                    return loadImage(src).then(function(img) {
+                    loadImage(src).then(function(img) {
                         if (img) images[layer.id] = img;
                         tick();
                     });
-                });
-
-                Promise.all(promises).then(function() {
-                    // Prepare dive-sorted layers and start
-                    diveSorted = layers.filter(function(l) { return l.visible; })
-                        .sort(function(a, b) { return b.zIndex - a.zIndex; });
-                    diveLayerCount = diveSorted.length;
-
-                    loadingOverlay.classList.add('hidden');
-                    fitView();
-                    homeX = viewX;
-                    homeY = viewY;
-                    diveHint.classList.add('visible');
-                    renderLoop();
                 });
             }).catch(function() {
                 loadingOverlay.classList.add('hidden');

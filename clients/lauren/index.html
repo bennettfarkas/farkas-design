@@ -17,14 +17,15 @@
             z-index: 1000; gap: 20px; transition: opacity 0.6s;
         }
         .loading-overlay.hidden { opacity: 0; pointer-events: none; }
-        .compass {
-            width: 48px; height: 48px;
+        .compass-wrap { position: relative; width: 48px; height: 48px; }
+        .compass-ring, .compass-needle {
+            position: absolute; inset: 0; width: 100%; height: 100%;
         }
         .compass-needle {
-            transform-origin: 24px 24px;
-            animation: spin 2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+            animation: needle 2s cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+            will-change: transform;
         }
-        @keyframes spin {
+        @keyframes needle {
             0% { transform: rotate(0deg); }
             40% { transform: rotate(380deg); }
             50% { transform: rotate(355deg); }
@@ -82,18 +83,20 @@
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
-        <svg class="compass" viewBox="0 0 48 48" fill="none">
-            <circle cx="24" cy="24" r="22" stroke="#ddd" stroke-width="1.5"/>
-            <line x1="24" y1="2" x2="24" y2="8" stroke="#ccc" stroke-width="1"/>
-            <line x1="24" y1="40" x2="24" y2="46" stroke="#ccc" stroke-width="1"/>
-            <line x1="2" y1="24" x2="8" y2="24" stroke="#ccc" stroke-width="1"/>
-            <line x1="40" y1="24" x2="46" y2="24" stroke="#ccc" stroke-width="1"/>
-            <g class="compass-needle">
+        <div class="compass-wrap">
+            <svg class="compass-ring" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="22" stroke="#ddd" stroke-width="1.5"/>
+                <line x1="24" y1="2" x2="24" y2="8" stroke="#ccc" stroke-width="1"/>
+                <line x1="24" y1="40" x2="24" y2="46" stroke="#ccc" stroke-width="1"/>
+                <line x1="2" y1="24" x2="8" y2="24" stroke="#ccc" stroke-width="1"/>
+                <line x1="40" y1="24" x2="46" y2="24" stroke="#ccc" stroke-width="1"/>
+                <circle cx="24" cy="24" r="2.5" fill="#999"/>
+            </svg>
+            <svg class="compass-needle" viewBox="0 0 48 48" fill="none">
                 <polygon points="24,8 21.5,24 26.5,24" fill="#c44"/>
                 <polygon points="24,40 21.5,24 26.5,24" fill="#bbb"/>
-            </g>
-            <circle cx="24" cy="24" r="2.5" fill="#999"/>
-        </svg>
+            </svg>
+        </div>
         <div class="progress-text" id="progressText"></div>
     </div>
 
@@ -503,7 +506,7 @@
                 var done = false;
                 var timer = setTimeout(function() {
                     if (!done) { done = true; resolve(null); }
-                }, 8000);
+                }, 30000);
                 img.onload = function() {
                     if (!done) { done = true; clearTimeout(timer); resolve(img); }
                 };

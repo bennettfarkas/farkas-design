@@ -181,7 +181,7 @@
         function fitView() {
             var scaleX = window.innerWidth / contentW;
             var scaleY = window.innerHeight / contentH;
-            viewZoom = Math.min(scaleX, scaleY) * 1.08;
+            viewZoom = Math.min(scaleX, scaleY) * 1.18;
             viewX = window.innerWidth / 2 - contentCX * viewZoom;
             viewY = window.innerHeight / 2 - contentCY * viewZoom + window.innerHeight * VIEW_NUDGE_Y;
         }
@@ -190,7 +190,7 @@
             targetScroll = 0;
             var scaleX = window.innerWidth / contentW;
             var scaleY = window.innerHeight / contentH;
-            var fitZoom = Math.min(scaleX, scaleY) * 1.08;
+            var fitZoom = Math.min(scaleX, scaleY) * 1.18;
             var fitX = window.innerWidth / 2 - contentCX * fitZoom;
             var fitY = window.innerHeight / 2 - contentCY * fitZoom + window.innerHeight * VIEW_NUDGE_Y;
             targetZoom = fitZoom;

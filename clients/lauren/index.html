@@ -113,6 +113,14 @@
         }
         .statement-body p { margin-bottom: 1em; }
         .statement-body p:last-child { margin-bottom: 0; }
+
+        /* iPad in case — pull UI away from cropped edges */
+        @media (min-width: 768px) and (max-width: 1100px) {
+            .reset-btn { bottom: 32px; left: 32px; }
+            .statement-link { top: 32px; left: 32px; }
+            .statement-close { top: 32px; left: 32px; }
+            .dive-track { top: 56px; bottom: 56px; right: 28px; }
+        }
     </style>
 </head>
 <body>

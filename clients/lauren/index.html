@@ -115,7 +115,7 @@
         .statement-body p:last-child { margin-bottom: 0; }
 
         /* iPad in case — pull UI away from cropped edges */
-        @media (min-width: 768px) and (max-width: 1100px) {
+        @media (min-width: 700px) and (max-width: 1100px) {
             .reset-btn { bottom: 32px; left: 32px; }
             .statement-link { top: 32px; left: 32px; }
             .statement-close { top: 32px; left: 32px; }
@@ -166,7 +166,7 @@
     <script>
     (function() {
         // Hide editor link on public-facing subdomain
-        if (location.hostname !== 'lauren.farkas.design') {
+        if (location.hostname !== 'lauren.farkas.design' && location.hostname !== 'marchmap.farkas.design') {
             document.getElementById('editLink').style.display = 'none';
         }
 

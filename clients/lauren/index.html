@@ -40,13 +40,6 @@
             color: #aaa; font-size: 15px;
         }
 
-        .edit-link {
-            position: fixed; bottom: 16px; right: 16px; z-index: 10;
-            color: #bbb; font-size: 12px; text-decoration: none;
-            padding: 4px 10px; border-radius: 4px; background: rgba(0,0,0,0.04);
-            transition: color 0.2s, background 0.2s;
-        }
-        .edit-link:hover { color: #666; background: rgba(0,0,0,0.08); }
 
         .reset-btn {
             position: fixed; bottom: 16px; left: 16px; z-index: 10;
@@ -161,15 +154,9 @@
             <p>See other maps and subscribe to First Friday monthly newsletter maps <a href="https://substack.com/@knoxvilleartmaps?utm_campaign=profile&utm_medium=profile-page" target="_blank" style="color:#333;">here</a>.</p>
         </div>
     </div>
-    <a class="edit-link" id="editLink" href="/editor">Edit</a>
 
     <script>
     (function() {
-        // Hide editor link on public-facing subdomain
-        if (location.hostname !== 'lauren.farkas.design' && location.hostname !== 'marchmap.farkas.design') {
-            document.getElementById('editLink').style.display = 'none';
-        }
-
         var CANVAS_W = 28800;
         var CANVAS_H = 16200;
         var MAX_PREVIEW_DIM = 4000;

@@ -26,6 +26,12 @@ jobs:
         run: |
           mkdir _site
           cp -r index.html CNAME shared clients _site/
+          if [ -d projects ]; then
+            for dir in projects/*/; do
+              name=$(basename "$dir" | sed 's/^[0-9]\{6\}-//')
+              cp -r "$dir" "_site/$name"
+            done
+          fi
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1065,6 +1065,7 @@ var state = {
     tiles: [],
     nextId: 1,
     selectedId: null,
+    selectedIds: [],
     activeTool: null,
     activeScale: 1,
     ghost: null,
@@ -1459,13 +1460,14 @@ function resolveTemplateId(tile) {
 // Grid / Occupancy
 // =====================================================================
 
-function buildOccupancy(excludeId) {
+function buildOccupancy(excludeId, excludeIds) {
     var grid = [];
     for (var i = 0; i < state.rows; i++) {
         grid.push(new Array(state.cols).fill(null));
     }
     state.tiles.forEach(function(t) {
         if (t.id === excludeId) return;
+        if (excludeIds && excludeIds.indexOf(t.id) !== -1) return;
         for (var r = 0; r < t.scale; r++) {
             for (var c = 0; c < t.scale; c++) {
                 var gr = t.row + r;
@@ -1479,9 +1481,9 @@ function buildOccupancy(excludeId) {
     return grid;
 }
 
-function canPlace(col, row, scale, excludeId) {
+function canPlace(col, row, scale, excludeId, excludeIds) {
     if (col < 0 || row < 0 || col + scale > state.cols || row + scale > state.rows) return false;
-    var grid = buildOccupancy(excludeId);
+    var grid = buildOccupancy(excludeId, excludeIds);
     for (var r = 0; r < scale; r++) {
         for (var c = 0; c < scale; c++) {
             if (grid[row + r][col + c] !== null) return false;
@@ -1498,6 +1500,20 @@ function tileAt(col, row) {
         }
     }
     return null;
+}
+
+function isSelected(id) {
+    return state.selectedIds.indexOf(id) !== -1;
+}
+
+function clearSelection() {
+    state.selectedId = null;
+    state.selectedIds = [];
+}
+
+function selectOnly(id) {
+    state.selectedId = id;
+    state.selectedIds = id !== null ? [id] : [];
 }
 
 
@@ -1522,7 +1538,7 @@ function undo() {
     var snap = state.undoStack.pop();
     state.tiles = snap.tiles;
     state.nextId = snap.nextId;
-    state.selectedId = null;
+    clearSelection();
     closePropsPanel();
     updateUndoButtons();
     renderCanvas();
@@ -1535,7 +1551,7 @@ function redo() {
     var snap = state.redoStack.pop();
     state.tiles = snap.tiles;
     state.nextId = snap.nextId;
-    state.selectedId = null;
+    clearSelection();
     closePropsPanel();
     updateUndoButtons();
     renderCanvas();
@@ -1647,35 +1663,37 @@ function renderCanvas() {
     }
 
     // Selection highlight — corner handles + edge lines
-    if (state.selectedId !== null) {
-        var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
-        if (sel) {
-            var sx = sel.col * TILE_UNIT;
-            var sy = sel.row * TILE_UNIT;
-            var sw = sel.scale * TILE_UNIT;
-            var sh = sel.scale * TILE_UNIT;
-            var corners = [
-                [sx, sy], [sx + sw, sy],
-                [sx + sw, sy + sh], [sx, sy + sh]
-            ];
+    var selectedList = state.selectedIds.length > 0 ? state.selectedIds : (state.selectedId !== null ? [state.selectedId] : []);
+    selectedList.forEach(function(selId) {
+        var sel = state.tiles.find(function(t) { return t.id === selId; });
+        if (!sel) return;
+        var sx = sel.col * TILE_UNIT;
+        var sy = sel.row * TILE_UNIT;
+        var sw = sel.scale * TILE_UNIT;
+        var sh = sel.scale * TILE_UNIT;
+        var corners = [
+            [sx, sy], [sx + sw, sy],
+            [sx + sw, sy + sh], [sx, sy + sh]
+        ];
 
-            // Edge lines connecting corners
-            for (var ei = 0; ei < 4; ei++) {
-                var c1 = corners[ei];
-                var c2 = corners[(ei + 1) % 4];
-                var line = document.createElementNS(SVG_NS, 'line');
-                line.setAttribute('x1', c1[0]);
-                line.setAttribute('y1', c1[1]);
-                line.setAttribute('x2', c2[0]);
-                line.setAttribute('y2', c2[1]);
-                line.setAttribute('stroke', '#D4792F');
-                line.setAttribute('stroke-width', '1.5');
-                line.setAttribute('opacity', '0.45');
-                line.style.pointerEvents = 'none';
-                $canvas.appendChild(line);
-            }
+        // Edge lines connecting corners
+        for (var ei = 0; ei < 4; ei++) {
+            var c1 = corners[ei];
+            var c2 = corners[(ei + 1) % 4];
+            var line = document.createElementNS(SVG_NS, 'line');
+            line.setAttribute('x1', c1[0]);
+            line.setAttribute('y1', c1[1]);
+            line.setAttribute('x2', c2[0]);
+            line.setAttribute('y2', c2[1]);
+            line.setAttribute('stroke', '#D4792F');
+            line.setAttribute('stroke-width', '1.5');
+            line.setAttribute('opacity', '0.45');
+            line.style.pointerEvents = 'none';
+            $canvas.appendChild(line);
+        }
 
-            // Corner handle squares
+        // Corner handle squares (only for single selection)
+        if (selectedList.length === 1) {
             var hs = 6; // handle size in SVG units
             var half = hs / 2;
             for (var ci = 0; ci < 4; ci++) {
@@ -1692,7 +1710,7 @@ function renderCanvas() {
                 $canvas.appendChild(cr);
             }
         }
-    }
+    });
 }
 
 // mode: 'full' (default) | 'clipped' (backgrounds only) | 'overflow' (star only)
@@ -1854,13 +1872,22 @@ function renderPalette() {
         btn.addEventListener('mousedown', function(e) {
             if (e.button !== 0) return;
             e.preventDefault();
-            // If a tile is selected, swap its type instead of entering placement mode
-            if (state.selectedId !== null) {
-                var sel = state.tiles.find(function(t) { return t.id === state.selectedId; });
-                if (sel && sel.tileType !== def.id) {
-                    pushUndo();
-                    swapTileType(sel, def.id);
-                    openPropsPanel(sel);
+            // If tile(s) selected, swap type instead of entering placement mode
+            if (state.selectedIds.length > 0) {
+                var changed = false;
+                state.selectedIds.forEach(function(sid) {
+                    var sel = state.tiles.find(function(t) { return t.id === sid; });
+                    if (sel && sel.tileType !== def.id) {
+                        if (!changed) pushUndo();
+                        changed = true;
+                        swapTileType(sel, def.id);
+                    }
+                });
+                if (changed) {
+                    if (state.selectedId !== null) {
+                        var primary = state.tiles.find(function(t) { return t.id === state.selectedId; });
+                        if (primary) openPropsPanel(primary);
+                    }
                     renderCanvas();
                     saveState();
                 }
@@ -1868,7 +1895,7 @@ function renderPalette() {
             }
             paletteDrag = { tileId: def.id };
             state.activeTool = def.id;
-            state.selectedId = null;
+            clearSelection();
             closePropsPanel();
             updatePaletteActive();
             updateViewportCursor();
@@ -2324,7 +2351,7 @@ document.addEventListener('keydown', function(e) {
         e.preventDefault();
         redo();
     }
-    if ((e.code === 'Delete' || e.code === 'Backspace') && state.selectedId !== null && e.target === document.body) {
+    if ((e.code === 'Delete' || e.code === 'Backspace') && state.selectedIds.length > 0 && e.target === document.body) {
         e.preventDefault();
         deleteSelected();
     }
@@ -2339,8 +2366,8 @@ document.addEventListener('keydown', function(e) {
             updatePaletteActive();
             updateViewportCursor();
             renderCanvas();
-        } else if (state.selectedId !== null) {
-            state.selectedId = null;
+        } else if (state.selectedIds.length > 0) {
+            clearSelection();
             closePropsPanel();
             renderCanvas();
         }
@@ -2359,8 +2386,8 @@ $viewport.addEventListener('mousedown', function(e) {
 
     // Pan mode (space held OR click outside canvas)
     if (spaceHeld || !isOnCanvas(e.clientX, e.clientY)) {
-        if (state.selectedId !== null) {
-            state.selectedId = null;
+        if (state.selectedIds.length > 0) {
+            clearSelection();
             closePropsPanel();
             renderCanvas();
         }
@@ -2409,6 +2436,7 @@ $viewport.addEventListener('mousedown', function(e) {
     var clicked = tileAt(pos.col, pos.row);
     if (clicked) {
         var isDuplicate = e.altKey;
+        var isShift = e.shiftKey;
         var dragTarget = clicked;
 
         if (isDuplicate) {
@@ -2419,18 +2447,57 @@ $viewport.addEventListener('mousedown', function(e) {
             dragTarget = clone;
         }
 
-        var wasAlreadySelected = !isDuplicate && state.selectedId === dragTarget.id;
-        state.selectedId = dragTarget.id;
+        if (isShift && !isDuplicate) {
+            // Shift+click: toggle tile in multi-selection
+            var idx = state.selectedIds.indexOf(dragTarget.id);
+            if (idx !== -1) {
+                state.selectedIds.splice(idx, 1);
+            } else {
+                state.selectedIds.push(dragTarget.id);
+            }
+            // Update selectedId: set to single if exactly one, else null
+            if (state.selectedIds.length === 1) {
+                state.selectedId = state.selectedIds[0];
+                var single = state.tiles.find(function(t) { return t.id === state.selectedId; });
+                if (single) openPropsPanel(single);
+            } else {
+                state.selectedId = null;
+                closePropsPanel();
+            }
+            state.activeTool = null;
+            updatePaletteActive();
+            renderCanvas();
+            e.preventDefault();
+            return;
+        }
+
+        var wasAlreadySelected = !isDuplicate && isSelected(dragTarget.id);
+        // If clicking an already-selected tile in a multi-selection, keep multi-selection for drag
+        if (!isShift && !isDuplicate && !wasAlreadySelected) {
+            selectOnly(dragTarget.id);
+        } else if (isDuplicate) {
+            selectOnly(dragTarget.id);
+        }
         state.activeTool = null;
         updatePaletteActive();
-        openPropsPanel(dragTarget);
+        if (state.selectedIds.length === 1) {
+            openPropsPanel(dragTarget);
+        } else {
+            closePropsPanel();
+        }
         renderCanvas();
 
-        // Start drag
+        // Start drag — record start positions for all selected tiles
+        var startPositions = {};
+        state.selectedIds.forEach(function(sid) {
+            var t = state.tiles.find(function(t) { return t.id === sid; });
+            if (t) startPositions[sid] = { col: t.col, row: t.row };
+        });
         dragState = {
             tileId: dragTarget.id,
             startCol: dragTarget.col,
             startRow: dragTarget.row,
+            startPositions: startPositions,
             wasAlreadySelected: wasAlreadySelected,
             isDuplicate: isDuplicate,
             mouseTarget: e.target,
@@ -2444,7 +2511,7 @@ $viewport.addEventListener('mousedown', function(e) {
 
     // Click empty
     if (pos.col >= 0 && pos.col < state.cols && pos.row >= 0 && pos.row < state.rows) {
-        state.selectedId = null;
+        clearSelection();
         closePropsPanel();
         renderCanvas();
     }
@@ -2506,13 +2573,50 @@ document.addEventListener('mousemove', function(e) {
 
     // Dragging
     if (dragState) {
-        var tile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
-        if (tile && (pos.col !== tile.col || pos.row !== tile.row)) {
-            if (canPlace(pos.col, pos.row, tile.scale, tile.id)) {
-                tile.col = pos.col;
-                tile.row = pos.row;
-                renderCanvas();
+        var primaryTile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
+        if (!primaryTile) return;
+        var dc = pos.col - primaryTile.col;
+        var dr = pos.row - primaryTile.row;
+        if (dc === 0 && dr === 0) return;
+
+        // Check if all selected tiles can move by this delta
+        var movingIds = state.selectedIds.length > 1 ? state.selectedIds : [dragState.tileId];
+        // Build occupancy excluding all moving tiles
+        var grid = buildOccupancy(null, movingIds);
+        var allCanMove = movingIds.every(function(id) {
+            var t = state.tiles.find(function(t) { return t.id === id; });
+            if (!t) return false;
+            var nc = t.col + dc, nr = t.row + dr;
+            if (nc < 0 || nr < 0 || nc + t.scale > state.cols || nr + t.scale > state.rows) return false;
+            for (var r = 0; r < t.scale; r++) {
+                for (var c = 0; c < t.scale; c++) {
+                    if (grid[nr + r][nc + c] !== null) return false;
+                }
             }
+            return true;
+        });
+        // Also check that moved tiles don't overlap each other
+        if (allCanMove && movingIds.length > 1) {
+            var tempOcc = {};
+            allCanMove = movingIds.every(function(id) {
+                var t = state.tiles.find(function(t) { return t.id === id; });
+                var nc = t.col + dc, nr = t.row + dr;
+                for (var sc = 0; sc < t.scale; sc++) {
+                    for (var sr = 0; sr < t.scale; sr++) {
+                        var key = (nc + sc) + ',' + (nr + sr);
+                        if (tempOcc[key]) return false;
+                        tempOcc[key] = true;
+                    }
+                }
+                return true;
+            });
+        }
+        if (allCanMove) {
+            movingIds.forEach(function(id) {
+                var t = state.tiles.find(function(t) { return t.id === id; });
+                if (t) { t.col += dc; t.row += dr; }
+            });
+            renderCanvas();
         }
         return;
     }
@@ -2572,7 +2676,7 @@ document.addEventListener('mouseup', function() {
                     shapeColors: getDefaultColors(pd.tileId, state.activeScale),
                 };
                 state.tiles.push(newTile);
-                state.selectedId = newTile.id;
+                selectOnly(newTile.id);
                 openPropsPanel(newTile);
                 saveState();
             }
@@ -2587,28 +2691,32 @@ document.addEventListener('mouseup', function() {
 
     if (dragState) {
         var tile = state.tiles.find(function(t) { return t.id === dragState.tileId; });
+        // Check if any tile in the drag group actually moved
+        var anyMoved = false;
+        var startPositions = dragState.startPositions;
+        Object.keys(startPositions).forEach(function(id) {
+            var t = state.tiles.find(function(t) { return t.id === parseInt(id); });
+            if (t && (t.col !== startPositions[id].col || t.row !== startPositions[id].row)) anyMoved = true;
+        });
         if (dragState.isDuplicate) {
             // Duplicate: undo was already pushed in mousedown, just save
-            if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
-                saveState();
-            } else {
-                // Stationary Option+click — clone placed on top, already undo-able
-                saveState();
-            }
-        } else if (tile && (tile.col !== dragState.startCol || tile.row !== dragState.startRow)) {
-            // Create undo snapshot with original position
+            saveState();
+        } else if (anyMoved) {
+            // Create undo snapshot with original positions
             var undoSnap = snapshotTiles();
-            var snapTile = undoSnap.find(function(t) { return t.id === dragState.tileId; });
-            if (snapTile) {
-                snapTile.col = dragState.startCol;
-                snapTile.row = dragState.startRow;
-            }
+            Object.keys(startPositions).forEach(function(id) {
+                var snapTile = undoSnap.find(function(t) { return t.id === parseInt(id); });
+                if (snapTile) {
+                    snapTile.col = startPositions[id].col;
+                    snapTile.row = startPositions[id].row;
+                }
+            });
             state.undoStack.push({ tiles: undoSnap, nextId: state.nextId });
             state.redoStack = [];
             if (state.undoStack.length > 50) state.undoStack.shift();
             updateUndoButtons();
             saveState();
-        } else if (tile && dragState.wasAlreadySelected) {
+        } else if (tile && dragState.wasAlreadySelected && state.selectedIds.length <= 1) {
             // Stationary click on already-selected tile — open color picker for clicked shape
             var shapeEl = dragState.mouseTarget;
             while (shapeEl && (!shapeEl.dataset || shapeEl.dataset.shapeIndex === undefined)) {
@@ -2635,6 +2743,10 @@ document.addEventListener('mouseup', function() {
                     }, color, globalCtx);
                 }
             }
+        } else if (tile && dragState.wasAlreadySelected && state.selectedIds.length > 1) {
+            // Stationary click on tile in multi-selection — narrow to just this tile
+            selectOnly(tile.id);
+            openPropsPanel(tile);
         }
         dragState = null;
         $viewport.classList.remove('mode-drag');
@@ -2760,10 +2872,11 @@ $selScale.addEventListener('click', function(e) {
 
 // Delete
 function deleteSelected() {
-    if (state.selectedId === null) return;
+    if (state.selectedIds.length === 0) return;
     pushUndo();
-    state.tiles = state.tiles.filter(function(t) { return t.id !== state.selectedId; });
-    state.selectedId = null;
+    var ids = state.selectedIds;
+    state.tiles = state.tiles.filter(function(t) { return ids.indexOf(t.id) === -1; });
+    clearSelection();
     closePropsPanel();
     renderCanvas();
     saveState();
@@ -2774,29 +2887,42 @@ $btnDeleteSel.addEventListener('click', deleteSelected);
 
 // Duplicate
 function duplicateSelected() {
-    if (state.selectedId === null) return;
-    var tile = state.tiles.find(function(t) { return t.id === state.selectedId; });
-    if (!tile) return;
+    if (state.selectedIds.length === 0) return;
+    var tilesToDup = state.selectedIds.map(function(id) {
+        return state.tiles.find(function(t) { return t.id === id; });
+    }).filter(Boolean);
+    if (tilesToDup.length === 0) return;
     pushUndo();
-    var clone = JSON.parse(JSON.stringify(tile));
-    clone.id = state.nextId++;
-    // Try offset positions: +1,+1 then +1,0 then 0,+1 then same position
-    var offsets = [[1,1],[1,0],[0,1],[0,0]];
-    for (var i = 0; i < offsets.length; i++) {
-        var nc = tile.col + offsets[i][0];
-        var nr = tile.row + offsets[i][1];
-        if (canPlace(nc, nr, tile.scale)) {
-            clone.col = nc;
-            clone.row = nr;
-            break;
+    var newIds = [];
+    tilesToDup.forEach(function(tile) {
+        var clone = JSON.parse(JSON.stringify(tile));
+        clone.id = state.nextId++;
+        // Try offset positions: +1,+1 then +1,0 then 0,+1 then same position
+        var offsets = [[1,1],[1,0],[0,1],[0,0]];
+        for (var i = 0; i < offsets.length; i++) {
+            var nc = tile.col + offsets[i][0];
+            var nr = tile.row + offsets[i][1];
+            if (canPlace(nc, nr, tile.scale)) {
+                clone.col = nc;
+                clone.row = nr;
+                break;
+            }
         }
+        state.tiles.push(clone);
+        newIds.push(clone.id);
+    });
+    state.selectedIds = newIds;
+    if (newIds.length === 1) {
+        state.selectedId = newIds[0];
+        var single = state.tiles.find(function(t) { return t.id === newIds[0]; });
+        if (single) openPropsPanel(single);
+    } else {
+        state.selectedId = null;
+        closePropsPanel();
     }
-    state.tiles.push(clone);
-    state.selectedId = clone.id;
-    openPropsPanel(clone);
     renderCanvas();
     saveState();
-    showToast('Tile duplicated');
+    showToast(tilesToDup.length === 1 ? 'Tile duplicated' : tilesToDup.length + ' tiles duplicated');
 }
 
 $btnDuplicateTile.addEventListener('click', duplicateSelected);
@@ -2806,7 +2932,7 @@ $btnNew.addEventListener('click', function() {
     if (state.tiles.length > 0 && !confirm('Start fresh? Your current composition will be cleared.')) return;
     state.tiles = [];
     state.nextId = 1;
-    state.selectedId = null;
+    clearSelection();
     state.undoStack = [];
     state.redoStack = [];
     state.bgColor = '#283845';
@@ -2834,7 +2960,7 @@ document.getElementById('btn-restore').addEventListener('click', function() {
     var comp = getDefaultComposition();
     state.tiles = comp.tiles;
     state.nextId = comp.nextId;
-    state.selectedId = null;
+    clearSelection();
     state.undoStack = [];
     state.redoStack = [];
     state.bgColor = comp.bgColor;
@@ -2862,7 +2988,7 @@ document.getElementById('btn-roll').addEventListener('click', function() {
     var comp = generateRandomComposition(state.cols, state.rows);
     state.tiles = comp.tiles;
     state.nextId = comp.nextId;
-    state.selectedId = null;
+    clearSelection();
     state.bgColor = comp.bgColor;
     state.borderWidth = comp.borderWidth;
     state.borderColor = comp.borderColor;
@@ -3599,7 +3725,7 @@ $importSvgInput.addEventListener('change', function() {
         state.borderColor = data.borderColor || '#283845';
         state.nextId = data.nextId || 1;
         state.tiles = data.tiles || [];
-        state.selectedId = null;
+        clearSelection();
         // Update UI controls
         $inpCols.value = state.cols;
         $inpRows.value = state.rows;

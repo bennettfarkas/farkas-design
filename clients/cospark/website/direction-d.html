@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <script>document.documentElement.classList.replace('no-js','js');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoSpark — Real Financial Strength, Built Together</title>
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════════
+           Direction D — Systematic Precision
+           ══════════════════════════════════════════════ */
+
+        /* ── Reset ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        img { display: block; max-width: 100%; }
+
+        body {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-regular);
+            color: var(--slate);
+            background: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── No-JS fallback: everything visible ── */
+        .no-js .reveal { opacity: 1 !important; transform: none !important; }
+
+        /* ── Reveal base (hidden until animated) ── */
+        .js .reveal { opacity: 0; transform: translateY(24px); }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+        .container--narrow { max-width: 680px; }
+
+        /* ── Spark Shapes (inline SVG) ── */
+        .spark {
+            display: inline-block;
+            line-height: 0;
+        }
+        .spark svg { display: block; }
+        .spark--sm { width: 24px; height: 24px; }
+        .spark--sm svg { width: 24px; height: 24px; }
+        .spark--md { width: 40px; height: 40px; }
+        .spark--md svg { width: 40px; height: 40px; }
+        .spark--lg { width: 64px; height: 64px; }
+        .spark--lg svg { width: 64px; height: 64px; }
+
+        /* ── Section Spark Markers ── */
+        .section-spark {
+            position: absolute;
+            left: clamp(16px, 3vw, 48px);
+            top: 0;
+        }
+
+        /* ── Tile System ── */
+        .tile {
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .tile--solid { background: var(--slate); }
+        .tile--quarter-circle {
+            background: var(--copper);
+            border-radius: 0 0 100% 0;
+        }
+        .tile--half-circle {
+            /* Rendered via inline SVG — full square bg + semicircle */
+            line-height: 0;
+        }
+        .tile--half-circle svg { width: 100%; height: 100%; display: block; }
+        .tile--diamond {
+            /* Rendered via inline SVG — 4 corner triangles + center diamond */
+            line-height: 0;
+        }
+        .tile--diamond svg { width: 100%; height: 100%; display: block; }
+        .tile--diagonal {
+            background: var(--slate);
+            clip-path: polygon(0 0, 100% 0, 0 100%);
+        }
+        .tile--leaf {
+            /* Rendered via inline SVG — bg + two intersecting arcs */
+            line-height: 0;
+        }
+        .tile--leaf svg { width: 100%; height: 100%; display: block; }
+        .tile--spark-shape {
+            /* Rendered via inline SVG — container only */
+            line-height: 0;
+        }
+        .tile--spark-shape svg { width: 100%; height: 100%; display: block; }
+
+        /* Tile row — brand signature strip */
+        .tile-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .tile-row .tile { width: 32px; height: 32px; }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: 0.9375rem;
+            letter-spacing: 0.01em;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn--primary {
+            background: var(--copper);
+            color: #fff;
+            border-color: var(--copper);
+        }
+        .btn--primary:hover { background: var(--copper-600); border-color: var(--copper-600); }
+        .btn--secondary {
+            background: var(--slate);
+            color: #fff;
+            border-color: var(--slate);
+        }
+        .btn--secondary:hover { background: var(--slate-700); border-color: var(--slate-700); }
+        .btn--outline {
+            background: transparent;
+            color: var(--slate);
+            border-color: var(--slate-200);
+        }
+        .btn--outline:hover { border-color: var(--slate); }
+        .btn--primary-dark {
+            background: var(--copper);
+            color: #fff;
+            border-color: var(--copper);
+        }
+        .btn--primary-dark:hover { background: var(--copper-400); border-color: var(--copper-400); }
+        .btn--white {
+            background: #fff;
+            color: var(--slate);
+            border-color: #fff;
+        }
+        .btn--white:hover { background: var(--slate-50); border-color: var(--slate-50); }
+        .btn--outline-light {
+            background: transparent;
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn--outline-light:hover { border-color: #fff; }
+
+        /* ── Navigation ── */
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 28px clamp(24px, 5vw, 80px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.4s, backdrop-filter 0.4s, padding 0.3s;
+        }
+        .site-nav.scrolled {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding-top: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+        .nav-logo { height: 22px; color: var(--slate); }
+        .nav-logo svg { height: 100%; width: auto; display: block; }
+        .nav-links {
+            display: flex;
+            gap: 36px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--slate-600);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-weight: var(--weight-medium);
+            font-size: 0.875rem;
+            letter-spacing: 0.01em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--copper); }
+        .nav-cta {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: 0.8125rem;
+            color: #fff;
+            background: var(--copper);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .nav-cta:hover { background: var(--copper-600); transform: translateY(-1px); }
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 22px;
+            height: 1.5px;
+            background: var(--slate);
+            margin: 5px 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        @media (max-width: 900px) {
+            .nav-links, .nav-cta-wrap { display: none; }
+            .nav-hamburger { display: block; }
+        }
+
+
+        /* ════════════════════════════════════════
+           HERO — Typography as hero
+           ════════════════════════════════════════ */
+        .hero {
+            min-height: 100vh;
+            min-height: 100svh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 140px 0 100px;
+            position: relative;
+        }
+        .hero__eyebrow {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-medium);
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 24px;
+        }
+        .hero__headline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-black);
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            color: var(--slate);
+            max-width: 900px;
+            margin-bottom: 32px;
+        }
+        .hero__sub {
+            font-family: var(--font-serif);
+            font-weight: var(--weight-regular);
+            font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+            line-height: 1.65;
+            color: var(--slate-500);
+            max-width: 600px;
+            margin-bottom: 48px;
+        }
+        .hero__ctas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 64px;
+        }
+        .hero__tile-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            opacity: 0.4;
+        }
+        .hero__tile-row .tile { width: 28px; height: 28px; }
+
+
+        /* ════════════════════════════════════════
+           PROBLEM
+           ════════════════════════════════════════ */
+        .problem {
+            position: relative;
+            padding: 160px 0 140px;
+            overflow: hidden;
+        }
+        .problem__bg-shape {
+            position: absolute;
+            top: -60px;
+            right: -80px;
+            width: 30vw;
+            height: 30vw;
+            max-width: 400px;
+            max-height: 400px;
+            background: var(--slate-50);
+            border-radius: 0 0 0 100%;
+            pointer-events: none;
+        }
+        .problem__inner {
+            display: flex;
+            align-items: flex-start;
+            gap: 80px;
+        }
+        .problem__text {
+            max-width: 580px;
+            flex: 1;
+        }
+        .problem__headline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--slate);
+            margin-bottom: 32px;
+        }
+        .problem__para {
+            font-family: var(--font-serif);
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: var(--slate-500);
+            margin-bottom: 24px;
+        }
+        .problem__para:last-child { margin-bottom: 0; }
+        .problem__image {
+            flex-shrink: 0;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        .problem__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        /* ── Tile Divider ── */
+        .tile-divider {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 0;
+        }
+        .tile-divider .tile { width: 24px; height: 24px; opacity: 0.5; }
+
+
+        /* ════════════════════════════════════════
+           SOLUTION — Patina accent
+           ════════════════════════════════════════ */
+        .solution {
+            background: var(--patina-50);
+            padding: 140px 0;
+            position: relative;
+        }
+        .solution__inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+        .solution__eyebrow {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-medium);
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--patina);
+            margin-bottom: 16px;
+        }
+        .solution__headline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--slate);
+            margin-bottom: 32px;
+        }
+        .solution__para {
+            font-family: var(--font-serif);
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: var(--slate-600);
+            margin-bottom: 24px;
+        }
+        .solution__para:last-child { margin-bottom: 0; }
+        .solution__image {
+            width: 100%;
+            aspect-ratio: 1;
+            max-width: 420px;
+            justify-self: center;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            overflow: hidden;
+        }
+        .solution__image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+
+        /* ════════════════════════════════════════
+           COMMONWEALTH
+           ════════════════════════════════════════ */
+        .commonwealth {
+            padding: 160px 0 140px;
+            position: relative;
+        }
+        .commonwealth__intro {
+            max-width: 700px;
+            margin-bottom: 80px;
+        }
+        .commonwealth__headline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--slate);
+            margin-bottom: 24px;
+        }
+        .commonwealth__sub {
+            font-family: var(--font-serif);
+            font-size: 1.125rem;
+            line-height: 1.65;
+            color: var(--slate-500);
+            margin-bottom: 24px;
+        }
+        .commonwealth__long {
+            font-family: var(--font-serif);
+            font-size: 1rem;
+            line-height: 1.7;
+            color: var(--slate-400);
+            margin-bottom: 24px;
+        }
+        .commonwealth__tagline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: 1rem;
+            color: var(--copper);
+        }
+        .commonwealth__cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .commonwealth__card {
+            background: #fff;
+            border: 1px solid var(--slate-100);
+            border-radius: 8px;
+            padding: 40px 32px 36px;
+            position: relative;
+            overflow: hidden;
+        }
+        .commonwealth__card-accent {
+            margin-bottom: 28px;
+        }
+        .commonwealth__card-accent .tile { width: 48px; height: 48px; }
+        .commonwealth__card-label {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-medium);
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--slate-400);
+            margin-bottom: 8px;
+        }
+        .commonwealth__card-title {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: 1.25rem;
+            line-height: 1.3;
+            color: var(--slate);
+            margin-bottom: 16px;
+        }
+        .commonwealth__card-body {
+            font-family: var(--font-serif);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+            color: var(--slate-500);
+        }
+        .commonwealth__below-tagline {
+            text-align: center;
+            margin-top: 56px;
+        }
+
+
+        /* ════════════════════════════════════════
+           PATHS — Ember accent
+           ════════════════════════════════════════ */
+        .paths {
+            background: var(--ember-50);
+            padding: 140px 0;
+            position: relative;
+        }
+        .paths__header {
+            max-width: 640px;
+            margin-bottom: 64px;
+        }
+        .paths__eyebrow {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-medium);
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--ember);
+            margin-bottom: 16px;
+        }
+        .paths__sub {
+            font-family: var(--font-serif);
+            font-size: 1.0625rem;
+            line-height: 1.65;
+            color: var(--slate-500);
+        }
+        .paths__cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+        .paths__card {
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--slate-100);
+        }
+        .paths__card-image {
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            position: relative;
+        }
+        /* Quarter-circle mask on path card images */
+        .paths__card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .paths__card-image--mask-1 { border-radius: 0 0 60% 0; }
+        .paths__card-image--mask-2 { border-radius: 0 0 0 60%; }
+        .paths__card-image--mask-3 { border-radius: 0 60% 0 0; }
+        .paths__card-body {
+            padding: 32px 28px 28px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .paths__card-title {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-bold);
+            font-size: 1.25rem;
+            line-height: 1.3;
+            color: var(--slate);
+            margin-bottom: 8px;
+        }
+        .paths__card-lead {
+            font-family: var(--font-serif);
+            font-weight: var(--weight-regular);
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--slate-600);
+            font-style: italic;
+            margin-bottom: 16px;
+        }
+        .paths__card-text {
+            font-family: var(--font-serif);
+            font-size: 0.9375rem;
+            line-height: 1.65;
+            color: var(--slate-500);
+            margin-bottom: 24px;
+            flex: 1;
+        }
+        .paths__card-cta {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: 0.875rem;
+            color: var(--copper);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: gap 0.3s;
+        }
+        .paths__card-cta:hover { gap: 0.7rem; }
+
+
+        /* ════════════════════════════════════════
+           TESTIMONIALS
+           ════════════════════════════════════════ */
+        .testimonials {
+            padding: 140px 0;
+            position: relative;
+        }
+        .testimonials__inner {
+            max-width: 640px;
+            margin: 0 auto;
+            text-align: center;
+            position: relative;
+            min-height: 320px;
+        }
+        .testimonial {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+        .testimonial.is-active { opacity: 1; }
+        .no-js .testimonial { position: relative; opacity: 1; margin-bottom: 64px; }
+        .testimonial__mark {
+            font-family: var(--font-serif);
+            font-size: 6rem;
+            line-height: 1;
+            color: var(--copper);
+            user-select: none;
+            margin-bottom: -20px;
+        }
+        .testimonial__quote {
+            font-family: var(--font-serif);
+            font-size: 1.125rem;
+            line-height: 1.7;
+            color: var(--slate-600);
+            font-style: italic;
+            margin-bottom: 28px;
+        }
+        .testimonial__attribution {
+            font-family: var(--font-sans);
+            font-size: var(--text-small);
+            color: var(--slate-400);
+            line-height: 1.5;
+        }
+        .testimonial__attribution strong {
+            display: block;
+            font-weight: var(--weight-semibold);
+            color: var(--slate);
+        }
+        .testimonials__dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .testimonials__dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--slate-200);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .testimonials__dot.is-active {
+            background: var(--copper);
+            transform: scale(1.3);
+        }
+
+
+        /* ════════════════════════════════════════
+           FINAL CTA — Dark inversion
+           ════════════════════════════════════════ */
+        .final-cta {
+            background: var(--slate-900);
+            padding: 140px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .final-cta__bg-tiles {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 8px;
+            padding: 40px;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+        .final-cta__bg-tiles .tile {
+            width: 100%;
+            height: 100%;
+        }
+        .final-cta__content {
+            position: relative;
+            z-index: 1;
+            max-width: 640px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .final-cta__headline {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-black);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.0;
+            letter-spacing: -0.03em;
+            color: #fff;
+            margin-bottom: 28px;
+        }
+        .final-cta__body {
+            font-family: var(--font-serif);
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: var(--slate-300);
+            margin-bottom: 48px;
+        }
+        .final-cta__buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+
+        /* ════════════════════════════════════════
+           FOOTER
+           ════════════════════════════════════════ */
+        .footer {
+            background: var(--slate-950);
+            padding: 0;
+            position: relative;
+        }
+        .footer__accent {
+            height: 2px;
+            background: var(--copper);
+        }
+        .footer__inner {
+            padding: 64px 0 48px;
+        }
+        .footer__top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 56px;
+        }
+        .footer__logo {
+            height: 20px;
+            color: var(--slate-300);
+            margin-bottom: 20px;
+        }
+        .footer__logo svg { height: 100%; width: auto; display: block; }
+        .footer__disclaimer {
+            font-family: var(--font-serif);
+            font-size: var(--text-small);
+            line-height: 1.6;
+            color: var(--slate-500);
+        }
+        .footer__disclaimer strong {
+            display: block;
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            color: var(--slate-300);
+            margin-bottom: 8px;
+        }
+        .footer__nav-title {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--slate-400);
+            margin-bottom: 16px;
+        }
+        .footer__nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .footer__nav-list a {
+            font-family: var(--font-sans);
+            font-size: var(--text-small);
+            color: var(--slate-500);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer__nav-list a:hover { color: var(--copper-300); }
+        .footer__bottom {
+            border-top: 1px solid var(--slate-800);
+            padding-top: 28px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer__legal {
+            font-family: var(--font-sans);
+            font-size: var(--text-caption);
+            color: var(--slate-600);
+        }
+        .footer__legal-links {
+            display: flex;
+            gap: 24px;
+        }
+        .footer__legal-links a {
+            font-family: var(--font-sans);
+            font-size: var(--text-caption);
+            color: var(--slate-600);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer__legal-links a:hover { color: var(--slate-300); }
+
+
+        /* ════════════════════════════════════════
+           RESPONSIVE
+           ════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .problem__inner { flex-direction: column; gap: 40px; }
+            .problem__image { width: 160px; height: 160px; }
+            .solution__inner { grid-template-columns: 1fr; gap: 48px; }
+            .solution__image { max-width: 300px; order: -1; }
+            .commonwealth__cards { grid-template-columns: 1fr; }
+            .paths__cards { grid-template-columns: 1fr; }
+            .footer__top { grid-template-columns: 1fr 1fr; gap: 36px; }
+            .footer__brand-col { grid-column: 1 / -1; }
+        }
+
+        @media (max-width: 640px) {
+            .hero { padding: 120px 0 80px; min-height: auto; }
+            .hero__ctas { flex-direction: column; align-items: flex-start; }
+            .hero__ctas .btn { width: 100%; justify-content: center; }
+            .problem { padding: 100px 0; }
+            .problem__image { align-self: center; }
+            .solution { padding: 100px 0; }
+            .commonwealth { padding: 100px 0; }
+            .paths { padding: 100px 0; }
+            .testimonials { padding: 100px 0; }
+            .final-cta { padding: 100px 0; }
+            .final-cta__buttons { flex-direction: column; align-items: center; }
+            .final-cta__buttons .btn { width: 100%; justify-content: center; }
+            .footer__top { grid-template-columns: 1fr; }
+            .footer__bottom { flex-direction: column; gap: 16px; text-align: center; }
+            .section-spark { display: none; }
+        }
+
+        /* ── Reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            .js .reveal { opacity: 1 !important; transform: none !important; }
+            .testimonial { transition: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ── Navigation ── -->
+    <nav class="site-nav" id="nav">
+        <div class="nav-logo">
+            <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#paths">Paths</a></li>
+            <li><a href="#testimonials">Stories</a></li>
+        </ul>
+        <div class="nav-cta-wrap">
+            <a href="#join" class="nav-cta">Get Started</a>
+        </div>
+        <button class="nav-hamburger" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </nav>
+
+
+    <!-- ════════════════════════════════════════
+         HERO
+         ════════════════════════════════════════ -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <p class="hero__eyebrow reveal">A member-driven community</p>
+            <h1 class="hero__headline reveal">Real financial strength. Built together.</h1>
+            <p class="hero__sub reveal">CoSpark is a member-driven community where people, families, and local businesses build real financial strength &mdash; not by handing their money to institutions, but by participating in a shared economy designed to multiply the value their commitment creates.</p>
+            <div class="hero__ctas reveal">
+                <a href="#paths" class="btn btn--primary">I&rsquo;m an Individual or Family</a>
+                <a href="#paths" class="btn btn--secondary">I Represent a Business</a>
+                <a href="#paths" class="btn btn--outline">I&rsquo;m with a Non-Profit or Church</a>
+            </div>
+            <div class="hero__tile-row reveal" aria-hidden="true">
+                <div class="tile tile--quarter-circle"></div>
+                <div class="tile tile--diamond"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--copper)"/><path d="M0 0H2L0 2V0Z" fill="var(--slate-800)"/><path d="M0 4V2L2 4H0Z" fill="var(--slate-900)"/><path d="M4 4L2 4L4 2V4Z" fill="var(--slate-600)"/><path d="M4 0V2L2 0H4Z" fill="var(--slate-700)"/><rect x="2" width="2.82842" height="2.82842" transform="rotate(45 2 0)" fill="var(--copper)"/></svg></div>
+                <div class="tile tile--spark-shape"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.0706787 0.0706787C1.17521 1.17492 1.17521 2.9657 0.0706787 4.07068V0.0706787Z" fill="var(--slate-800)"/><path d="M4.07068 4.07068C2.96615 2.9657 2.96615 1.17492 4.07068 0.0706787L4.07068 4.07068Z" fill="var(--slate-600)"/><path d="M4.07068 0.0706787C2.96607 1.17484 1.17529 1.17484 0.0706787 0.0706787L4.07068 0.0706787Z" fill="var(--slate-700)"/><path d="M0.0706787 4.07068C1.17529 2.96579 2.96607 2.96579 4.07068 4.07068L0.0706787 4.07068Z" fill="var(--slate-900)"/><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></div>
+                <div class="tile tile--half-circle"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-800)"/><path d="M0 4C0 2.89543 0.895431 2 2 2C3.10457 2 4 2.89543 4 4H0Z" fill="var(--copper)"/></svg></div>
+                <div class="tile tile--leaf"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--copper)"/><path d="M0 0L4 0C4 2.20914 2.20914 4 0 4V0Z" fill="var(--slate-800)"/><path d="M4 4H0C2.20914 4 4 2.20914 4 0V4Z" fill="var(--slate-900)"/><path d="M4 0C1.79086 0 0 1.79086 0 4C2.20914 4 4 2.20914 4 0Z" fill="var(--patina)"/></svg></div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         PROBLEM
+         ════════════════════════════════════════ -->
+    <section class="problem" id="problem">
+        <div class="problem__bg-shape" aria-hidden="true"></div>
+        <!-- Spark marker: 1x -->
+        <div class="section-spark" aria-hidden="true">
+            <span class="spark spark--sm"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></span>
+        </div>
+        <div class="container">
+            <div class="problem__inner">
+                <div class="problem__text">
+                    <h2 class="problem__headline reveal">You work hard and it seems like it should be easier to get ahead.</h2>
+                    <p class="problem__para reveal">You work to manage your money, stretch it, you put it somewhere &ldquo;safe&rdquo; and try to do the right thing. But somehow &mdash; whether it&rsquo;s your household, your business, or your organization &mdash; you&rsquo;re still not getting where you want to be.</p>
+                    <p class="problem__para reveal">The system you trust with your money puts it to work the moment you hand it over. It earns. It multiplies. It builds wealth. Just not for you.</p>
+                </div>
+                <div class="problem__image reveal">
+                    <img src="images/garden-of-gods.png" alt="Garden of the Gods at golden hour" loading="lazy" width="800" height="800">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ── Tile Divider ── -->
+    <div class="tile-divider" aria-hidden="true">
+        <div class="tile tile--solid"></div>
+        <div class="tile tile--quarter-circle"></div>
+        <div class="tile tile--diamond"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--copper)"/><path d="M0 0H2L0 2V0Z" fill="var(--slate-800)"/><path d="M0 4V2L2 4H0Z" fill="var(--slate-900)"/><path d="M4 4L2 4L4 2V4Z" fill="var(--slate-600)"/><path d="M4 0V2L2 0H4Z" fill="var(--slate-700)"/><rect x="2" width="2.82842" height="2.82842" transform="rotate(45 2 0)" fill="var(--copper)"/></svg></div>
+        <div class="tile tile--leaf"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--copper)"/><path d="M0 0L4 0C4 2.20914 2.20914 4 0 4V0Z" fill="var(--slate-800)"/><path d="M4 4H0C2.20914 4 4 2.20914 4 0V4Z" fill="var(--slate-900)"/><path d="M4 0C1.79086 0 0 1.79086 0 4C2.20914 4 4 2.20914 4 0Z" fill="var(--patina)"/></svg></div>
+        <div class="tile tile--half-circle"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-800)"/><path d="M0 4C0 2.89543 0.895431 2 2 2C3.10457 2 4 2.89543 4 4H0Z" fill="var(--copper)"/></svg></div>
+        <div class="tile tile--diagonal"></div>
+        <div class="tile tile--solid" style="background:var(--copper)"></div>
+    </div>
+
+
+    <!-- ════════════════════════════════════════
+         SOLUTION
+         ════════════════════════════════════════ -->
+    <section class="solution" id="solution">
+        <!-- Spark marker: 2x -->
+        <div class="section-spark" aria-hidden="true">
+            <span class="spark spark--md"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></span>
+        </div>
+        <div class="container">
+            <div class="solution__inner">
+                <div class="solution__text">
+                    <p class="solution__eyebrow reveal">A Different Path</p>
+                    <h2 class="solution__headline reveal">The system wasn&rsquo;t built for you. CoSpark is.</h2>
+                    <p class="solution__para reveal">CoSpark was created for those who are ready for a better answer. It isn&rsquo;t a bank. It&rsquo;s not an app. It&rsquo;s a member-driven community where people build the kind of financial resilience that creates confidence and secures futures.</p>
+                    <p class="solution__para reveal">What you put in stays yours and really grows! &mdash; and your participation generates tangible benefit for you and the people around you. Over time, the foundation you create opens doors to growth, lending, ownership, and opportunities you can&rsquo;t access alone.</p>
+                </div>
+                <div class="solution__image reveal">
+                    <img src="images/center-exterior.png" alt="CoSpark Center exterior" loading="lazy" width="800" height="800">
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         COMMONWEALTH
+         ════════════════════════════════════════ -->
+    <section class="commonwealth" id="how-it-works">
+        <!-- Spark marker: 3x -->
+        <div class="section-spark" aria-hidden="true">
+            <span class="spark spark--lg"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></span>
+        </div>
+        <div class="container">
+            <div class="commonwealth__intro">
+                <h2 class="commonwealth__headline reveal">Connect. Belong. Grow. Own. &mdash; Together.</h2>
+                <p class="commonwealth__sub reveal">CoSpark isn&rsquo;t a single program. It&rsquo;s a connected system of pathways designed to let people, families, and organizations build real financial strength &mdash; together.</p>
+                <p class="commonwealth__long reveal">It starts with the foundation: The CoSpark Member Reserve where what you put in stays yours and your commitment generates real benefits. From there, doors open. Lending pathways reward your history. Acquisition Circles let you build toward ownership alongside others. Initiatives pool member participation toward goals no one could reach alone. A member marketplace keeps value circulating inside the community. And local CoSpark Centers make the whole model tangible &mdash; a place to learn, connect, collaborate, and see it working in real life.</p>
+            </div>
+
+            <div class="commonwealth__cards">
+                <div class="commonwealth__card reveal">
+                    <div class="commonwealth__card-accent" aria-hidden="true">
+                        <div class="tile tile--quarter-circle" style="background:var(--copper);border-radius:0 0 100% 0;"></div>
+                    </div>
+                    <p class="commonwealth__card-label">The Network</p>
+                    <h3 class="commonwealth__card-title">Stronger together.</h3>
+                    <p class="commonwealth__card-body">A community that shows up with consistency working to build something none of them could build on their own. Your participation creates shared capability. Your commitment compounds.</p>
+                </div>
+                <div class="commonwealth__card reveal">
+                    <div class="commonwealth__card-accent" aria-hidden="true">
+                        <div class="tile tile--half-circle"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-800)"/><path d="M0 4C0 2.89543 0.895431 2 2 2C3.10457 2 4 2.89543 4 4H0Z" fill="var(--patina)"/></svg></div>
+                    </div>
+                    <p class="commonwealth__card-label">The Centers</p>
+                    <h3 class="commonwealth__card-title">See it. Touch it. Believe it.</h3>
+                    <p class="commonwealth__card-body">Physical hubs where the commonwealth becomes tangible. Workshops, mentors, community. Trust built face to face. Walk in, ask questions, and see what participation looks like in real life.</p>
+                </div>
+                <div class="commonwealth__card reveal">
+                    <div class="commonwealth__card-accent" aria-hidden="true">
+                        <div class="tile tile--spark-shape" style="width:48px;height:48px;"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.0706787 0.0706787C1.17521 1.17492 1.17521 2.9657 0.0706787 4.07068V0.0706787Z" fill="var(--ember-800)"/><path d="M4.07068 4.07068C2.96615 2.9657 2.96615 1.17492 4.07068 0.0706787L4.07068 4.07068Z" fill="var(--ember-600)"/><path d="M4.07068 0.0706787C2.96607 1.17484 1.17529 1.17484 0.0706787 0.0706787L4.07068 0.0706787Z" fill="var(--ember-700)"/><path d="M0.0706787 4.07068C1.17529 2.96579 2.96607 2.96579 4.07068 4.07068L0.0706787 4.07068Z" fill="var(--ember-900)"/><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></div>
+                    </div>
+                    <p class="commonwealth__card-label">The Platform</p>
+                    <h3 class="commonwealth__card-title">The connective tissue that makes it work.</h3>
+                    <p class="commonwealth__card-body">Nine pathways. Three layers. From your personal reserve to shared ownership, from lending to education, from local commerce to structured auctions &mdash; the platform connects everything so participation has somewhere real to go.</p>
+                </div>
+            </div>
+
+            <div class="commonwealth__below-tagline reveal">
+                <p class="commonwealth__tagline">You start where you are. The system grows with you.</p>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         PATHS
+         ════════════════════════════════════════ -->
+    <section class="paths" id="paths">
+        <div class="container">
+            <div class="paths__header">
+                <p class="paths__eyebrow reveal">There&rsquo;s a path for where you are right now</p>
+                <p class="paths__sub reveal">Whether you&rsquo;re managing a household, running a business, leading a church, or just starting to figure out what building real financial strength looks like &mdash; there&rsquo;s a way in that meets you where you are.</p>
+            </div>
+
+            <div class="paths__cards">
+                <div class="paths__card reveal">
+                    <div class="paths__card-image paths__card-image--mask-1">
+                        <img src="images/family-kitchen.png" alt="Couple at kitchen table" loading="lazy" width="800" height="600">
+                    </div>
+                    <div class="paths__card-body">
+                        <h3 class="paths__card-title">For Individuals &amp; Families</h3>
+                        <p class="paths__card-lead">You don&rsquo;t need to be perfect with money. You need a system that rewards the discipline you already have.</p>
+                        <p class="paths__card-text">Start with what works for your budget. Build a reserve that stays yours. Receive Boost Payments you can use today. And over time, grow into lending, ownership, and a community that has your back.</p>
+                        <a href="#" class="paths__card-cta">Explore paths for individuals &amp; families <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+                <div class="paths__card reveal">
+                    <div class="paths__card-image paths__card-image--mask-2">
+                        <img src="images/business-owner.png" alt="Business owner in shop" loading="lazy" width="800" height="600">
+                    </div>
+                    <div class="paths__card-body">
+                        <h3 class="paths__card-title">For Businesses</h3>
+                        <p class="paths__card-lead">You didn&rsquo;t build your business to hand the upside to someone else&rsquo;s balance sheet.</p>
+                        <p class="paths__card-text">Build real financial shock absorbers for your business. Qualify for lending designed for people who&rsquo;ve proven their commitment. Find operators, partners, and buyers inside a network that values the same things you do.</p>
+                        <a href="#" class="paths__card-cta">Explore paths for businesses <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+                <div class="paths__card reveal">
+                    <div class="paths__card-image paths__card-image--mask-3">
+                        <img src="images/church-community.png" alt="Church fellowship" loading="lazy" width="800" height="600">
+                    </div>
+                    <div class="paths__card-body">
+                        <h3 class="paths__card-title">For Non-Profits &amp; Churches</h3>
+                        <p class="paths__card-lead">This isn&rsquo;t a fundraising campaign. It&rsquo;s a structure.</p>
+                        <p class="paths__card-text">Your supporters save for their own future. Your organization receives ongoing, predictable support. Nobody is depleted. Give your people a way that builds them up instead of wearing them down.</p>
+                        <a href="#" class="paths__card-cta">Explore paths for non-profits &amp; churches <span aria-hidden="true">&rarr;</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         TESTIMONIALS
+         ════════════════════════════════════════ -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonials__inner">
+                <div class="testimonial is-active" data-testimonial="0">
+                    <div class="testimonial__mark" aria-hidden="true">&ldquo;</div>
+                    <blockquote class="testimonial__quote">We were skeptical. We&rsquo;d heard the pitch before &mdash; put your money here, trust us. But when we walked into the Center and sat down with real people who could answer every question, something clicked. Eighteen months in, our reserve is intact, the Boost Payments hit our Boost Card, and for the first time we feel like we&rsquo;re building something instead of just treading water.</blockquote>
+                    <p class="testimonial__attribution">
+                        <strong>Maria &amp; David Chen</strong>
+                        Member Reserve participants since 2024
+                    </p>
+                </div>
+                <div class="testimonial" data-testimonial="1">
+                    <div class="testimonial__mark" aria-hidden="true">&ldquo;</div>
+                    <blockquote class="testimonial__quote">I&rsquo;ve run my own shop for eleven years. Banks wanted collateral I didn&rsquo;t have. Investors wanted a piece of something I built from nothing. CoSpark gave me a different path. I built history through the Reserve program, qualified for lending on terms that actually made sense, and found two subcontractors through the member network who I trust with my name on the line.</blockquote>
+                    <p class="testimonial__attribution">
+                        <strong>James Whitfield, Owner, Whitfield Electric</strong>
+                        Business member since 2023
+                    </p>
+                </div>
+                <div class="testimonial" data-testimonial="2">
+                    <div class="testimonial__mark" aria-hidden="true">&ldquo;</div>
+                    <blockquote class="testimonial__quote">Our congregation wanted to help, but they were tired. Tired of campaigns, tired of being asked. When we brought CoSpark to our leadership team, the first thing they said was &ldquo;this doesn&rsquo;t feel like fundraising.&rdquo; That&rsquo;s because it isn&rsquo;t. Our supporters are building their own reserves while the church receives ongoing support. Nobody is being drained.</blockquote>
+                    <p class="testimonial__attribution">
+                        <strong>Pastor Angela Reeves, Community Life Church</strong>
+                        Initiative leader since 2024
+                    </p>
+                </div>
+            </div>
+            <div class="testimonials__dots">
+                <button class="testimonials__dot is-active" data-goto="0" aria-label="Testimonial 1"></button>
+                <button class="testimonials__dot" data-goto="1" aria-label="Testimonial 2"></button>
+                <button class="testimonials__dot" data-goto="2" aria-label="Testimonial 3"></button>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         FINAL CTA
+         ════════════════════════════════════════ -->
+    <section class="final-cta" id="join">
+        <!-- Background tile texture -->
+        <div class="final-cta__bg-tiles" aria-hidden="true">
+            <div class="tile tile--solid" style="background:var(--slate-700)"></div>
+            <div class="tile tile--quarter-circle" style="background:var(--slate-800);border-radius:0 0 100% 0;"></div>
+            <div class="tile tile--diamond"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-700)"/><path d="M0 0H2L0 2V0Z" fill="var(--slate-800)"/><path d="M0 4V2L2 4H0Z" fill="var(--slate-800)"/><path d="M4 4L2 4L4 2V4Z" fill="var(--slate-700)"/><path d="M4 0V2L2 0H4Z" fill="var(--slate-700)"/><rect x="2" width="2.82842" height="2.82842" transform="rotate(45 2 0)" fill="var(--slate-700)"/></svg></div>
+            <div class="tile tile--half-circle"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-800)"/><path d="M0 4C0 2.89543 0.895431 2 2 2C3.10457 2 4 2.89543 4 4H0Z" fill="var(--slate-700)"/></svg></div>
+            <div class="tile tile--leaf"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-700)"/><path d="M0 0L4 0C4 2.20914 2.20914 4 0 4V0Z" fill="var(--slate-800)"/><path d="M4 4H0C2.20914 4 4 2.20914 4 0V4Z" fill="var(--slate-800)"/><path d="M4 0C1.79086 0 0 1.79086 0 4C2.20914 4 4 2.20914 4 0Z" fill="var(--slate-800)"/></svg></div>
+            <div class="tile tile--solid" style="background:var(--slate-800)"></div>
+            <div class="tile tile--diagonal" style="background:var(--slate-700)"></div>
+            <div class="tile tile--spark-shape"><svg viewBox="0 0 4.16 4.16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.0706787 0.0706787C1.17521 1.17492 1.17521 2.9657 0.0706787 4.07068V0.0706787Z" fill="var(--slate-800)"/><path d="M4.07068 4.07068C2.96615 2.9657 2.96615 1.17492 4.07068 0.0706787L4.07068 4.07068Z" fill="var(--slate-700)"/><path d="M4.07068 0.0706787C2.96607 1.17484 1.17529 1.17484 0.0706787 0.0706787L4.07068 0.0706787Z" fill="var(--slate-700)"/><path d="M0.0706787 4.07068C1.17529 2.96579 2.96607 2.96579 4.07068 4.07068L0.0706787 4.07068Z" fill="var(--slate-800)"/><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z" fill="var(--copper)" stroke="var(--copper)" stroke-width="0.1"/></svg></div>
+            <div class="tile tile--half-circle"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-700)"/><path d="M0 4C0 2.89543 0.895431 2 2 2C3.10457 2 4 2.89543 4 4H0Z" fill="var(--slate-800)"/></svg></div>
+            <div class="tile tile--solid" style="background:var(--slate-700)"></div>
+            <div class="tile tile--quarter-circle" style="background:var(--slate-800);border-radius:100% 0 0 0;"></div>
+            <div class="tile tile--leaf"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-700)"/><path d="M0 0L4 0C4 2.20914 2.20914 4 0 4V0Z" fill="var(--slate-700)"/><path d="M4 4H0C2.20914 4 4 2.20914 4 0V4Z" fill="var(--slate-700)"/><path d="M4 0C1.79086 0 0 1.79086 0 4C2.20914 4 4 2.20914 4 0Z" fill="var(--slate-700)"/></svg></div>
+            <div class="tile tile--diamond"><svg viewBox="0 0 4 4" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="4" height="4" fill="var(--slate-800)"/><path d="M0 0H2L0 2V0Z" fill="var(--slate-800)"/><path d="M0 4V2L2 4H0Z" fill="var(--slate-800)"/><path d="M4 4L2 4L4 2V4Z" fill="var(--slate-800)"/><path d="M4 0V2L2 0H4Z" fill="var(--slate-800)"/><rect x="2" width="2.82842" height="2.82842" transform="rotate(45 2 0)" fill="var(--slate-800)"/></svg></div>
+            <div class="tile tile--solid" style="background:var(--slate-700)"></div>
+            <div class="tile tile--solid" style="background:var(--slate-800)"></div>
+            <div class="tile tile--diagonal" style="background:var(--slate-700);clip-path:polygon(100% 0,100% 100%,0 100%);"></div>
+        </div>
+        <div class="container">
+            <div class="final-cta__content reveal">
+                <h2 class="final-cta__headline">Come Explore!</h2>
+                <p class="final-cta__body">CoSpark is for people, families, and organizations who are ready to stop funding someone else&rsquo;s balance sheet. You don&rsquo;t need to take a risk. You need a system actually designed to put your interests first. We&rsquo;re working together to create a better way.</p>
+                <div class="final-cta__buttons">
+                    <a href="#" class="btn btn--primary-dark">Become a Member</a>
+                    <a href="#" class="btn btn--white">Visit a Center</a>
+                    <a href="#" class="btn btn--outline-light">Talk to Someone</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ════════════════════════════════════════
+         FOOTER
+         ════════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer__accent"></div>
+        <div class="container">
+            <div class="footer__inner">
+                <div class="footer__top">
+                    <div class="footer__brand-col">
+                        <div class="footer__logo">
+                            <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+                        </div>
+                        <div class="footer__disclaimer">
+                            <strong>Operated by The Community Corp</strong>
+                            CoSpark is a member-driven community operated by The Community Corp. Programs, terms, and availability are described in the membership agreement. CoSpark is not a bank, credit union, or registered investment vehicle.
+                        </div>
+                    </div>
+                    <div class="footer__nav-group">
+                        <p class="footer__nav-title">Who Can Join</p>
+                        <ul class="footer__nav-list">
+                            <li><a href="#">Individuals &amp; Families</a></li>
+                            <li><a href="#">Businesses</a></li>
+                            <li><a href="#">Non-Profits &amp; Churches</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__nav-group">
+                        <p class="footer__nav-title">Explore</p>
+                        <ul class="footer__nav-list">
+                            <li><a href="#">CoSpark Centers</a></li>
+                            <li><a href="#">About</a></li>
+                            <li><a href="#">Magazine</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer__nav-group">
+                        <p class="footer__nav-title">Get Started</p>
+                        <ul class="footer__nav-list">
+                            <li><a href="#">Become a Member</a></li>
+                            <li><a href="#">Contact</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer__bottom">
+                    <p class="footer__legal">&copy; 2026 The Community Corp. All rights reserved.</p>
+                    <div class="footer__legal-links">
+                        <a href="#">Privacy Policy</a>
+                        <a href="#">Terms of Service</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- ── Scripts ── -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ── Nav scroll behavior ── */
+        var nav = document.getElementById('nav');
+        ScrollTrigger.create({
+            start: 'top -80',
+            onUpdate: function(self) {
+                if (self.scroll() > 80) {
+                    nav.classList.add('scrolled');
+                } else {
+                    nav.classList.remove('scrolled');
+                }
+            }
+        });
+
+        /* ── Reveal animations ── */
+        if (!prefersReducedMotion) {
+
+            /* Hero — animate on load, not scroll */
+            var heroReveals = document.querySelectorAll('.hero .reveal');
+            gsap.to(heroReveals, {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out',
+                stagger: 0.1,
+                delay: 0.1
+            });
+
+            /* All other .reveal elements — ScrollTrigger */
+            var scrollReveals = document.querySelectorAll('.reveal:not(.hero .reveal)');
+            scrollReveals.forEach(function(el) {
+                /* Images get slightly longer duration */
+                var isImage = el.classList.contains('problem__image') ||
+                              el.classList.contains('solution__image');
+                gsap.to(el, {
+                    scrollTrigger: {
+                        trigger: el,
+                        start: 'top 65%',
+                        toggleActions: 'play none none none'
+                    },
+                    opacity: 1,
+                    y: 0,
+                    duration: isImage ? 0.8 : 0.6,
+                    ease: 'power2.out'
+                });
+            });
+
+        } else {
+            /* Reduced motion: make everything visible */
+            document.querySelectorAll('.reveal').forEach(function(el) {
+                el.style.opacity = '1';
+                el.style.transform = 'none';
+            });
+        }
+
+        /* ── Testimonial rotation ── */
+        var testimonials = document.querySelectorAll('.testimonial');
+        var dots = document.querySelectorAll('.testimonials__dot');
+        var currentTestimonial = 0;
+        var autoRotateInterval;
+
+        function showTestimonial(index) {
+            testimonials.forEach(function(t) { t.classList.remove('is-active'); });
+            dots.forEach(function(d) { d.classList.remove('is-active'); });
+            testimonials[index].classList.add('is-active');
+            dots[index].classList.add('is-active');
+            currentTestimonial = index;
+        }
+
+        function nextTestimonial() {
+            showTestimonial((currentTestimonial + 1) % testimonials.length);
+        }
+
+        /* Dot clicks */
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                var idx = parseInt(this.getAttribute('data-goto'), 10);
+                showTestimonial(idx);
+                clearInterval(autoRotateInterval);
+                autoRotateInterval = setInterval(nextTestimonial, 6000);
+            });
+        });
+
+        /* Auto-rotate every 6 seconds */
+        autoRotateInterval = setInterval(nextTestimonial, 6000);
+
+    })();
+    </script>
+</body>
+</html>

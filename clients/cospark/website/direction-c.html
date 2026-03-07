@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <script>document.documentElement.classList.remove('no-js');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoSpark — Real Financial Strength, Built Together</title>
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <style>
+        /* ── Reset ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+
+        body {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            color: var(--slate);
+            background: var(--slate-950);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── Film Grain Overlay ── */
+        .grain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-size: 200px 200px;
+            will-change: transform;
+        }
+
+        /* ── Vignette ── */
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9998;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(11, 21, 32, 0.3) 100%);
+        }
+
+        /* ── Progress Indicator ── */
+        .progress-track {
+            position: fixed;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .progress-line {
+            width: 1px;
+            height: 24px;
+            background: rgba(212, 121, 47, 0.2);
+        }
+        .progress-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            border: 1.5px solid var(--copper);
+            background: transparent;
+            transition: background 0.4s ease, transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            font-size: 0;
+            line-height: 0;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .progress-dot.active {
+            background: var(--copper);
+            transform: scale(1.4);
+            box-shadow: 0 0 8px rgba(212, 121, 47, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .progress-track { right: 12px; }
+        }
+        @media (max-width: 640px) {
+            .progress-track { display: none; }
+        }
+
+        /* ── Navigation ── */
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1001;
+            padding: 24px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.5s ease, backdrop-filter 0.5s ease, padding 0.4s ease;
+        }
+        .site-nav.scrolled {
+            background: rgba(11, 21, 32, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 18px 48px;
+        }
+        .nav-logo {
+            color: #fff;
+            height: 26px;
+            width: auto;
+            flex-shrink: 0;
+            margin-right: 24px;
+        }
+        .nav-logo svg {
+            height: 100%;
+            width: auto;
+            display: block;
+        }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 0.875rem;
+            letter-spacing: 0.02em;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--copper); }
+        .nav-cta {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: #fff;
+            background: var(--copper);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+            white-space: nowrap;
+        }
+        .nav-cta:hover { background: var(--copper-600); transform: translateY(-1px); }
+
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #fff;
+            margin: 5px 0;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        @media (max-width: 900px) {
+            .site-nav { padding: 20px 24px; }
+            .site-nav.scrolled { padding: 16px 24px; }
+            .nav-links, .nav-cta-wrap { display: none; }
+            .nav-hamburger { display: block; }
+        }
+
+        /* ── Scene Base ── */
+        .scene {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            min-height: 100svh;
+            overflow: hidden;
+        }
+        .scene-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .scene-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            will-change: transform;
+        }
+        .scene-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+        }
+        .scene-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ── Typography ── */
+        .eyebrow {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: var(--text-small);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 16px;
+        }
+        .headline-massive {
+            font-family: var(--font-sans);
+            font-weight: 900;
+            font-size: clamp(3.5rem, 8vw, 7rem);
+            line-height: 0.92;
+            letter-spacing: -0.04em;
+            color: #fff;
+        }
+        .headline-large {
+            font-family: var(--font-sans);
+            font-weight: 900;
+            font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+        }
+        .headline-medium {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+        }
+        .body-large {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+            line-height: 1.65;
+        }
+        .body-text {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-size: clamp(1rem, 1.5vw, 1.125rem);
+            line-height: 1.65;
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 1rem;
+            padding: 16px 32px;
+            border-radius: 8px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--copper);
+            color: #fff;
+            border-color: var(--copper);
+        }
+        .btn-primary:hover {
+            background: var(--copper-600);
+            border-color: var(--copper-600);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(212, 121, 47, 0.3);
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            background: transparent;
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        .btn-outline:hover {
+            border-color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+        .btn-white {
+            background: #fff;
+            color: var(--slate);
+            border-color: #fff;
+        }
+        .btn-white:hover {
+            background: var(--slate-50);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.15);
+        }
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        @media (max-width: 640px) {
+            .btn { padding: 14px 24px; font-size: 0.9rem; width: 100%; }
+            .btn-group { flex-direction: column; }
+        }
+
+        /* ── Scene 1: Hero ── */
+        .hero {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10vh;
+            text-align: center;
+        }
+        .hero .scene-overlay {
+            background: linear-gradient(
+                to top,
+                rgba(11, 21, 32, 0.85) 0%,
+                rgba(11, 21, 32, 0.4) 40%,
+                rgba(11, 21, 32, 0.15) 100%
+            );
+        }
+        .hero .scene-bg img {
+            filter: sepia(0.08) saturate(1.15) brightness(0.95);
+        }
+        .hero-content {
+            max-width: 900px;
+            padding: 0 24px;
+        }
+        .hero .eyebrow { color: var(--copper-300); margin-bottom: 20px; }
+        .hero-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .hero-sub {
+            color: rgba(255, 255, 255, 0.75);
+            max-width: 650px;
+            margin: 28px auto 0;
+            font-size: clamp(1rem, 1.6vw, 1.2rem);
+        }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0.6;
+        }
+        .scroll-indicator span {
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(0.6); transform-origin: top; }
+            50% { opacity: 1; transform: scaleY(1); }
+        }
+
+        /* ── Scene 2: Problem ── */
+        .problem {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .problem .scene-overlay {
+            background: rgba(40, 56, 69, 0.8);
+        }
+        .problem .scene-bg img {
+            filter: sepia(0.15) saturate(1.1) brightness(0.7);
+        }
+        .problem-content {
+            max-width: 720px;
+            padding: 0 24px;
+            text-align: center;
+        }
+        .problem-content .headline-large {
+            color: #fff;
+            margin-bottom: 48px;
+        }
+        .problem-p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        .problem-divider {
+            width: 0;
+            height: 1px;
+            background: var(--copper);
+            margin: 40px auto;
+            transition: width 1s ease;
+        }
+        .problem-divider.drawn { width: 200px; }
+
+        /* ── Scene 3: Solution ── */
+        .solution {
+            display: flex;
+            min-height: 100vh;
+            min-height: 100svh;
+        }
+        .solution-image {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        .solution-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: sepia(0.1) saturate(1.1);
+        }
+        .solution-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--copper);
+        }
+        .solution-text {
+            flex: 1;
+            background: var(--patina-50);
+            display: flex;
+            align-items: center;
+            padding: 80px 60px;
+        }
+        .solution-inner {
+            max-width: 520px;
+        }
+        .solution-inner .eyebrow { color: var(--patina); }
+        .solution-inner .headline-large {
+            color: var(--slate);
+            margin-bottom: 32px;
+        }
+        .solution-inner .body-large {
+            color: var(--slate-600);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .solution { flex-direction: column; }
+            .solution-image { height: 50vh; flex: none; }
+            .solution-image::after { display: none; }
+            .solution-text { padding: 48px 24px; }
+        }
+
+        /* ── Scene 4: Commonwealth ── */
+        .commonwealth-intro {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--slate-950);
+            text-align: center;
+            padding: 0 24px;
+        }
+        .commonwealth-intro-inner {
+            max-width: 800px;
+        }
+        .cw-headline {
+            font-family: var(--font-sans);
+            font-weight: 900;
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 1.05;
+            letter-spacing: -0.04em;
+            color: #fff;
+        }
+        .cw-word {
+            display: block;
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        .cw-sub {
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 40px;
+            font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .cw-long {
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 24px;
+            font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+            line-height: 1.7;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .cw-tagline {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--copper);
+            margin-top: 32px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Commonwealth Cards */
+        .cw-card-scene {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 24px;
+        }
+        .cw-card-scene .scene-overlay {
+            background: rgba(11, 21, 32, 0.7);
+        }
+        .cw-card-scene .scene-bg img {
+            filter: sepia(0.1) saturate(1.1) brightness(0.8);
+        }
+        .cw-card-scene.platform-scene {
+            background: var(--slate-900);
+        }
+        .platform-scene .copper-geo {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .platform-scene .copper-geo::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border: 1px solid rgba(212, 121, 47, 0.1);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .platform-scene .copper-geo::after {
+            content: '';
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 1px solid rgba(212, 121, 47, 0.15);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        .cw-card-content {
+            max-width: 640px;
+        }
+        .cw-card-label {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--copper-300);
+            margin-bottom: 12px;
+        }
+        .cw-card-title {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .cw-card-tagline {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-style: italic;
+            font-size: 1.2rem;
+            color: var(--copper);
+            margin-bottom: 24px;
+        }
+        .cw-card-body {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: clamp(1rem, 1.5vw, 1.15rem);
+            line-height: 1.7;
+        }
+
+        /* ── Scene 5: Paths ── */
+        .path-scene {
+            display: flex;
+            align-items: center;
+            padding: 80px 40px;
+        }
+        .path-scene .scene-overlay {
+            background: linear-gradient(135deg, rgba(165, 56, 62, 0.55) 0%, rgba(40, 56, 69, 0.7) 100%);
+        }
+        .path-scene .scene-bg img {
+            filter: sepia(0.12) saturate(1.15) brightness(0.85);
+        }
+        .path-panel {
+            position: relative;
+            z-index: 2;
+            max-width: 520px;
+            padding: 48px;
+            background: rgba(11, 21, 32, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+        }
+        .path-scene:nth-child(odd) { justify-content: flex-start; }
+        .path-scene:nth-child(even) { justify-content: flex-end; }
+        .path-label {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--copper-300);
+            margin-bottom: 12px;
+        }
+        .path-title {
+            font-family: var(--font-sans);
+            font-weight: 800;
+            font-size: clamp(1.5rem, 3vw, 2.25rem);
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .path-hook {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-style: italic;
+            color: var(--copper);
+            font-size: 1.1rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .path-body {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+        .path-cta {
+            font-family: var(--font-sans);
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--copper);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.3s, color 0.3s;
+        }
+        .path-cta:hover { gap: 14px; color: var(--copper-300); }
+        .path-cta::after { content: '\2192'; }
+
+        @media (max-width: 900px) {
+            .path-scene { padding: 60px 20px; justify-content: center !important; }
+            .path-panel { max-width: 100%; padding: 32px 24px; }
+        }
+
+        /* ── Scene 6: Testimonials ── */
+        .testimonials-scene {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--slate-50);
+            padding: 80px 24px;
+            min-height: 100vh;
+            min-height: 100svh;
+        }
+        .testimonials-container {
+            position: relative;
+            max-width: 720px;
+            width: 100%;
+            min-height: 400px;
+        }
+        .testimonial-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .testimonial-slide.active { opacity: 1; }
+        .testimonial-quote-mark {
+            font-family: var(--font-serif);
+            font-size: 4rem;
+            line-height: 1;
+            color: var(--copper);
+            margin-bottom: 16px;
+        }
+        .testimonial-text {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-style: italic;
+            font-size: clamp(1.1rem, 2vw, 1.35rem);
+            line-height: 1.75;
+            color: var(--slate-700);
+            margin-bottom: 32px;
+        }
+        .testimonial-image {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 12px;
+            filter: sepia(0.08) saturate(1.1);
+        }
+        .testimonial-name {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--slate);
+        }
+        .testimonial-role {
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 0.8rem;
+            color: var(--slate-400);
+            margin-top: 2px;
+        }
+        .testimonial-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            position: absolute;
+            bottom: -48px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .testimonial-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--slate-200);
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+        }
+        .testimonial-dot.active {
+            background: var(--copper);
+            transform: scale(1.3);
+        }
+
+        /* ── Scene 7: Final CTA ── */
+        .final-cta {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 24px;
+        }
+        .final-cta .scene-overlay {
+            background: rgba(11, 21, 32, 0.85);
+        }
+        .final-cta .scene-bg img {
+            filter: sepia(0.1) saturate(1.1) brightness(0.6);
+        }
+        .final-cta-content {
+            max-width: 680px;
+        }
+        .final-cta-content .headline-large {
+            color: #fff;
+            margin-bottom: 24px;
+        }
+        .final-cta-content .body-large {
+            color: rgba(255, 255, 255, 0.75);
+            margin-bottom: 16px;
+        }
+        .final-cta .btn-primary:hover {
+            box-shadow: 0 8px 40px rgba(212, 121, 47, 0.4);
+        }
+
+        /* ── Footer ── */
+        .site-footer {
+            background: var(--slate-950);
+            color: rgba(255, 255, 255, 0.5);
+            padding: 80px 40px 40px;
+        }
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 48px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .footer-brand-logo {
+            color: #fff;
+            height: 20px;
+            width: auto;
+            margin-bottom: 20px;
+        }
+        .footer-brand-logo svg { height: 100%; width: auto; display: block; }
+        .footer-disclaimer {
+            font-family: var(--font-serif);
+            font-weight: 400;
+            font-size: 0.8rem;
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.35);
+        }
+        .footer-col-title {
+            font-family: var(--font-sans);
+            font-weight: 700;
+            font-size: 0.75rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 16px;
+        }
+        .footer-col a {
+            display: block;
+            color: rgba(255, 255, 255, 0.45);
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 4px 0;
+            transition: color 0.3s;
+        }
+        .footer-col a:hover { color: var(--copper); }
+        .footer-legal {
+            max-width: 1200px;
+            margin: 24px auto 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-sans);
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.25);
+        }
+        .footer-legal-links {
+            display: flex;
+            gap: 24px;
+        }
+        .footer-legal-links a {
+            color: rgba(255, 255, 255, 0.25);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .footer-legal-links a:hover { color: rgba(255, 255, 255, 0.5); }
+
+        @media (max-width: 900px) {
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-brand { grid-column: 1 / -1; }
+            .site-footer { padding: 48px 24px 32px; }
+        }
+        @media (max-width: 640px) {
+            .footer-top { grid-template-columns: 1fr; }
+            .footer-legal { flex-direction: column; gap: 12px; text-align: center; }
+        }
+
+        /* ── Utility ── */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ── No-JS Fallback ── */
+        .no-js .hero-word,
+        .no-js .cw-word,
+        .no-js .problem-p,
+        .no-js .cw-sub,
+        .no-js .cw-long,
+        .no-js .cw-tagline {
+            opacity: 1 !important;
+            transform: none !important;
+        }
+
+        /* ── Reduced Motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .hero-word, .cw-word, .problem-p, .cw-sub, .cw-long, .cw-tagline,
+            .cw-card-content, .path-panel, .solution-inner, .solution-inner > *,
+            #solutionImage, .final-cta-content, .final-cta-content > *,
+            #problem .headline-large, .hero-sub, .hero .btn-group {
+                opacity: 1 !important;
+                transform: none !important;
+            }
+            .scroll-line { animation: none; opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Film Grain -->
+    <div class="grain" aria-hidden="true"></div>
+    <!-- Vignette -->
+    <div class="vignette" aria-hidden="true"></div>
+
+    <!-- Progress Indicator -->
+    <nav class="progress-track" aria-label="Page sections">
+        <button class="progress-dot active" data-scene="0" title="Hero" aria-label="Go to Hero section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="1" title="The Problem" aria-label="Go to The Problem section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="2" title="The Solution" aria-label="Go to The Solution section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="3" title="The Commonwealth" aria-label="Go to The Commonwealth section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="4" title="Your Path" aria-label="Go to Your Path section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="5" title="Stories" aria-label="Go to Stories section"></button>
+        <div class="progress-line"></div>
+        <button class="progress-dot" data-scene="6" title="Join" aria-label="Go to Join section"></button>
+    </nav>
+
+    <!-- Navigation -->
+    <header class="site-nav" id="siteNav">
+        <div class="nav-logo" aria-label="CoSpark">
+            <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="#problem">Why CoSpark</a></li>
+                <li><a href="#commonwealth">How It Works</a></li>
+                <li><a href="#paths">Your Path</a></li>
+                <li><a href="#testimonials">Stories</a></li>
+            </ul>
+        </nav>
+        <div class="nav-cta-wrap">
+            <a href="#final-cta" class="nav-cta">Become a Member</a>
+        </div>
+        <button class="nav-hamburger" aria-label="Menu" id="navHamburger">
+            <span></span><span></span><span></span>
+        </button>
+    </header>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 1: HERO                                    -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene hero" id="hero" data-scene="0">
+        <div class="scene-bg">
+            <img src="images/hero-community.png" alt="CoSpark community gathering in Colorado Springs" id="heroBg">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content hero-content">
+            <p class="eyebrow">A member-driven community</p>
+            <h1 class="headline-massive" id="heroHeadline">
+                <span class="hero-word">Real</span>
+                <span class="hero-word">financial</span>
+                <span class="hero-word">strength.</span><br>
+                <span class="hero-word">Built</span>
+                <span class="hero-word">together.</span>
+            </h1>
+            <p class="hero-sub body-large" style="color: rgba(255,255,255,0.75);">CoSpark is a member-driven community where people, families, and local businesses build real financial strength &mdash; not by handing their money to institutions, but by participating in a shared economy designed to multiply the value their commitment creates.</p>
+            <div class="btn-group" style="justify-content: center;">
+                <a href="#" class="btn btn-primary">I'm an Individual or Family</a>
+                <a href="#" class="btn btn-secondary">I Represent a Business</a>
+                <a href="#" class="btn btn-outline">I'm with a Non-Profit or Church</a>
+            </div>
+        </div>
+        <div class="scroll-indicator" aria-hidden="true">
+            <span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 2: PROBLEM                                 -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene problem" id="problem" data-scene="1">
+        <div class="scene-bg">
+            <img src="images/garden-of-gods.png" alt="Garden of the Gods, Colorado Springs" loading="lazy" id="problemBg">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content problem-content">
+            <h2 class="headline-large">You work hard and it seems like it should be easier to get ahead.</h2>
+            <p class="problem-p" id="problemP1">You work to manage your money, stretch it, you put it somewhere &ldquo;safe&rdquo; and try to do the right thing. But somehow &mdash; whether it&rsquo;s your household, your business, or your organization &mdash; you&rsquo;re still not getting where you want to be.</p>
+            <div class="problem-divider" id="problemDivider"></div>
+            <p class="problem-p" id="problemP2">The system you trust with your money puts it to work the moment you hand it over. It earns. It multiplies. It builds wealth. Just not for you.</p>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 3: SOLUTION                                -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene solution" id="solution" data-scene="2">
+        <div class="solution-image" id="solutionImage">
+            <img src="images/center-exterior.png" alt="CoSpark Center exterior" loading="lazy">
+        </div>
+        <div class="solution-text" id="solutionText">
+            <div class="solution-inner">
+                <p class="eyebrow">A Different Path</p>
+                <h2 class="headline-large">The system wasn&rsquo;t built for you. CoSpark is.</h2>
+                <p class="body-large">CoSpark was created for those who are ready for a better answer. It isn&rsquo;t a bank. It&rsquo;s not an app. It&rsquo;s a member-driven community where people build the kind of financial resilience that creates confidence and secures futures.</p>
+                <p class="body-large">What you put in stays yours and really grows! &mdash; and your participation generates tangible benefit for you and the people around you. Over time, the foundation you create opens doors to growth, lending, ownership, and opportunities you can&rsquo;t access alone.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 4: COMMONWEALTH                            -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene commonwealth-intro" id="commonwealth" data-scene="3">
+        <div class="scene-content commonwealth-intro-inner">
+            <h2 class="cw-headline" id="cwHeadline">
+                <span class="cw-word">Connect.</span>
+                <span class="cw-word">Belong.</span>
+                <span class="cw-word">Grow.</span>
+                <span class="cw-word">Own.</span>
+                <span class="cw-word" style="color: var(--copper);">&mdash; Together.</span>
+            </h2>
+            <p class="cw-sub body-large" id="cwSub">CoSpark isn&rsquo;t a single program. It&rsquo;s a connected system of pathways designed to let people, families, and organizations build real financial strength &mdash; together.</p>
+            <p class="cw-long body-text" id="cwLong">It starts with the foundation: The CoSpark Member Reserve where what you put in stays yours and your commitment generates real benefits. From there, doors open. Lending pathways reward your history. Acquisition Circles let you build toward ownership alongside others. Initiatives pool member participation toward goals no one could reach alone. A member marketplace keeps value circulating inside the community. And local CoSpark Centers make the whole model tangible &mdash; a place to learn, connect, collaborate, and see it working in real life.</p>
+            <p class="cw-tagline" id="cwTagline">You start where you are. The system grows with you.</p>
+        </div>
+    </section>
+
+    <!-- Commonwealth Card: The Network -->
+    <section class="scene cw-card-scene" data-scene="3">
+        <div class="scene-bg">
+            <img src="images/workshop-activity.png" alt="Community workshop activity" loading="lazy">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content cw-card-content">
+            <p class="cw-card-label">Element One</p>
+            <h3 class="cw-card-title">The Network</h3>
+            <p class="cw-card-tagline">Stronger together.</p>
+            <p class="cw-card-body">The network is every member, every business, every organization that participates. It&rsquo;s the people who save, who lend, who buy from each other, who show up. The network is the engine. Without it, CoSpark is just an idea. With it, CoSpark is an economy.</p>
+        </div>
+    </section>
+
+    <!-- Commonwealth Card: The Centers -->
+    <section class="scene cw-card-scene" data-scene="3">
+        <div class="scene-bg">
+            <img src="images/center-exterior.png" alt="CoSpark Center" loading="lazy">
+        </div>
+        <div class="scene-overlay" style="background: rgba(11, 21, 32, 0.6);"></div>
+        <div class="scene-content cw-card-content">
+            <p class="cw-card-label">Element Two</p>
+            <h3 class="cw-card-title">The Centers</h3>
+            <p class="cw-card-tagline">See it. Touch it. Believe it.</p>
+            <p class="cw-card-body">CoSpark Centers are physical spaces where the model becomes real. They&rsquo;re where you learn how the system works, meet other members, attend workshops, get guidance, and see your participation creating something tangible. They&rsquo;re the front door to everything CoSpark offers.</p>
+        </div>
+    </section>
+
+    <!-- Commonwealth Card: The Platform -->
+    <section class="scene cw-card-scene platform-scene" data-scene="3">
+        <div class="copper-geo" aria-hidden="true"></div>
+        <div class="scene-content cw-card-content" style="position:relative; z-index:2;">
+            <p class="cw-card-label">Element Three</p>
+            <h3 class="cw-card-title">The Platform</h3>
+            <p class="cw-card-tagline">The connective tissue that makes it work.</p>
+            <p class="cw-card-body">The platform is the technology layer that connects every piece. It tracks your reserve, calculates your Boost Payments, connects you to lending and acquisition pathways, powers the marketplace, and keeps the entire community&rsquo;s activity transparent and accountable. It&rsquo;s the infrastructure that turns participation into outcomes.</p>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 5: PATHS                                   -->
+    <!-- ════════════════════════════════════════════════ -->
+
+    <!-- Path: Individuals & Families -->
+    <section class="scene path-scene" id="paths" data-scene="4">
+        <div class="scene-bg">
+            <img src="images/family-kitchen.png" alt="Family in their kitchen" loading="lazy">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content path-panel">
+            <p class="path-label">There&rsquo;s a path for where you are right now</p>
+            <h3 class="path-title">For Individuals &amp; Families</h3>
+            <p class="path-hook">You don&rsquo;t need to be perfect with money. You need a system that rewards the discipline you already have.</p>
+            <p class="path-body">Start with what works for your budget. Build a reserve that stays yours. Receive Boost Payments you can use today. And over time, grow into lending, ownership, and a community that has your back.</p>
+            <a href="#" class="path-cta">Explore paths for individuals &amp; families</a>
+        </div>
+    </section>
+
+    <!-- Path: Businesses -->
+    <section class="scene path-scene" data-scene="4">
+        <div class="scene-bg">
+            <img src="images/business-owner.png" alt="Local business owner" loading="lazy">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content path-panel">
+            <p class="path-label">There&rsquo;s a path for where you are right now</p>
+            <h3 class="path-title">For Businesses</h3>
+            <p class="path-hook">You didn&rsquo;t build your business to hand the upside to someone else&rsquo;s balance sheet.</p>
+            <p class="path-body">Build real financial shock absorbers for your business. Qualify for lending designed for people who&rsquo;ve proven their commitment. Find operators, partners, and buyers inside a network that values the same things you do.</p>
+            <a href="#" class="path-cta">Explore paths for businesses</a>
+        </div>
+    </section>
+
+    <!-- Path: Non-Profits & Churches -->
+    <section class="scene path-scene" data-scene="4">
+        <div class="scene-bg">
+            <img src="images/church-community.png" alt="Church community gathering" loading="lazy">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content path-panel">
+            <p class="path-label">There&rsquo;s a path for where you are right now</p>
+            <h3 class="path-title">For Non-Profits &amp; Churches</h3>
+            <p class="path-hook">This isn&rsquo;t a fundraising campaign. It&rsquo;s a structure.</p>
+            <p class="path-body">Your supporters save for their own future. Your organization receives ongoing, predictable support. Nobody is depleted. Give your people a way that builds them up instead of wearing them down.</p>
+            <a href="#" class="path-cta">Explore paths for non-profits &amp; churches</a>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 6: TESTIMONIALS                            -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene testimonials-scene" id="testimonials" data-scene="5">
+        <div class="testimonials-container">
+            <!-- Testimonial 1 -->
+            <div class="testimonial-slide active" data-testimonial="0">
+                <div class="testimonial-quote-mark" aria-hidden="true">&ldquo;</div>
+                <p class="testimonial-text">We were skeptical. We&rsquo;d tried budgeting apps, savings challenges, even a financial advisor once. Nothing stuck because nothing actually changed the math. When we joined CoSpark, we started with $200 a month &mdash; what we could do. Within six months, the Boost Payments alone covered our kids&rsquo; activity fees. A year in, we qualified for a lending pathway to consolidate some debt at a rate we&rsquo;d never seen. It&rsquo;s not magic. It&rsquo;s just a system that&rsquo;s actually on your side.</p>
+                <img src="images/family-kitchen.png" alt="Maria & David Chen" class="testimonial-image" loading="lazy">
+                <p class="testimonial-name">Maria &amp; David Chen</p>
+                <p class="testimonial-role">Member Reserve participants since 2024</p>
+            </div>
+            <!-- Testimonial 2 -->
+            <div class="testimonial-slide" data-testimonial="1">
+                <div class="testimonial-quote-mark" aria-hidden="true">&ldquo;</div>
+                <p class="testimonial-text">I&rsquo;ve run my own shop for eleven years. I know how to do the work. What I never had was a financial cushion that didn&rsquo;t come with strings. Banks want collateral. Investors want equity. CoSpark just wanted me to show up consistently. I built a reserve over eight months, got access to a lending pathway, and used it to buy equipment I&rsquo;d been renting for years. The payments are lower than the rental was. I&rsquo;m building equity in my own business now, not someone else&rsquo;s.</p>
+                <img src="images/business-owner.png" alt="James Whitfield" class="testimonial-image" loading="lazy">
+                <p class="testimonial-name">James Whitfield</p>
+                <p class="testimonial-role">Owner, Whitfield Electric &mdash; Business member since 2023</p>
+            </div>
+            <!-- Testimonial 3 -->
+            <div class="testimonial-slide" data-testimonial="2">
+                <div class="testimonial-quote-mark" aria-hidden="true">&ldquo;</div>
+                <p class="testimonial-text">Our congregation wanted to help, but they were tired. Tired of giving and not seeing change. Tired of campaigns that ask for sacrifice without building anything lasting. When we brought CoSpark to our community, the whole dynamic shifted. People started saving for themselves &mdash; and their participation generated support for our housing initiative at the same time. Nobody feels depleted. People feel invested. That&rsquo;s the difference.</p>
+                <img src="images/church-community.png" alt="Pastor Angela Reeves" class="testimonial-image" loading="lazy">
+                <p class="testimonial-name">Pastor Angela Reeves</p>
+                <p class="testimonial-role">Community Life Church &mdash; Initiative leader since 2024</p>
+            </div>
+            <div class="testimonial-dots" aria-label="Testimonial navigation">
+                <button class="testimonial-dot active" data-index="0" aria-label="Testimonial 1"></button>
+                <button class="testimonial-dot" data-index="1" aria-label="Testimonial 2"></button>
+                <button class="testimonial-dot" data-index="2" aria-label="Testimonial 3"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCENE 7: FINAL CTA                               -->
+    <!-- ════════════════════════════════════════════════ -->
+    <section class="scene final-cta" id="final-cta" data-scene="6">
+        <div class="scene-bg">
+            <img src="images/hero-community.png" alt="CoSpark community" loading="lazy">
+        </div>
+        <div class="scene-overlay"></div>
+        <div class="scene-content final-cta-content">
+            <h2 class="headline-large" style="color:#fff;">Come Explore!</h2>
+            <p class="body-large" style="color: rgba(255,255,255,0.75);">CoSpark is for people, families, and organizations who are ready to stop funding someone else&rsquo;s balance sheet. You don&rsquo;t need to take a risk. You need a system actually designed to put your interests first. We&rsquo;re working together to create a better way.</p>
+            <div class="btn-group" style="justify-content: center;">
+                <a href="#" class="btn btn-primary">Become a Member</a>
+                <a href="#" class="btn btn-white">Visit a Center</a>
+                <a href="#" class="btn btn-outline">Talk to Someone</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- FOOTER                                           -->
+    <!-- ════════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <div class="footer-brand-logo" aria-label="CoSpark">
+                    <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+                </div>
+                <p class="footer-disclaimer">Operated by The Community Corp. CoSpark is not a bank, credit union, or licensed financial institution. Member reserves are held in trust accounts administered by licensed fiduciary partners. Boost Payments are generated from network activity and are subject to participation thresholds. Lending pathways are facilitated through licensed lending partners and subject to qualification. Past performance of the network does not guarantee future results. All financial products and services are subject to terms and conditions available upon request.</p>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-title">Pathways</p>
+                <a href="#">Individuals &amp; Families</a>
+                <a href="#">Businesses</a>
+                <a href="#">Non-Profits &amp; Churches</a>
+                <a href="#">Member Reserve</a>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-title">Community</p>
+                <a href="#">Find a Center</a>
+                <a href="#">Events</a>
+                <a href="#">Stories</a>
+                <a href="#">FAQ</a>
+            </div>
+            <div class="footer-col">
+                <p class="footer-col-title">Company</p>
+                <a href="#">About</a>
+                <a href="#">Leadership</a>
+                <a href="#">Careers</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <div class="footer-legal">
+            <span>&copy; 2026 The Community Corp. All rights reserved.</span>
+            <div class="footer-legal-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Disclosures</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- SCRIPTS                                          -->
+    <!-- ════════════════════════════════════════════════ -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        /* ── Reduced Motion Check ── */
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ── Lenis Smooth Scroll ── */
+        let lenis;
+        if (!prefersReducedMotion) {
+            lenis = new Lenis({
+                duration: 1.4,
+                easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+                orientation: 'vertical',
+                gestureOrientation: 'vertical',
+                smoothWheel: true
+            });
+
+            lenis.on('scroll', ScrollTrigger.update);
+
+            gsap.ticker.add(function (time) {
+                lenis.raf(time * 1000);
+            });
+            gsap.ticker.lagSmoothing(0);
+        }
+
+        /* ── Register GSAP Plugin ── */
+        gsap.registerPlugin(ScrollTrigger);
+
+        /* ── Nav Scroll State ── */
+        var nav = document.getElementById('siteNav');
+        ScrollTrigger.create({
+            trigger: '#hero',
+            start: 'bottom top+=80',
+            onEnter: function () { nav.classList.add('scrolled'); },
+            onLeaveBack: function () { nav.classList.remove('scrolled'); }
+        });
+
+        /* ── Progress Indicator ── */
+        var dots = document.querySelectorAll('.progress-dot');
+        var scenes = document.querySelectorAll('.scene[data-scene]');
+        var sceneMap = {};
+        scenes.forEach(function (s) {
+            var idx = s.getAttribute('data-scene');
+            if (!sceneMap[idx]) sceneMap[idx] = s;
+        });
+
+        Object.keys(sceneMap).forEach(function (idx) {
+            ScrollTrigger.create({
+                trigger: sceneMap[idx],
+                start: 'top center',
+                end: 'bottom center',
+                onEnter: function () { setActiveDot(parseInt(idx)); },
+                onEnterBack: function () { setActiveDot(parseInt(idx)); }
+            });
+        });
+
+        function setActiveDot(index) {
+            dots.forEach(function (d) { d.classList.remove('active'); });
+            dots.forEach(function (d) {
+                if (parseInt(d.getAttribute('data-scene')) === index) {
+                    d.classList.add('active');
+                }
+            });
+        }
+
+        dots.forEach(function (d) {
+            d.addEventListener('click', function () {
+                var targetScene = sceneMap[d.getAttribute('data-scene')];
+                if (targetScene) {
+                    if (lenis) {
+                        lenis.scrollTo(targetScene, { offset: 0 });
+                    } else {
+                        targetScene.scrollIntoView({ behavior: 'smooth' });
+                    }
+                }
+            });
+        });
+
+        /* ── Hero Animations ── */
+        if (!prefersReducedMotion) {
+            // Ken Burns on hero image
+            gsap.to('#heroBg', {
+                scale: 1.08,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+
+            // Hero words stagger
+            gsap.to('.hero-word', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.12,
+                ease: 'power3.out',
+                delay: 0.3
+            });
+
+            // Hero sub + buttons fade in
+            gsap.from('.hero-sub', { opacity: 0, y: 20, duration: 0.8, delay: 0.8, ease: 'power2.out' });
+            gsap.from('.hero .btn-group', { opacity: 0, y: 20, duration: 0.8, delay: 1.0, ease: 'power2.out' });
+
+            // Scroll indicator
+            gsap.to('.scroll-indicator', {
+                opacity: 0,
+                scrollTrigger: {
+                    trigger: '#hero',
+                    start: 'top top',
+                    end: '+=200',
+                    scrub: true
+                }
+            });
+        }
+
+        /* ── Problem Animations ── */
+        if (!prefersReducedMotion) {
+            // Ken Burns on problem bg
+            gsap.to('#problemBg', {
+                scale: 1.06,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#problem',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+
+            // Headline
+            gsap.from('#problem .headline-large', {
+                opacity: 0,
+                y: 40,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#problem',
+                    start: 'top 85%'
+                }
+            });
+
+            // P1
+            gsap.to('#problemP1', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#problemP1',
+                    start: 'top 90%'
+                }
+            });
+
+            // Divider
+            ScrollTrigger.create({
+                trigger: '#problemDivider',
+                start: 'top 90%',
+                onEnter: function () {
+                    document.getElementById('problemDivider').classList.add('drawn');
+                }
+            });
+
+            // P2
+            gsap.to('#problemP2', {
+                opacity: 1,
+                y: 0,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#problemP2',
+                    start: 'top 90%'
+                }
+            });
+        }
+
+        /* ── Solution Animations ── */
+        if (!prefersReducedMotion) {
+            gsap.from('#solutionImage', {
+                x: -80,
+                opacity: 0,
+                duration: 1.2,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#solution',
+                    start: 'top 85%'
+                }
+            });
+            gsap.from('#solutionText .solution-inner > *', {
+                x: 60,
+                opacity: 0,
+                duration: 0.9,
+                stagger: 0.15,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#solution',
+                    start: 'top 80%'
+                }
+            });
+        }
+
+        /* ── Commonwealth Intro Animations ── */
+        if (!prefersReducedMotion) {
+            gsap.to('.cw-word', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.2,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#cwHeadline',
+                    start: 'top 85%'
+                }
+            });
+            gsap.to('#cwSub', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#cwSub',
+                    start: 'top 90%'
+                }
+            });
+            gsap.to('#cwLong', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#cwLong',
+                    start: 'top 90%'
+                }
+            });
+            gsap.to('#cwTagline', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#cwTagline',
+                    start: 'top 90%'
+                }
+            });
+        }
+
+        /* ── Commonwealth Card Animations ── */
+        if (!prefersReducedMotion) {
+            document.querySelectorAll('.cw-card-scene').forEach(function (card) {
+                gsap.from(card.querySelector('.cw-card-content'), {
+                    opacity: 0,
+                    y: 60,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%'
+                    }
+                });
+                var bg = card.querySelector('.scene-bg img');
+                if (bg) {
+                    gsap.to(bg, {
+                        scale: 1.06,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: true
+                        }
+                    });
+                }
+            });
+        }
+
+        /* ── Path Animations ── */
+        if (!prefersReducedMotion) {
+            document.querySelectorAll('.path-scene').forEach(function (path, i) {
+                var panel = path.querySelector('.path-panel');
+                var fromX = (i % 2 === 0) ? -60 : 60;
+                gsap.from(panel, {
+                    x: fromX,
+                    opacity: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: path,
+                        start: 'top 85%'
+                    }
+                });
+                var bg = path.querySelector('.scene-bg img');
+                if (bg) {
+                    gsap.to(bg, {
+                        scale: 1.06,
+                        ease: 'none',
+                        scrollTrigger: {
+                            trigger: path,
+                            start: 'top bottom',
+                            end: 'bottom top',
+                            scrub: true
+                        }
+                    });
+                }
+            });
+        }
+
+        /* ── Testimonial Crossfade (scroll-driven) ── */
+        var testimonialSlides = document.querySelectorAll('.testimonial-slide');
+        var testimonialDots = document.querySelectorAll('.testimonial-dot');
+        var currentTestimonial = 0;
+
+        function showTestimonial(index) {
+            testimonialSlides.forEach(function (s) { s.classList.remove('active'); });
+            testimonialDots.forEach(function (d) { d.classList.remove('active'); });
+            testimonialSlides[index].classList.add('active');
+            testimonialDots[index].classList.add('active');
+            currentTestimonial = index;
+        }
+
+        testimonialDots.forEach(function (dot) {
+            dot.addEventListener('click', function () {
+                showTestimonial(parseInt(dot.getAttribute('data-index')));
+            });
+        });
+
+        // Auto-cycle testimonials while in view
+        var testimonialInterval;
+        ScrollTrigger.create({
+            trigger: '#testimonials',
+            start: 'top 60%',
+            end: 'bottom 40%',
+            onEnter: function () {
+                testimonialInterval = setInterval(function () {
+                    showTestimonial((currentTestimonial + 1) % 3);
+                }, 5000);
+            },
+            onLeave: function () { clearInterval(testimonialInterval); },
+            onEnterBack: function () {
+                testimonialInterval = setInterval(function () {
+                    showTestimonial((currentTestimonial + 1) % 3);
+                }, 5000);
+            },
+            onLeaveBack: function () { clearInterval(testimonialInterval); }
+        });
+
+        /* ── Final CTA Animations ── */
+        if (!prefersReducedMotion) {
+            gsap.from('.final-cta-content > *', {
+                opacity: 0,
+                y: 40,
+                duration: 0.9,
+                stagger: 0.15,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: '#final-cta',
+                    start: 'top 85%'
+                }
+            });
+
+            // Ken Burns on final bg
+            gsap.to('#final-cta .scene-bg img', {
+                scale: 1.06,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#final-cta',
+                    start: 'top bottom',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+        }
+
+        /* ── Mobile Nav Hamburger ── */
+        var hamburger = document.getElementById('navHamburger');
+        if (hamburger) {
+            hamburger.addEventListener('click', function () {
+                // Simple toggle — in production this would open a mobile menu
+                hamburger.classList.toggle('open');
+            });
+        }
+
+    })();
+    </script>
+</body>
+</html>

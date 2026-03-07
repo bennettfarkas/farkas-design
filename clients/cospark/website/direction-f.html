@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <script>document.documentElement.classList.replace('no-js','js');</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoSpark — Real Financial Strength, Built Together</title>
+    <link rel="stylesheet" href="../brand.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">
+    <style>
+        /* ══════════════════════════════════════════════
+           Direction F — Living Mosaic
+           ══════════════════════════════════════════════ */
+
+        /* ── Reset ── */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: auto; }
+        img { display: block; max-width: 100%; }
+
+        body {
+            font-family: var(--font-sans);
+            font-weight: var(--weight-regular);
+            color: var(--slate);
+            background: #fff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ── No-JS fallback ── */
+        .no-js .reveal { opacity: 1 !important; transform: none !important; }
+        .no-js .mural-strip .tile { transform: none !important; opacity: 1 !important; }
+
+        /* ── Reveal base ── */
+        .js .reveal { opacity: 0; transform: translateY(20px); }
+        .js .mural-strip .tile { transform: scale(0); }
+
+        /* ── Reduced motion ── */
+        @media (prefers-reduced-motion: reduce) {
+            .js .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+            .js .mural-strip .tile { transform: none !important; opacity: 1 !important; transition: none !important; }
+        }
+
+        /* ── Container ── */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+        .container--narrow { max-width: 680px; }
+
+        /* ══════════════════════════════════════════════
+           Tile System
+           ══════════════════════════════════════════════ */
+        .tile {
+            aspect-ratio: 1;
+            overflow: hidden;
+            position: relative;
+        }
+        .tile--quarter-tl { border-radius: 0 0 100% 0; }
+        .tile--quarter-tr { border-radius: 0 0 0 100%; }
+        .tile--quarter-bl { border-radius: 0 100% 0 0; }
+        .tile--quarter-br { border-radius: 100% 0 0 0; }
+        .tile--circle { border-radius: 50%; }
+        .tile--diamond { clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%); }
+        .tile--diagonal-tl { clip-path: polygon(0 0, 100% 0, 0 100%); }
+        .tile--diagonal-br { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        .tile--half-b { clip-path: url(#half-b-clip); }
+        .tile--spark { clip-path: url(#spark-clip); }
+
+        /* Color fills */
+        .fill-slate { background: var(--slate); }
+        .fill-slate-100 { background: var(--slate-100); }
+        .fill-slate-200 { background: var(--slate-200); }
+        .fill-slate-600 { background: var(--slate-600); }
+        .fill-slate-700 { background: var(--slate-700); }
+        .fill-slate-800 { background: var(--slate-800); }
+        .fill-slate-900 { background: var(--slate-900); }
+        .fill-copper { background: var(--copper); }
+        .fill-copper-50 { background: var(--copper-50); }
+        .fill-copper-100 { background: var(--copper-100); }
+        .fill-copper-200 { background: var(--copper-200); }
+        .fill-patina { background: var(--patina); }
+        .fill-patina-50 { background: var(--patina-50); }
+        .fill-patina-100 { background: var(--patina-100); }
+        .fill-patina-700 { background: var(--patina-700); }
+        .fill-ember { background: var(--ember); }
+        .fill-ember-100 { background: var(--ember-100); }
+        .fill-ember-700 { background: var(--ember-700); }
+
+        /* Photo tile */
+        .tile-photo { overflow: hidden; }
+        .tile-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* ══════════════════════════════════════════════
+           Mural Strips
+           ══════════════════════════════════════════════ */
+        .mural-strip {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+            flex-wrap: wrap;
+        }
+        .mural-strip .tile {
+            width: 68px;
+            height: 68px;
+            flex-shrink: 0;
+        }
+
+        /* ══════════════════════════════════════════════
+           Navigation
+           ══════════════════════════════════════════════ */
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: #fff;
+            border-bottom: 1px solid var(--slate-100);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+        }
+        .nav-logo svg {
+            height: 22px;
+            width: auto;
+            color: var(--slate);
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        .nav-links a {
+            font-size: var(--text-small);
+            font-weight: var(--weight-medium);
+            color: var(--slate-600);
+            text-decoration: none;
+            letter-spacing: 0.01em;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover { color: var(--slate); }
+        .nav-cta {
+            font-size: var(--text-small);
+            font-weight: var(--weight-semibold);
+            background: var(--copper);
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .nav-cta:hover { background: var(--copper-600); transform: translateY(-1px); }
+
+        @media (max-width: 900px) {
+            .nav-links { display: none; }
+        }
+
+        /* ══════════════════════════════════════════════
+           Buttons
+           ══════════════════════════════════════════════ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-family: var(--font-sans);
+            font-weight: var(--weight-semibold);
+            font-size: 0.9375rem;
+            letter-spacing: 0.01em;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 6px;
+            transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn--primary {
+            background: var(--copper);
+            color: #fff;
+        }
+        .btn--primary:hover { background: var(--copper-600); }
+        .btn--secondary {
+            background: var(--slate);
+            color: #fff;
+        }
+        .btn--secondary:hover { background: var(--slate-700); }
+        .btn--outline {
+            background: transparent;
+            color: var(--slate);
+            border-color: var(--slate-200);
+        }
+        .btn--outline:hover { border-color: var(--slate); }
+        .btn--ghost {
+            background: transparent;
+            color: var(--copper);
+            padding: 14px 0;
+        }
+        .btn--ghost:hover { color: var(--copper-700); }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 2rem;
+        }
+        /* White variant for dark backgrounds */
+        .btn--primary-on-dark {
+            background: var(--copper);
+            color: #fff;
+        }
+        .btn--primary-on-dark:hover { background: var(--copper-400); }
+        .btn--outline-on-dark {
+            background: transparent;
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+        }
+        .btn--outline-on-dark:hover { border-color: #fff; }
+
+        /* ══════════════════════════════════════════════
+           Sections
+           ══════════════════════════════════════════════ */
+        section { padding: clamp(4rem, 8vw, 7rem) 0; }
+
+        .eyebrow {
+            font-family: var(--font-sans);
+            font-size: var(--text-label);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--copper);
+            margin-bottom: 1rem;
+        }
+        .section-headline {
+            font-family: var(--font-serif);
+            font-size: var(--text-h1);
+            font-weight: var(--weight-bold);
+            line-height: var(--leading-h1);
+            letter-spacing: var(--tracking-h1);
+            color: var(--color-heading);
+            margin-bottom: 1.5rem;
+        }
+        .section-sub {
+            font-size: var(--text-body);
+            line-height: var(--leading-body);
+            color: var(--color-body);
+            max-width: var(--measure-body);
+        }
+        .section-sub + .section-sub { margin-top: 1rem; }
+
+        /* ══════════════════════════════════════════════
+           HERO — Mosaic Grid
+           ══════════════════════════════════════════════ */
+        .hero {
+            padding-top: calc(60px + clamp(3rem, 6vw, 5rem));
+            padding-bottom: clamp(2rem, 4vw, 4rem);
+        }
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: auto;
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+        .hero-content {
+            grid-column: 1 / 6;
+            grid-row: 1 / 4;
+            background: var(--slate-50);
+            border-radius: 12px;
+            padding: clamp(2rem, 4vw, 3.5rem);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            z-index: 2;
+        }
+        .hero-headline {
+            font-family: var(--font-serif);
+            font-size: var(--text-display);
+            font-weight: var(--weight-bold);
+            line-height: var(--leading-display);
+            letter-spacing: var(--tracking-display);
+            color: var(--color-heading);
+            margin-bottom: 1.25rem;
+        }
+        .hero-sub {
+            font-size: var(--text-body);
+            line-height: var(--leading-body);
+            color: var(--color-body);
+            max-width: 540px;
+            margin-bottom: 0;
+        }
+        .hero-photo {
+            grid-column: 6 / 9;
+            grid-row: 1 / 3;
+            aspect-ratio: 1;
+            overflow: hidden;
+            border-radius: 100% 0 0 0; /* quarter-br */
+        }
+        .hero-photo img { width: 100%; height: 100%; object-fit: cover; }
+        .hero-tile-1 {
+            grid-column: 6 / 7;
+            grid-row: 3 / 4;
+        }
+        .hero-tile-2 {
+            grid-column: 7 / 8;
+            grid-row: 3 / 4;
+        }
+        .hero-tile-3 {
+            grid-column: 8 / 9;
+            grid-row: 3 / 4;
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+            .hero-content {
+                grid-column: 1;
+                grid-row: 2;
+            }
+            .hero-photo {
+                grid-column: 1;
+                grid-row: 1;
+                border-radius: 0 0 100% 0;
+                max-height: 360px;
+            }
+            .hero-tile-1, .hero-tile-2, .hero-tile-3 { display: none; }
+        }
+
+        /* ══════════════════════════════════════════════
+           PROBLEM
+           ══════════════════════════════════════════════ */
+        .problem { position: relative; }
+        .problem-body {
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .problem-float {
+            float: right;
+            width: 200px;
+            height: 200px;
+            margin: 0 0 1.5rem 2rem;
+            shape-outside: circle(50%);
+        }
+        .problem-float img { width: 100%; height: 100%; object-fit: cover; }
+        .problem-decor {
+            position: absolute;
+            right: clamp(40px, 8vw, 120px);
+            bottom: clamp(40px, 6vw, 100px);
+            display: flex;
+            gap: 8px;
+        }
+        .problem-decor .tile { width: 40px; height: 40px; }
+
+        @media (max-width: 640px) {
+            .problem-float {
+                float: none;
+                margin: 0 auto 2rem;
+                width: 160px;
+                height: 160px;
+            }
+            .problem-decor { display: none; }
+        }
+
+        /* ══════════════════════════════════════════════
+           SOLUTION — Two Column
+           ══════════════════════════════════════════════ */
+        .solution-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(2rem, 4vw, 4rem);
+            align-items: center;
+        }
+        .solution-text {
+            background: var(--patina-50);
+            padding: clamp(2rem, 4vw, 3rem);
+            border-radius: 12px;
+        }
+        .solution-mosaic {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            align-items: center;
+            justify-items: center;
+        }
+        .solution-photo-cell {
+            grid-column: 1 / 3;
+            grid-row: 1 / 3;
+            width: 100%;
+            aspect-ratio: 1;
+        }
+        .solution-photo-cell img { width: 100%; height: 100%; object-fit: cover; }
+
+        @media (max-width: 900px) {
+            .solution-grid { grid-template-columns: 1fr; }
+            .solution-mosaic { max-width: 400px; margin: 0 auto; }
+        }
+
+        /* ══════════════════════════════════════════════
+           COMMONWEALTH — Cards with Tile Accents
+           ══════════════════════════════════════════════ */
+        .cw-intro { max-width: 720px; margin: 0 auto 3rem; text-align: center; }
+        .cw-tagline {
+            font-family: var(--font-serif);
+            font-size: var(--text-h3);
+            font-weight: var(--weight-semibold);
+            font-style: italic;
+            color: var(--copper);
+            margin-top: 1.5rem;
+        }
+        .cw-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .cw-card {
+            background: var(--slate-50);
+            border-radius: 12px;
+            padding: 2rem;
+            position: relative;
+            overflow: visible;
+        }
+        .cw-card-accent {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 1.25rem;
+        }
+        .cw-card h3 {
+            font-family: var(--font-serif);
+            font-size: var(--text-h3);
+            font-weight: var(--weight-semibold);
+            color: var(--color-heading);
+            margin-bottom: 0.75rem;
+        }
+        .cw-card p {
+            font-size: var(--text-small);
+            line-height: var(--leading-body);
+            color: var(--color-body);
+        }
+
+        @media (max-width: 900px) { .cw-cards { grid-template-columns: 1fr; } }
+
+        /* ══════════════════════════════════════════════
+           PATHS — Photo Cards
+           ══════════════════════════════════════════════ */
+        .paths-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .path-card {
+            background: #fff;
+            border: 1px solid var(--slate-100);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.3s, transform 0.3s;
+        }
+        .path-card:hover {
+            box-shadow: 0 12px 40px rgba(40,56,69,0.1);
+            transform: translateY(-2px);
+        }
+        .path-card-photo {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 1.5rem;
+            background: var(--slate-50);
+        }
+        .path-card-photo .tile {
+            width: 80%;
+            max-width: 240px;
+        }
+        .path-card-photo .tile img { width: 100%; height: 100%; object-fit: cover; }
+        .path-card-body { padding: 1.75rem; }
+        .path-card-body h3 {
+            font-family: var(--font-serif);
+            font-size: var(--text-h3);
+            font-weight: var(--weight-semibold);
+            color: var(--color-heading);
+            margin-bottom: 0.75rem;
+        }
+        .path-card-body p {
+            font-size: var(--text-small);
+            line-height: var(--leading-body);
+            color: var(--color-body);
+            margin-bottom: 1.25rem;
+        }
+
+        @media (max-width: 900px) { .paths-cards { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; } }
+
+        /* ══════════════════════════════════════════════
+           TESTIMONIALS — Carousel
+           ══════════════════════════════════════════════ */
+        .testimonials { text-align: center; }
+        .testimonial-carousel { position: relative; min-height: 280px; }
+        .testimonial-slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            padding: 0 clamp(24px, 5vw, 80px);
+        }
+        .testimonial-slide.active { opacity: 1; pointer-events: auto; }
+        .testimonial-quote {
+            font-family: var(--font-serif);
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            font-weight: var(--weight-regular);
+            font-style: italic;
+            line-height: 1.6;
+            color: var(--color-heading);
+            max-width: 640px;
+            margin-bottom: 1.5rem;
+        }
+        .testimonial-attr {
+            font-size: var(--text-small);
+            font-weight: var(--weight-semibold);
+            color: var(--copper);
+        }
+        .testimonial-role {
+            font-size: var(--text-caption);
+            color: var(--color-body);
+            margin-top: 0.25rem;
+        }
+        .testimonial-dots {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .testimonial-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--slate-200);
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+            padding: 0;
+        }
+        .testimonial-dot.active { background: var(--copper); }
+
+        /* ══════════════════════════════════════════════
+           FINAL CTA — Mosaic Background
+           ══════════════════════════════════════════════ */
+        .final-cta {
+            background: var(--slate-900);
+            position: relative;
+            overflow: hidden;
+        }
+        .final-cta-mosaic {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 8px;
+            padding: 8px;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        .final-cta-mosaic .tile { aspect-ratio: 1; }
+        .final-cta-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .final-cta-content .section-headline { color: #fff; }
+        .final-cta-content .section-sub { color: var(--slate-300); margin: 0 auto 2rem; }
+
+        /* ══════════════════════════════════════════════
+           FOOTER
+           ══════════════════════════════════════════════ */
+        .site-footer {
+            background: var(--slate-950);
+            color: var(--slate-400);
+            padding: 3rem 0 2rem;
+        }
+        .footer-mural {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding-bottom: 2.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 1px solid var(--slate-800);
+        }
+        .footer-mural .tile { width: 40px; height: 40px; }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+        }
+        .footer-brand p {
+            font-size: var(--text-small);
+            line-height: var(--leading-body);
+            color: var(--slate-500);
+            max-width: 280px;
+        }
+        .footer-col h4 {
+            font-size: var(--text-caption);
+            font-weight: var(--weight-bold);
+            letter-spacing: var(--tracking-label);
+            text-transform: uppercase;
+            color: var(--slate-300);
+            margin-bottom: 1rem;
+        }
+        .footer-col ul { list-style: none; }
+        .footer-col li { margin-bottom: 0.5rem; }
+        .footer-col a {
+            font-size: var(--text-small);
+            color: var(--slate-500);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: #fff; }
+        .footer-legal {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--slate-800);
+            font-size: var(--text-caption);
+            color: var(--slate-600);
+            text-align: center;
+        }
+        .footer-disclaimer {
+            font-size: var(--text-caption);
+            color: var(--slate-600);
+            line-height: var(--leading-body);
+            max-width: 640px;
+            margin: 0 auto 2rem;
+            text-align: center;
+        }
+
+        @media (max-width: 640px) {
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+            .footer-brand { grid-column: 1 / -1; }
+            .mural-strip .tile { width: 52px; height: 52px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SVG defs for curved tile shapes -->
+    <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+        <defs>
+            <!-- Spark: curved 4-point star from spark.svg (4.16×4.16 viewBox, normalized to 0-1) -->
+            <clipPath id="spark-clip" clipPathUnits="objectBoundingBox">
+                <path d="M0.987 0.0254C0.7262 0.2862 0.7262 0.7091 0.987 0.97L0.9701 0.9869L0.9194 0.9411C0.657 0.7271 0.27 0.7423 0.0254 0.9869L0.0085 0.97C0.2694 0.7091 0.2694 0.2862 0.0085 0.0254L0.0254 0.0085C0.2863 0.2693 0.7091 0.2693 0.9701 0.0085L0.987 0.0254Z"/>
+            </clipPath>
+            <!-- Half-circle (bottom): semicircle occupying bottom half, from half-circle.svg (4×4 viewBox, normalized) -->
+            <clipPath id="half-b-clip" clipPathUnits="objectBoundingBox">
+                <path d="M0 1C0 0.7239 0.2239 0.5 0.5 0.5C0.7761 0.5 1 0.7239 1 1H0Z"/>
+            </clipPath>
+        </defs>
+    </svg>
+
+    <!-- ══════════════════════════════════════════════
+         Navigation
+         ══════════════════════════════════════════════ -->
+    <nav class="site-nav" id="nav">
+        <div class="nav-logo">
+            <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#paths">Paths</a></li>
+            <li><a href="#testimonials">Stories</a></li>
+        </ul>
+        <div class="nav-cta-wrap">
+            <a href="#join" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- ══════════════════════════════════════════════
+         1. Hero — Mosaic Grid
+         ══════════════════════════════════════════════ -->
+    <section class="hero">
+        <div class="hero-grid">
+            <!-- Text content spanning left 5 columns -->
+            <div class="hero-content reveal">
+                <p class="eyebrow">A member-driven community</p>
+                <h1 class="hero-headline">Real financial strength.<br>Built together.</h1>
+                <p class="hero-sub">CoSpark is a member-driven community where people, families, and local businesses build real financial strength — not by handing their money to institutions, but by participating in a shared economy designed to multiply the value their commitment creates.</p>
+                <div class="btn-row">
+                    <a href="#paths" class="btn btn--primary">I'm an Individual or Family</a>
+                    <a href="#paths" class="btn btn--secondary">I Represent a Business</a>
+                    <a href="#paths" class="btn btn--outline">I'm with a Non-Profit or Church</a>
+                </div>
+            </div>
+            <!-- Photo: hero-community masked as quarter-br -->
+            <div class="hero-photo tile-photo">
+                <img src="images/hero-community.png" alt="Community members gathering together">
+            </div>
+            <!-- Decorative tiles below photo -->
+            <div class="hero-tile-1 tile tile--spark fill-copper"></div>
+            <div class="hero-tile-2 tile fill-slate-700"></div>
+            <div class="hero-tile-3 tile tile--quarter-tl fill-copper-100"></div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         2. Mural Strip 1 — Slate + Copper
+         ══════════════════════════════════════════════ -->
+    <div class="mural-strip" aria-hidden="true">
+        <div class="tile tile--quarter-tl fill-slate"></div>
+        <div class="tile tile--diamond fill-copper"></div>
+        <div class="tile fill-slate-700"></div>
+        <div class="tile tile--spark fill-copper"></div>
+        <div class="tile tile--circle fill-slate-200"></div>
+        <div class="tile tile--diagonal-tl fill-copper-100"></div>
+        <div class="tile fill-copper-200"></div>
+        <div class="tile tile--quarter-br fill-slate"></div>
+        <div class="tile tile--half-b fill-copper"></div>
+        <div class="tile tile--diagonal-br fill-slate-700"></div>
+        <div class="tile tile--spark fill-slate-200"></div>
+        <div class="tile tile--quarter-tr fill-copper"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         3. Problem
+         ══════════════════════════════════════════════ -->
+    <section class="problem" id="problem">
+        <div class="container">
+            <div class="problem-body">
+                <div class="problem-float tile tile--circle tile-photo reveal">
+                    <img src="images/garden-of-gods.png" alt="Garden of the Gods landscape">
+                </div>
+                <h2 class="section-headline reveal">You work hard and it seems like it should be easier to get ahead.</h2>
+                <p class="section-sub reveal">You work to manage your money, stretch it, you put it somewhere "safe" and try to do the right thing. But somehow — whether it's your household, your business, or your organization — you're still not getting where you want to be.</p>
+                <p class="section-sub reveal">The system you trust with your money puts it to work the moment you hand it over. It earns. It multiplies. It builds wealth. Just not for you.</p>
+            </div>
+            <div class="problem-decor" aria-hidden="true">
+                <div class="tile tile--diamond fill-copper"></div>
+                <div class="tile tile--quarter-bl fill-slate-200"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         4. Mural Strip 2
+         ══════════════════════════════════════════════ -->
+    <div class="mural-strip" aria-hidden="true">
+        <div class="tile tile--circle fill-slate"></div>
+        <div class="tile tile--quarter-bl fill-copper"></div>
+        <div class="tile tile--spark fill-slate-700"></div>
+        <div class="tile fill-copper-100"></div>
+        <div class="tile tile--diagonal-br fill-slate"></div>
+        <div class="tile tile--diamond fill-copper-200"></div>
+        <div class="tile tile--quarter-tl fill-slate-200"></div>
+        <div class="tile fill-slate-700"></div>
+        <div class="tile tile--half-b fill-copper"></div>
+        <div class="tile tile--circle fill-slate-100"></div>
+        <div class="tile tile--spark fill-copper"></div>
+        <div class="tile tile--diagonal-tl fill-slate"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         5. Solution — Two Column
+         ══════════════════════════════════════════════ -->
+    <section class="solution" id="how-it-works">
+        <div class="container">
+            <div class="solution-grid">
+                <div class="solution-text reveal">
+                    <p class="eyebrow">A Different Path</p>
+                    <h2 class="section-headline">The system wasn't built for you. CoSpark is.</h2>
+                    <p class="section-sub">CoSpark is not a bank. It's not an app. It's a member-driven community — a shared economic system designed to help everyday people, local businesses, and community organizations build real financial resilience.</p>
+                    <p class="section-sub">When you participate in CoSpark, your participation generates benefit — for you and for others. Your commitment is recognized, your consistency is rewarded, and doors open to growth, lending, ownership, and opportunity that traditional systems never offer.</p>
+                </div>
+                <div class="solution-mosaic reveal">
+                    <div class="solution-photo-cell tile tile--diamond tile-photo">
+                        <img src="images/center-exterior.png" alt="CoSpark community center exterior">
+                    </div>
+                    <div class="tile tile--circle fill-patina" style="width:80%;aspect-ratio:1;"></div>
+                    <div class="tile tile--quarter-tl fill-copper" style="width:80%;aspect-ratio:1;"></div>
+                    <div class="tile tile--spark fill-patina-700" style="width:70%;aspect-ratio:1;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         6. Mural Strip 3 — Adds Patina
+         ══════════════════════════════════════════════ -->
+    <div class="mural-strip" aria-hidden="true">
+        <div class="tile tile--quarter-tr fill-patina"></div>
+        <div class="tile tile--diamond fill-slate"></div>
+        <div class="tile fill-copper"></div>
+        <div class="tile tile--circle fill-patina-100"></div>
+        <div class="tile tile--spark fill-copper"></div>
+        <div class="tile tile--diagonal-tl fill-patina-700"></div>
+        <div class="tile tile--quarter-bl fill-slate-700"></div>
+        <div class="tile fill-patina"></div>
+        <div class="tile tile--half-b fill-copper-100"></div>
+        <div class="tile tile--diamond fill-patina"></div>
+        <div class="tile tile--quarter-tl fill-slate"></div>
+        <div class="tile tile--circle fill-copper-200"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         7. Commonwealth
+         ══════════════════════════════════════════════ -->
+    <section class="commonwealth" id="commonwealth">
+        <div class="container">
+            <div class="cw-intro reveal">
+                <h2 class="section-headline">Connect. Belong. Grow. Own. — Together.</h2>
+                <p class="section-sub" style="margin:0 auto;">CoSpark is built around the Member Reserve — a shared financial foundation that every member helps build. Your regular contributions don't just sit in an account; they power a living system. The Reserve fuels lending for members who need it, backs Acquisition Circles that let groups of members collectively purchase assets, supports Initiatives that strengthen the community, and grows a marketplace where members trade, hire, and support one another. Centers — physical community hubs — anchor the experience locally, giving members a place to meet, learn, plan, and build together.</p>
+                <p class="cw-tagline">You start where you are. The system grows with you.</p>
+            </div>
+
+            <div class="cw-cards">
+                <div class="cw-card reveal">
+                    <div class="cw-card-accent tile tile--quarter-tl fill-copper" aria-hidden="true"></div>
+                    <h3>The Network</h3>
+                    <p>Every CoSpark member is part of a network of people committed to building together. You're not a customer — you're an owner, a participant, a neighbor. The network is how opportunity flows: referrals, partnerships, mentorship, and mutual support.</p>
+                </div>
+                <div class="cw-card reveal">
+                    <div class="cw-card-accent tile tile--circle fill-patina" aria-hidden="true"></div>
+                    <h3>The Centers</h3>
+                    <p>Physical spaces where the community comes alive. Centers host workshops, financial coaching, co-working space, and community events. They're owned collectively and operated locally — a living room for your economic life.</p>
+                </div>
+                <div class="cw-card reveal">
+                    <div class="cw-card-accent tile tile--spark fill-ember" aria-hidden="true"></div>
+                    <h3>The Platform</h3>
+                    <p>A digital backbone that tracks your participation, manages your Reserve contributions, facilitates lending, and connects you to the marketplace. It's the infrastructure that makes the commonwealth work at scale — transparent, fair, and member-governed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         8. Mural Strip 4 — All Four Colors
+         ══════════════════════════════════════════════ -->
+    <div class="mural-strip" aria-hidden="true">
+        <div class="tile tile--quarter-tl fill-ember"></div>
+        <div class="tile tile--diamond fill-patina"></div>
+        <div class="tile fill-copper"></div>
+        <div class="tile tile--spark fill-slate"></div>
+        <div class="tile tile--circle fill-ember-100"></div>
+        <div class="tile tile--diagonal-br fill-copper"></div>
+        <div class="tile tile--quarter-br fill-patina-700"></div>
+        <div class="tile fill-ember-700"></div>
+        <div class="tile tile--half-b fill-slate-700"></div>
+        <div class="tile tile--spark fill-ember"></div>
+        <div class="tile tile--quarter-tr fill-copper-100"></div>
+        <div class="tile tile--diamond fill-slate"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         9. Paths
+         ══════════════════════════════════════════════ -->
+    <section class="paths" id="paths">
+        <div class="container">
+            <p class="eyebrow reveal">Find Your Path</p>
+            <p class="section-sub reveal" style="margin-bottom:2.5rem;">CoSpark is designed for anyone who believes that building together beats going it alone. Here's how different members engage.</p>
+
+            <div class="paths-cards">
+                <!-- Individuals & Families -->
+                <div class="path-card reveal">
+                    <div class="path-card-photo">
+                        <div class="tile tile--circle tile-photo">
+                            <img src="images/family-kitchen.png" alt="Family in their kitchen">
+                        </div>
+                    </div>
+                    <div class="path-card-body">
+                        <h3>Individuals &amp; Families</h3>
+                        <p>Start building your Reserve, access fair lending when you need it, and join a community that helps you grow — financially and personally. From first-time savers to established households, CoSpark meets you where you are and helps you get where you want to be.</p>
+                        <a href="#join" class="btn btn--ghost">Learn More &rarr;</a>
+                    </div>
+                </div>
+                <!-- Businesses -->
+                <div class="path-card reveal">
+                    <div class="path-card-photo">
+                        <div class="tile tile--diamond tile-photo">
+                            <img src="images/business-owner.png" alt="Local business owner">
+                        </div>
+                    </div>
+                    <div class="path-card-body">
+                        <h3>Businesses</h3>
+                        <p>Tap into a network of loyal local customers, access capital that understands your business, and participate in Acquisition Circles to grow collectively. CoSpark helps local businesses thrive by connecting them to a community that wants to see them succeed.</p>
+                        <a href="#join" class="btn btn--ghost">Learn More &rarr;</a>
+                    </div>
+                </div>
+                <!-- Non-Profits & Churches -->
+                <div class="path-card reveal">
+                    <div class="path-card-photo">
+                        <div class="tile tile--quarter-tr tile-photo">
+                            <img src="images/church-community.png" alt="Church community gathering">
+                        </div>
+                    </div>
+                    <div class="path-card-body">
+                        <h3>Non-Profits &amp; Churches</h3>
+                        <p>Strengthen your organization's financial foundation while deepening community bonds. CoSpark helps non-profits and churches build reserves, access shared resources, and create lasting economic infrastructure for the people they serve.</p>
+                        <a href="#join" class="btn btn--ghost">Learn More &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         10. Testimonials — Carousel
+         ══════════════════════════════════════════════ -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="testimonial-carousel">
+                <div class="testimonial-slide active" data-slide="0">
+                    <blockquote class="testimonial-quote">"We were barely keeping up with bills, and the idea of 'saving' felt like a joke. But CoSpark didn't ask us to be perfect — just consistent. Within a year, we had a real reserve, and when our car broke down, we didn't have to go into debt. For the first time, it felt like the system was actually working for us."</blockquote>
+                    <p class="testimonial-attr">Maria &amp; David Chen</p>
+                    <p class="testimonial-role">CoSpark Members, Colorado Springs</p>
+                </div>
+                <div class="testimonial-slide" data-slide="1">
+                    <blockquote class="testimonial-quote">"I've run my shop for twelve years, and banks never really got what I needed. CoSpark connected me with other business owners, helped me access capital through an Acquisition Circle, and now I'm expanding into a second location. The difference is that these people actually know me."</blockquote>
+                    <p class="testimonial-attr">James Whitfield</p>
+                    <p class="testimonial-role">Owner, Whitfield Hardware</p>
+                </div>
+                <div class="testimonial-slide" data-slide="2">
+                    <blockquote class="testimonial-quote">"Our congregation has always talked about economic justice, but we never had a practical way to live it out. CoSpark gave us that. Our members are building reserves together, supporting local businesses, and our church itself is stronger financially than it's been in decades."</blockquote>
+                    <p class="testimonial-attr">Pastor Angela Reeves</p>
+                    <p class="testimonial-role">Grace Community Church</p>
+                </div>
+            </div>
+            <div class="testimonial-dots">
+                <button class="testimonial-dot active" data-slide="0" aria-label="Show testimonial 1"></button>
+                <button class="testimonial-dot" data-slide="1" aria-label="Show testimonial 2"></button>
+                <button class="testimonial-dot" data-slide="2" aria-label="Show testimonial 3"></button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         11. Final CTA — Mosaic Background
+         ══════════════════════════════════════════════ -->
+    <section class="final-cta" id="join">
+        <!-- Background mosaic texture -->
+        <div class="final-cta-mosaic" aria-hidden="true">
+            <div class="tile tile--quarter-tl fill-slate-800"></div>
+            <div class="tile fill-slate-700"></div>
+            <div class="tile tile--diamond fill-slate-600"></div>
+            <div class="tile tile--circle fill-slate-800"></div>
+            <div class="tile fill-slate-700"></div>
+            <div class="tile tile--spark fill-slate-600"></div>
+            <div class="tile tile--diagonal-br fill-slate-700"></div>
+            <div class="tile fill-slate-800"></div>
+            <div class="tile tile--quarter-br fill-slate-600"></div>
+            <div class="tile tile--spark fill-slate-700"></div>
+            <div class="tile fill-slate-800"></div>
+            <div class="tile tile--diamond fill-slate-700"></div>
+            <div class="tile tile--circle fill-slate-600"></div>
+            <div class="tile tile--quarter-tl fill-slate-800"></div>
+            <div class="tile fill-slate-700"></div>
+            <div class="tile tile--diagonal-tl fill-slate-600"></div>
+            <div class="tile fill-slate-800"></div>
+            <div class="tile tile--half-b fill-slate-700"></div>
+            <div class="tile tile--quarter-tr fill-slate-600"></div>
+            <div class="tile fill-slate-700"></div>
+            <div class="tile tile--spark fill-slate-800"></div>
+            <div class="tile tile--diamond fill-slate-600"></div>
+            <div class="tile fill-slate-700"></div>
+            <div class="tile tile--circle fill-slate-800"></div>
+        </div>
+        <div class="container">
+            <div class="final-cta-content reveal">
+                <h2 class="section-headline">Come Explore!</h2>
+                <p class="section-sub">CoSpark is building something different — a real community where your participation creates value, your commitment is recognized, and the system works for everyone. Whether you're an individual, a family, a business, or an organization, there's a place for you here. Come see what building together looks like.</p>
+                <div class="btn-row" style="justify-content:center;">
+                    <a href="#" class="btn btn--primary-on-dark">I'm an Individual or Family</a>
+                    <a href="#" class="btn btn--primary-on-dark">I Represent a Business</a>
+                    <a href="#" class="btn btn--outline-on-dark">I'm with a Non-Profit or Church</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════
+         12. Footer
+         ══════════════════════════════════════════════ -->
+    <footer class="site-footer">
+        <div class="container">
+            <!-- Decorative mural strip above footer content -->
+            <div class="footer-mural" aria-hidden="true">
+                <div class="tile tile--quarter-tl fill-copper"></div>
+                <div class="tile tile--diamond fill-patina"></div>
+                <div class="tile tile--circle fill-ember"></div>
+                <div class="tile fill-slate-700"></div>
+                <div class="tile tile--spark fill-copper"></div>
+                <div class="tile tile--quarter-br fill-patina-700"></div>
+                <div class="tile tile--diagonal-tl fill-ember-700"></div>
+                <div class="tile fill-copper-100"></div>
+                <div class="tile tile--half-b fill-slate"></div>
+                <div class="tile tile--diamond fill-patina"></div>
+            </div>
+
+            <p class="footer-disclaimer">CoSpark is a member-driven community platform. It is not a bank, credit union, or registered investment advisor. Member contributions to the Reserve are participation commitments, not insured deposits. All financial activities are governed by the CoSpark Member Agreement.</p>
+
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <svg viewBox="0 0 352 67" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:20px;width:auto;color:var(--slate-400);margin-bottom:1rem;"><path d="M256.585 34.6834V33.1595C266.716 33.1595 276.445 25.1825 276.445 13.3404H266.058C266.058 13.3404 263.769 30.6906 251.161 30.6906V0.876922H241.73V54.5024H251.161V38.1398C263.777 38.1398 265.904 54.5024 265.904 54.5024H276.471C276.471 43.069 266.946 34.6834 256.585 34.6834Z" fill="currentColor"/><path d="M235.281 14.1492C232.744 14.1492 230.199 15.3496 228.729 16.5159C225.842 18.806 223.638 22.2369 222.408 25.208H221.417L221.529 15.0601H213.473V54.5024H223.049V36.1051C223.502 33.5937 224.177 31.4143 225.065 29.5839C225.953 27.745 227.115 26.3318 228.559 25.3272C230.002 24.3227 231.711 23.8204 233.692 23.8204C234.401 23.8204 235.17 23.8885 236.007 24.0077C236.844 24.1354 237.664 24.3482 238.476 24.6462L238.86 14.6174C238.151 14.4131 237.502 14.2939 236.921 14.2429C236.34 14.1918 235.794 14.1662 235.29 14.1662L235.281 14.1492ZM221.375 28.6219V28.6049C221.375 28.6049 221.375 28.6134 221.375 28.6219Z" fill="currentColor"/><path d="M209.143 43.6735C209.066 41.8346 209.032 40.0638 209.032 38.3526V30.963C209.032 27.0384 208.451 23.8374 207.28 21.3515C206.11 18.8656 204.342 17.0267 201.959 15.8434C199.576 14.66 196.535 14.0726 192.836 14.0726C190.401 14.0726 188.172 14.328 186.148 14.8303C184.123 15.3326 182.321 16.1158 180.749 17.1714C179.177 18.2271 177.862 19.4956 176.794 20.9769C175.726 22.4582 174.923 24.2035 174.36 26.2211L182.944 28.8603C183.294 27.098 183.952 25.6848 184.917 24.6036C185.883 23.5224 187.036 22.7307 188.377 22.2284C189.718 21.7261 191.128 21.4707 192.597 21.4707C195.031 21.4707 196.791 22.0326 197.876 23.1648C198.961 24.2971 199.507 25.6422 199.507 27.2002C199.507 28.2558 199.251 29.0475 198.747 29.5754C198.243 30.1032 197.44 30.4948 196.355 30.7417C195.262 30.9971 193.861 31.244 192.135 31.4994C188.992 31.9506 186.259 32.4954 183.927 33.1169C181.595 33.7469 179.647 34.5216 178.075 35.4581C176.504 36.386 175.325 37.5864 174.539 39.0422C173.753 40.498 173.36 42.2602 173.36 44.3205C173.36 46.7893 173.856 48.8496 174.838 50.5012C175.829 52.1613 177.178 53.4042 178.904 54.2385C180.629 55.0728 182.628 55.4815 184.755 55.4815C193.212 55.4815 197.577 50.9268 199.422 48.0323H200.601C200.66 48.6708 200.729 49.3689 200.789 49.9733C200.942 51.5823 201.113 53.0892 201.318 54.4939H209.903C209.698 52.7827 209.536 51.012 209.407 49.1731C209.279 47.3427 209.177 45.5038 209.1 43.6649L209.143 43.6735ZM197.551 43.7501C196.688 44.7802 195.749 45.6485 194.741 46.3552C193.724 47.0618 192.699 47.5896 191.666 47.9386C190.632 48.2877 189.599 48.4665 188.591 48.4665C186.865 48.4665 185.447 47.9897 184.337 47.0362C183.226 46.0827 182.662 44.7461 182.662 43.0435C182.662 41.6898 182.987 40.6172 183.653 39.8425C184.311 39.0592 185.199 38.4633 186.31 38.0291C187.42 37.6034 188.676 37.2544 190.068 36.9735C191.461 36.701 192.853 36.4627 194.245 36.2583C195.638 36.054 196.97 35.7561 198.234 35.3559C198.738 35.1942 199.2 35.0069 199.635 34.8026L199.755 40.1064C199.148 41.5111 198.414 42.737 197.551 43.7671V43.7501Z" fill="currentColor"/><path d="M163.81 16.6692C161.324 14.941 158.309 14.0726 154.764 14.0726C146.308 14.0726 142.968 18.7805 141.558 22.3816H140.345L140.405 15.0516H132.35V67H141.926V48.0153H143.19C144.966 51.4206 148.708 55.4644 155.302 55.4644C158.847 55.4644 161.811 54.5705 164.22 52.7827C166.629 50.9949 168.431 48.5601 169.619 45.4698C170.806 42.3794 171.404 38.8634 171.404 34.9473C171.404 30.7758 170.755 27.115 169.456 23.9736C168.175 20.8322 166.279 18.3889 163.802 16.6606L163.81 16.6692ZM160.316 41.5536C159.599 43.4947 158.565 44.993 157.19 46.0742C155.823 47.1554 154.149 47.7003 152.176 47.7003C150.86 47.7003 149.639 47.4449 148.528 46.9341C147.427 46.4403 146.453 45.7507 145.641 44.8653C144.838 43.9885 144.155 43.0094 143.591 41.9282C143.036 40.847 142.609 39.7658 142.327 38.6846C142.045 37.6035 141.917 36.5648 141.917 35.5603V34.2747C141.917 32.9126 142.122 31.5334 142.523 30.1287C142.925 28.7155 143.557 27.396 144.411 26.1615C145.283 24.9356 146.342 23.9395 147.606 23.1819C148.879 22.4327 150.348 22.0496 152.022 22.0496C153.944 22.0496 155.61 22.5774 157.036 23.6331C158.454 24.6802 159.531 26.17 160.265 28.0855C161 29.9925 161.367 32.3507 161.367 34.8792C161.367 37.4076 161.008 39.6126 160.299 41.5451L160.316 41.5536Z" fill="currentColor"/><path d="M122.971 29.8308C121.1 28.7751 119.059 27.9238 116.855 27.2683C114.651 26.6127 112.456 26.0594 110.277 25.6082C107.894 25.0548 105.707 24.4929 103.7 23.914C101.701 23.3351 100.087 22.5689 98.8738 21.6154C97.6608 20.6619 97.0458 19.3764 97.0458 17.7674C97.0458 16.4648 97.4473 15.3155 98.2588 14.3365C99.0703 13.3575 100.249 12.5913 101.795 12.0379C103.341 11.4845 105.152 11.2036 107.228 11.2036C109.005 11.2036 110.585 11.4079 111.977 11.808C113.37 12.2082 114.574 12.8296 115.591 13.6554C116.607 14.4812 117.376 15.5113 117.905 16.7458C118.435 17.9802 118.7 19.4275 118.7 21.0791L127.438 18.6698C127.336 15.605 126.447 12.9403 124.782 10.6758C123.116 8.41123 120.776 6.69153 117.794 5.50818C114.805 4.32482 111.362 3.7374 107.305 3.7374C103.247 3.7374 99.7707 4.35036 96.8579 5.5848C93.945 6.81923 91.7327 8.53041 90.2122 10.7098C88.6917 12.8978 87.9315 15.4943 87.9315 18.5166C87.9315 21.1812 88.5038 23.3777 89.6399 25.1144C90.776 26.8511 92.3135 28.2728 94.2355 29.3711C96.1574 30.4778 98.3015 31.3547 100.659 32.0102C103.017 32.6657 105.434 33.2702 107.92 33.8235C110.2 34.3258 112.242 34.8707 114.036 35.4496C115.83 36.0285 117.265 36.7606 118.332 37.6375C119.4 38.5144 119.93 39.6892 119.93 41.145C119.93 42.4561 119.503 43.6224 118.64 44.6525C117.777 45.6826 116.496 46.4999 114.805 47.1043C113.105 47.7088 111.114 48.0068 108.535 48.0068C105.955 48.0068 103.657 47.6322 101.658 46.8745C99.6597 46.1168 98.1221 44.9505 97.0629 43.367C96.0037 41.7835 95.4912 39.7829 95.5424 37.3736L87.0346 39.8595C87.0858 42.4731 87.5898 44.7461 88.555 46.6872C89.5203 48.6197 90.8956 50.2543 92.6979 51.5909C94.4917 52.919 96.687 53.9065 99.2753 54.528C101.855 55.158 104.793 55.473 108.091 55.473C112.755 55.473 116.65 54.8685 119.793 53.6596C122.937 52.4507 125.286 50.7481 126.857 48.5346C128.429 46.3211 129.215 43.7586 129.215 40.8385C129.215 38.1228 128.643 35.8753 127.507 34.0874C126.371 32.2996 124.859 30.8864 122.988 29.8308H122.971Z" fill="currentColor"/><path d="M75.1612 16.4138C72.1715 14.8558 68.5753 14.0726 64.8253 14.0726C61.0754 14.0726 57.7098 14.8303 54.7201 16.3371C51.7304 17.844 49.3643 20.1171 47.6132 23.1648C45.8621 26.2041 44.9908 30.1373 44.9908 34.6663C44.9908 39.1954 45.8365 43.0009 47.5363 46.0912C49.2362 49.1816 51.5767 51.5227 54.5664 53.1062C57.5561 54.6897 60.9985 55.4815 64.9022 55.4815C68.7034 55.4815 72.1117 54.7408 75.127 53.2595C78.1423 51.7782 80.5085 49.5051 82.234 46.4318C83.9509 43.367 84.8136 39.4679 84.8136 34.8962C84.8136 30.3245 83.9509 26.485 82.234 23.3947C80.5085 20.3044 78.1509 17.9802 75.1697 16.4223L75.1612 16.4138ZM74.0593 42.3539C73.2734 44.312 72.1459 45.7848 70.6766 46.7638C69.2074 47.7428 67.405 48.2366 65.2781 48.2366C61.9809 48.2366 59.3926 47.0533 57.4878 44.6951C55.5914 42.3369 54.6347 38.94 54.6347 34.5131C54.6347 31.6952 55.0277 29.337 55.8135 27.4215C56.5994 25.5145 57.7526 24.0672 59.273 23.0882C60.7935 22.1092 62.5617 21.6154 64.5947 21.6154C66.9267 21.6154 68.8657 22.1688 70.4118 23.2755C71.9579 24.3822 73.1453 25.9487 73.9824 27.9919C74.8195 30.0266 75.2381 32.4784 75.2381 35.3474C75.2381 38.0632 74.8451 40.4043 74.0593 42.3624V42.3539Z" fill="currentColor"/><path d="M33.8178 37.3821L42.7869 39.7233C42.7357 42.1836 42.2317 44.3801 41.2665 46.3211C40.3012 48.2536 38.9687 49.9137 37.2773 51.3014C35.5775 52.6806 33.5616 53.7277 31.2296 54.4343C28.8976 55.1324 26.3692 55.49 23.6272 55.49C20.0823 55.49 16.8619 54.9111 13.9747 53.7533C11.0875 52.5954 8.60181 50.8757 6.5261 48.5857C4.45039 46.2956 2.84449 43.5202 1.69986 40.2511C0.615025 37.1437 0.0512521 33.466 0 29.6179C0.0512521 25.7614 0.615025 22.0922 1.69986 18.9848C2.84449 15.7157 4.45039 12.9403 6.5261 10.6502C8.60181 8.36015 11.0875 6.64045 13.9747 5.48264C16.8619 4.32482 20.0737 3.74592 23.6272 3.74592C26.3606 3.74592 28.8976 4.10348 31.2296 4.80157C33.5616 5.50818 35.5775 6.5468 37.2773 7.93448C38.9772 9.31364 40.3012 10.9737 41.2665 12.9148C42.2317 14.8473 42.7357 17.0523 42.7869 19.5126L33.8178 21.8538C33.8691 19.5892 33.3907 17.7078 32.3742 16.2009C31.3577 14.6941 30.0593 13.5618 28.462 12.8041C26.8646 12.0464 25.1562 11.6718 23.3368 11.6718C21.7138 11.6718 20.1079 11.9953 18.5105 12.6509C16.9132 13.3064 15.4867 14.3365 14.2139 15.7412C12.9497 17.1459 11.9332 18.9933 11.1729 21.2834C10.4213 23.5564 10.0369 26.3318 10.0283 29.6179C10.0283 32.9041 10.4127 35.6794 11.1729 37.9525C11.9332 40.2426 12.9411 42.09 14.2139 43.4947C15.4781 44.9079 16.9132 45.9295 18.5105 46.585C20.1079 47.2406 21.7138 47.5641 23.3368 47.5641C25.1562 47.5641 26.8732 47.1895 28.462 46.4318C30.0593 45.6741 31.3577 44.5418 32.3742 43.035C33.3907 41.5281 33.8691 39.6467 33.8178 37.3821Z" fill="currentColor"/><path d="M351.008 32.6997L350.137 33.5681C345.729 29.1752 339.946 26.9788 334.172 26.9788C328.398 26.9788 322.615 29.1752 318.207 33.5681C315.303 36.4541 313.859 40.2425 313.859 44.031C313.859 47.8194 315.311 51.5993 318.207 54.4939L317.336 55.3622C314.431 52.4677 310.639 51.0289 306.838 51.0289C303.036 51.0289 299.235 52.4762 296.339 55.3622L295.468 54.4939C298.372 51.5993 299.816 47.8194 299.816 44.031C299.816 40.2425 298.372 36.4626 295.468 33.5681C294.076 32.1804 292.256 31.4908 290.437 31.4908C288.617 31.4908 286.789 32.1804 285.406 33.5681L284.534 32.6997C285.927 31.312 286.619 29.4987 286.619 27.6854C286.619 25.872 285.927 24.0587 284.534 22.671L285.406 21.8027C286.798 23.1903 288.617 23.8799 290.437 23.8799C292.256 23.8799 294.076 23.1903 295.468 21.8027L296.339 22.671C294.947 24.0587 294.255 25.8635 294.255 27.6854C294.255 29.5072 294.947 31.312 296.339 32.6997C299.235 35.5943 303.036 37.033 306.838 37.033C310.639 37.033 314.431 35.5943 317.336 32.6997C321.743 28.2983 323.947 22.5433 323.947 16.7798C323.947 11.0163 321.743 5.26124 317.336 0.86836L318.207 0C322.623 4.39288 328.398 6.58932 334.172 6.58932C339.946 6.58932 345.729 4.39288 350.137 0L350.573 0.43418L351.008 0.86836C346.601 5.26124 344.397 11.0163 344.397 16.7798C344.397 22.5433 346.601 28.2983 351.017 32.6912L351.008 32.6997Z" fill="currentColor"/></svg>
+                    <p>Real financial strength, built together. CoSpark is a member-driven community where participation creates value for everyone.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Community</h4>
+                    <ul>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">The Commonwealth</a></li>
+                        <li><a href="#">Centers</a></li>
+                        <li><a href="#">Stories</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Paths</h4>
+                    <ul>
+                        <li><a href="#">Individuals &amp; Families</a></li>
+                        <li><a href="#">Businesses</a></li>
+                        <li><a href="#">Non-Profits &amp; Churches</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-legal">
+                &copy; 2026 CoSpark. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- ══════════════════════════════════════════════
+         Scripts — GSAP + ScrollTrigger
+         ══════════════════════════════════════════════ -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+    (function() {
+        'use strict';
+
+        // Bail on reduced-motion
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── Hero tiles stagger on load ──
+        const heroTiles = document.querySelectorAll('.hero-tile-1, .hero-tile-2, .hero-tile-3');
+        gsap.from(heroTiles, {
+            scale: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            ease: 'back.out(1.7)',
+            delay: 0.3
+        });
+
+        // ── Hero content fade in ──
+        gsap.to('.hero-content', {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            delay: 0.1,
+            ease: 'power2.out'
+        });
+
+        // ── Hero photo ──
+        gsap.to('.hero-photo', {
+            opacity: 1,
+            duration: 0.8,
+            delay: 0.2,
+            ease: 'power2.out'
+        });
+
+        // ── Reveal elements on scroll ──
+        document.querySelectorAll('.reveal').forEach(function(el) {
+            // Skip hero content (already animated)
+            if (el.closest('.hero')) return;
+
+            gsap.to(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 65%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        });
+
+        // ── Mural strip tile animations ──
+        document.querySelectorAll('.mural-strip').forEach(function(strip) {
+            var tiles = strip.querySelectorAll('.tile');
+            gsap.to(tiles, {
+                scrollTrigger: {
+                    trigger: strip,
+                    start: 'top 65%',
+                    toggleActions: 'play none none none'
+                },
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.05,
+                ease: 'back.out(1.7)'
+            });
+        });
+
+        // ── Footer mural ──
+        var footerTiles = document.querySelectorAll('.footer-mural .tile');
+        if (footerTiles.length) {
+            gsap.set(footerTiles, { scale: 0 });
+            gsap.to(footerTiles, {
+                scrollTrigger: {
+                    trigger: '.footer-mural',
+                    start: 'top 65%',
+                    toggleActions: 'play none none none'
+                },
+                scale: 1,
+                duration: 0.4,
+                stagger: 0.05,
+                ease: 'back.out(1.7)'
+            });
+        }
+
+        // ── Photo tiles fade in ──
+        document.querySelectorAll('.tile-photo').forEach(function(el) {
+            if (el.closest('.hero')) return;
+            gsap.from(el, {
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 65%',
+                    toggleActions: 'play none none none'
+                },
+                opacity: 0,
+                duration: 0.6,
+                ease: 'power2.out'
+            });
+        });
+
+        // ── Testimonial carousel ──
+        var slides = document.querySelectorAll('.testimonial-slide');
+        var dots = document.querySelectorAll('.testimonial-dot');
+        var current = 0;
+        var total = slides.length;
+        var interval;
+
+        function showSlide(index) {
+            slides.forEach(function(s) { s.classList.remove('active'); });
+            dots.forEach(function(d) { d.classList.remove('active'); });
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            current = index;
+        }
+
+        function nextSlide() {
+            showSlide((current + 1) % total);
+        }
+
+        function startAutoRotate() {
+            interval = setInterval(nextSlide, 5000);
+        }
+
+        dots.forEach(function(dot) {
+            dot.addEventListener('click', function() {
+                clearInterval(interval);
+                showSlide(parseInt(this.getAttribute('data-slide')));
+                startAutoRotate();
+            });
+        });
+
+        startAutoRotate();
+
+    })();
+    </script>
+</body>
+</html>

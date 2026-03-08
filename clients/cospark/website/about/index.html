@@ -8,7 +8,7 @@
     <meta name="description" content="CoSpark exists because a group of entrepreneurs, families, and practitioners decided that understanding how wealth creation works came with an obligation: make it accessible to everyone.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=3">
+    <link rel="stylesheet" href="../website.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -121,14 +121,15 @@
         }
         .origin-header {
             max-width: 720px;
-            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
         }
         .origin-body {
             max-width: 720px;
+            margin: 0 auto;
         }
         .origin-image {
             max-width: 720px;
-            margin: clamp(2rem, 4vw, 3rem) 0;
+            margin: clamp(2rem, 4vw, 3rem) auto;
             border-radius: 12px;
             overflow: hidden;
         }
@@ -144,36 +145,16 @@
         }
         .how-header {
             max-width: 720px;
-            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
         }
         .how-body {
             max-width: 720px;
-            margin-bottom: clamp(2rem, 4vw, 3rem);
+            margin: 0 auto clamp(2rem, 4vw, 3rem);
         }
-        .elements-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: clamp(1.5rem, 3vw, 2.5rem);
-            margin-top: clamp(2rem, 4vw, 3rem);
-        }
-        .element-card {
-            padding: clamp(1.5rem, 2.5vw, 2rem);
-            border: 1px solid rgba(255, 220, 200, 0.12);
-            border-radius: 8px;
-            background: rgba(255, 220, 200, 0.03);
-        }
-        .element-card h3 {
-            font-family: var(--font-sans);
-            font-size: clamp(1.125rem, 1.8vw, 1.25rem);
-            font-weight: var(--weight-bold);
-            color: #fff;
-            letter-spacing: -0.01em;
-            margin-bottom: 0.75rem;
-        }
-        .element-card p {
-            font-family: var(--font-serif);
-            font-size: 1rem;
-            line-height: var(--leading-body);
+        /* Elements use shared .card-list + .flat-card from website.css */
+        .how-it-works .card-list {
+            max-width: 720px;
+            margin: 0 auto;
         }
         .elements-note {
             font-family: var(--font-serif);
@@ -183,6 +164,13 @@
             color: var(--copper);
             margin-top: clamp(2rem, 4vw, 3rem);
             max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .how-it-works > .container > .btn-row {
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
         }
         @media (max-width: 768px) {
             .elements-grid { grid-template-columns: 1fr; }
@@ -194,32 +182,45 @@
         }
         .leadership-header {
             max-width: 720px;
-            margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+            margin: 0 auto clamp(1.5rem, 3vw, 2.5rem);
         }
         .leadership-intro {
             font-family: var(--font-serif);
             font-size: 1.0625rem;
             line-height: var(--leading-body);
             max-width: 720px;
-            margin-bottom: clamp(2rem, 4vw, 3rem);
+            margin: 0 auto clamp(2rem, 4vw, 3rem);
         }
         .leader-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: clamp(2rem, 4vw, 3rem);
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            max-width: 720px;
+            margin: 0 auto;
         }
         .leader-card {
-            padding: clamp(1.5rem, 2.5vw, 2rem);
-            border: 1px solid rgba(200, 235, 225, 0.12);
-            border-radius: 8px;
-            background: rgba(200, 235, 225, 0.03);
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            gap: 1.25rem;
+            padding: clamp(1.5rem, 3vw, 2rem) 0;
+            position: relative;
+        }
+        .leader-card + .leader-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: rgba(200, 235, 225, 0.12);
         }
         .leader-portrait {
-            width: 100%;
-            aspect-ratio: 4 / 5;
-            border-radius: 8px;
+            width: 88px;
+            height: 88px;
+            border-radius: 50%;
             overflow: hidden;
-            margin-bottom: 1.25rem;
+            flex-shrink: 0;
             background: rgba(200, 235, 225, 0.06);
         }
         .leader-portrait img {
@@ -227,27 +228,40 @@
             height: 100%;
             object-fit: cover;
         }
+        .leader-info {
+            flex: 1;
+            min-width: 0;
+        }
         .leader-card h3 {
             font-family: var(--font-sans);
-            font-size: clamp(1.25rem, 2vw, 1.5rem);
+            font-size: clamp(1.125rem, 1.8vw, 1.25rem);
             font-weight: var(--weight-bold);
             color: #fff;
-            margin-bottom: 0.25rem;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.15rem;
         }
         .leader-role {
             font-family: var(--font-sans);
             font-size: var(--text-small);
             font-weight: var(--weight-medium);
             color: var(--copper);
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
         .leader-card .leader-bio {
             font-family: var(--font-serif);
             font-size: 1rem;
             line-height: var(--leading-body);
         }
-        @media (max-width: 768px) {
-            .leader-grid { grid-template-columns: 1fr; max-width: 480px; }
+        .leadership > .container > .btn-row {
+            max-width: 720px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (max-width: 640px) {
+            .leader-portrait {
+                width: 72px;
+                height: 72px;
+            }
         }
 
         /* ── Final CTA ── */
@@ -329,6 +343,7 @@
                     <div class="hero-body-text">
                         <p class="hero-italic reveal">CoSpark exists because a group of entrepreneurs, families, and practitioners decided that understanding how wealth creation works at the highest levels came with an obligation: make it accessible to everyone.</p>
                         <p class="hero-sub reveal">The deposits you make fund loans to other people. The interest on those loans generates profit for the institution. What you receive in return is a fraction of what your money helped create. This is how banking has worked for over a century, and it is extraordinarily profitable for the institution.</p>
+                        <p class="hero-sub reveal">CoSpark's founders understood this architecture from the inside. They had built businesses, managed assets, and watched the 2008 financial crisis confirm what many already suspected: the system that holds your money was never structured to build your wealth. So they spent six years building a member-driven commonwealth where participation creates value, reserves stay with the people who contributed them, and the benefits flow back to the members who made it possible. It started with a handful of families and one question nobody in the financial industry had much incentive to answer: what if the model worked for the members first?</p>
                         <div class="btn-row reveal">
                             <a href="#how-it-works" class="btn btn--primary">See how it works</a>
                             <a href="#" class="btn btn--outline">Talk to a CoSpark team member</a>
@@ -355,7 +370,7 @@
         <div class="container">
             <div class="origin-header">
                 <p class="eyebrow reveal">Where It Started</p>
-                <h2 class="section-headline reveal">The question behind CoSpark.</h2>
+                <h2 class="section-headline reveal">Working to build what we could not find.</h2>
             </div>
 
             <div class="origin-body prose">
@@ -383,29 +398,35 @@
         <div class="container">
             <div class="how-header">
                 <p class="eyebrow reveal">How It Works</p>
-                <h2 class="section-headline reveal">A commonwealth built on a principle the financial system keeps to itself.</h2>
+                <h2 class="section-headline reveal">What do we mean by Commonwealth?</h2>
             </div>
 
             <div class="how-body prose">
                 <p class="reveal">CoSpark is a private, member-driven commonwealth. That word matters. A commonwealth exists to generate benefit for its members, governed by their participation, sustained by their collective activity. It shares DNA with cooperatives and credit unions, but it is a corporate structure (a C-Corp) built to acquire and hold assets, generate revenue, and direct the value of that activity back to the people who make it possible.</p>
 
-                <p class="reveal"><strong>The core principle is multiplicative exchange.</strong> In most financial relationships, value moves in one direction. You deposit money, the bank uses it, you get a fraction back. CoSpark operates differently. Each act of participation creates more than one unit of value: your contributions stay yours, your participation generates Boost Payments funded from corporate revenue, your commerce strengthens the network, and your consistency builds future buying power. This is how wealth has been built at the institutional level for generations: pooled capital, structured reserves, compounding returns. CoSpark's contribution was building a model that makes those mechanics available to its members, with published formulas and transparent terms.</p>
+                <p class="reveal">The core principle is multiplicative exchange. In most financial relationships, value moves in one direction. You deposit money, the bank uses it, you get a fraction back. CoSpark operates differently. Each act of participation creates more than one unit of value: your contributions stay yours, your participation generates Boost Payments funded from corporate revenue, your commerce strengthens the network, and your consistency builds future buying power. This is how wealth has been built at the institutional level for generations: pooled capital, structured reserves, compounding returns. CoSpark's contribution was building a model that makes those mechanics available to its members, with published formulas and transparent terms.</p>
 
                 <p class="reveal">Three elements carry this model:</p>
             </div>
 
-            <div class="elements-grid">
-                <div class="element-card reveal">
-                    <h3>The Corporation</h3>
-                    <p>Manages assets, administers programs, and ensures the financial engine runs with discipline and transparency. It holds commercial real estate-backed assets, manages the Member Reserve Program, and funds the Boost Payments that flow to members from corporate revenue. The corporation is the steward, not the beneficiary.</p>
+            <div class="card-list">
+                <div class="flat-card reveal">
+                    <div>
+                        <h3>The Corporation</h3>
+                        <p>Manages assets, administers programs, and ensures the financial engine runs with discipline and transparency. It holds commercial real estate-backed assets, manages the Member Reserve Program, and funds the Boost Payments that flow to members from corporate revenue. The corporation is the steward, not the beneficiary.</p>
+                    </div>
                 </div>
-                <div class="element-card reveal">
-                    <h3>The Network</h3>
-                    <p>The living community of individuals, families, businesses, nonprofits, and collaborative ventures that participate in CoSpark. When members buy from each other, hire each other, and support each other's initiatives, the economy that most financial institutions extract from instead stays within the community that created it.</p>
+                <div class="flat-card reveal">
+                    <div>
+                        <h3>The Network</h3>
+                        <p>The living community of individuals, families, businesses, nonprofits, and collaborative ventures that participate in CoSpark. When members buy from each other, hire each other, and support each other's initiatives, the economy that most financial institutions extract from instead stays within the community that created it.</p>
+                    </div>
                 </div>
-                <div class="element-card reveal">
-                    <h3>The Centers</h3>
-                    <p>Where CoSpark becomes tangible. Physical locations, the first in Colorado Springs, where members gather, learn, access coaching, and build the kind of trust that only comes from being in the same room. The Centers house the BrightEyed Society restaurant, community events, and educational programming. Financial infrastructure without human connection is just another app.</p>
+                <div class="flat-card reveal">
+                    <div>
+                        <h3>The Centers</h3>
+                        <p>Where CoSpark becomes tangible. Physical locations, the first in Colorado Springs, where members gather, learn, access coaching, and build the kind of trust that only comes from being in the same room. The Centers house the BrightEyed Society restaurant, community events, and educational programming. Financial infrastructure without human connection is just another app.</p>
+                    </div>
                 </div>
             </div>
 
@@ -423,8 +444,8 @@
     <section class="leadership dark-section" data-flow="patina" id="leadership">
         <div class="container">
             <div class="leadership-header">
-                <p class="eyebrow reveal">The People Behind It</p>
-                <h2 class="section-headline reveal">Practitioners who built what they couldn't find.</h2>
+                <p class="eyebrow reveal">The Leadership</p>
+                <h2 class="section-headline reveal">Bringing the vision to light.</h2>
             </div>
 
             <p class="leadership-intro reveal">CoSpark's leadership team includes people who have built businesses, served in the military, administered global humanitarian organizations, and navigated the financial system from the inside.</p>
@@ -434,17 +455,21 @@
                     <div class="leader-portrait">
                         <img src="../images/founder-portrait-1.png" alt="Boyd Morris, Co-Founder and Chairman">
                     </div>
-                    <h3>Boyd Morris</h3>
-                    <p class="leader-role">Co-Founder and Chairman</p>
-                    <p class="leader-bio">Boyd graduated from George Fox University and spent two decades with Sheila building charitable organizations and humanitarian initiatives across North Africa, Central Asia, and the Himalayas. He was ordained in 2004 and launched business and real estate ventures in the U.S. that same year. When the 2008 crash exposed the structural fragility most people face in the conventional financial system, Boyd and Sheila redirected their energy toward building a model that could do what the existing system wouldn't: create genuine, accessible, long-term wealth-building for families and communities. They have called Colorado Springs home since 1998.</p>
+                    <div class="leader-info">
+                        <h3>Boyd Morris</h3>
+                        <p class="leader-role">Co-Founder and Chairman</p>
+                        <p class="leader-bio">Boyd graduated from George Fox University and spent two decades with Sheila building charitable organizations and humanitarian initiatives across North Africa, Central Asia, and the Himalayas. He was ordained in 2004 and launched business and real estate ventures in the U.S. that same year. When the 2008 crash exposed the structural fragility most people face in the conventional financial system, Boyd and Sheila redirected their energy toward building a model that could do what the existing system wouldn't: create genuine, accessible, long-term wealth-building for families and communities. They have called Colorado Springs home since 1998.</p>
+                    </div>
                 </div>
                 <div class="leader-card reveal">
                     <div class="leader-portrait">
                         <img src="../images/founder-portrait-2.png" alt="David Befort, Chief Executive Officer">
                     </div>
-                    <h3>David Befort</h3>
-                    <p class="leader-role">Chief Executive Officer</p>
-                    <p class="leader-bio">David is a graduate of the United States Air Force Academy who flew A-10 combat missions in multiple deployments before turning his focus to entrepreneurship. He founded companies in real estate development, financial education, and leadership training, and served as a Lieutenant Colonel in the Minnesota Air National Guard before retiring in 2025. David leads CoSpark with the precision of someone trained for high-stakes decisions and the conviction of someone who believes financial independence should be built on infrastructure, not privilege.</p>
+                    <div class="leader-info">
+                        <h3>David Befort</h3>
+                        <p class="leader-role">Chief Executive Officer</p>
+                        <p class="leader-bio">David is a graduate of the United States Air Force Academy who flew A-10 combat missions in multiple deployments before turning his focus to entrepreneurship. He founded companies in real estate development, financial education, and leadership training, and served as a Lieutenant Colonel in the Minnesota Air National Guard before retiring in 2025. David leads CoSpark with the precision of someone trained for high-stakes decisions and the conviction of someone who believes financial independence should be built on infrastructure, not privilege.</p>
+                    </div>
                 </div>
             </div>
 

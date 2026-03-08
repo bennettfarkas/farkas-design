@@ -8,7 +8,7 @@
     <meta name="description" content="A community where your commitment builds real financial strength — no matter where you're starting from. Keep what's yours, grow what you build.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=3">
+    <link rel="stylesheet" href="../website.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -143,11 +143,17 @@
         }
 
         /* ── Doors Open (within Foundation) ── */
-        .doors-open-content {
-            max-width: 720px;
+        .doors-open {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: clamp(2rem, 4vw, 4rem);
+            align-items: center;
             margin-top: clamp(3rem, 6vw, 5rem);
             border-top: 1px solid rgba(255,255,255,0.06);
             padding-top: clamp(3rem, 6vw, 5rem);
+        }
+        .doors-open-content {
+            max-width: 720px;
         }
         .doors-open-lead {
             font-family: var(--font-serif);
@@ -156,6 +162,29 @@
             line-height: 1.5;
             color: #fff;
             margin-bottom: 1.5rem;
+        }
+        /* Tile composition */
+        .doors-open-tiles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            align-self: center;
+            margin-top: 10rem;
+            opacity: 0.7;
+        }
+        .doors-open-tiles .tile {
+            aspect-ratio: 1;
+            will-change: transform;
+        }
+        @media (max-width: 900px) {
+            .doors-open {
+                grid-template-columns: 1fr;
+            }
+            .doors-open-tiles {
+                position: static;
+                max-width: 200px;
+                order: -1;
+            }
         }
 
         /* ── Pathways section ── */
@@ -171,8 +200,31 @@
         .guidance {
             padding: clamp(4rem, 8vw, 7rem) 0;
         }
+        .guidance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: clamp(2.5rem, 5vw, 5rem);
+            align-items: center;
+        }
         .guidance-content {
-            max-width: 720px;
+            max-width: none;
+        }
+        .guidance-photo {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .guidance-photo img {
+            width: 100%;
+            display: block;
+            border-radius: 8px;
+        }
+        @media (max-width: 900px) {
+            .guidance-grid {
+                grid-template-columns: 1fr;
+            }
+            .guidance-photo {
+                order: -1;
+            }
         }
 
         /* ── Testimonial section ── */
@@ -312,16 +364,19 @@
                 <div>
                     <div class="process-panels reveal">
                         <div class="process-panel">
+                            <span class="process-panel-node">1</span>
                             <span class="process-panel-step">Step 1</span>
                             <h3>You contribute.</h3>
                             <p>On your terms. Your pace. Your amount.</p>
                         </div>
                         <div class="process-panel">
+                            <span class="process-panel-node">2</span>
                             <span class="process-panel-step">Step 2</span>
                             <h3>You earn a Boost — now.</h3>
                             <p>Each contribution triggers a Boost Payment of approximately 30% of what you put in, funded from corporate revenue, delivered to your Boost Card. Real money you can use today while your reserve stays intact.</p>
                         </div>
                         <div class="process-panel">
+                            <span class="process-panel-node">3</span>
                             <span class="process-panel-step">Step 3</span>
                             <h3>You get it all back + 5%.</h3>
                             <p>At 60 months, you redeem your full reserve plus a 5% maturity bonus. Your Boost Payments along the way were yours to keep. And from here, the doors open to lending, ownership, and your next cycle.</p>
@@ -336,11 +391,19 @@
             </div>
 
             <!-- And Then the Doors Open (continuation of Foundation) -->
-            <div class="doors-open-content prose">
-                <p class="doors-open-lead reveal">And then the doors open.</p>
-                <p class="reveal">The Member Reserve Program isn't the whole story. It's the starting line. Your Points and participation history are what qualify you for the rest of what CoSpark offers — lending designed for people who've demonstrated commitment, Acquisition Circles where small groups build toward ownership, Big Circle Auctions where you can access real assets at transparent prices, a Death Benefit Exchange that lets you unlock present-day value from a whole-life policy, Initiatives that pool participation toward goals none of you could reach alone, a member marketplace where everyday spending strengthens your position.</p>
-                <p class="reveal">Your involvement in those other pathways — the marketplace, Initiatives, Centers — also builds Points back into your reserve. The whole system connects.</p>
-                <p class="reveal">After maturity, you can pledge your reserve as collateral for a low-cost CoSpark loan and begin a new cycle. The foundation doesn't reset. It stacks.</p>
+            <div class="doors-open">
+                <div class="doors-open-content prose">
+                    <p class="doors-open-lead reveal">And then the doors open.</p>
+                    <p class="reveal">The Member Reserve Program isn't the whole story. It's the starting line. Your Points and participation history are what qualify you for the rest of what CoSpark offers — lending designed for people who've demonstrated commitment, Acquisition Circles where small groups build toward ownership, Big Circle Auctions where you can access real assets at transparent prices, a Death Benefit Exchange that lets you unlock present-day value from a whole-life policy, Initiatives that pool participation toward goals none of you could reach alone, a member marketplace where everyday spending strengthens your position.</p>
+                    <p class="reveal">Your involvement in those other pathways — the marketplace, Initiatives, Centers — also builds Points back into your reserve. The whole system connects.</p>
+                    <p class="reveal">After maturity, you can pledge your reserve as collateral for a low-cost CoSpark loan and begin a new cycle. The foundation doesn't reset. It stacks.</p>
+                </div>
+                <div class="doors-open-tiles reveal" aria-hidden="true">
+                    <div class="tile tile--spark fill-copper"></div>
+                    <div class="tile tile--quarter-tl fill-patina"></div>
+                    <div class="tile tile--diamond fill-ember"></div>
+                    <div class="tile tile--circle fill-slate-700"></div>
+                </div>
             </div>
             <div class="btn-row reveal">
                 <a href="#" class="btn btn--outline-light">Learn how the Member Reserve Program works</a>
@@ -361,6 +424,7 @@
 
             <div class="card-list card-list--two-col">
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/growth.svg" alt="">
                     <div>
                         <h3>Lending Pathways</h3>
                         <p class="flat-card-tagline">Your history here opens doors out there.</p>
@@ -369,6 +433,7 @@
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/community.svg" alt="">
                     <div>
                         <h3>Acquisition Circles</h3>
                         <p class="flat-card-tagline">Own something real. Build toward it together.</p>
@@ -377,6 +442,7 @@
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/center.svg" alt="">
                     <div>
                         <h3>Big Circle Auctions</h3>
                         <p class="flat-card-tagline">Access to real assets. Transparent mechanics. No hidden premiums.</p>
@@ -385,6 +451,7 @@
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/resources.svg" alt="">
                     <div>
                         <h3>Death Benefit Exchange (DBX)</h3>
                         <p class="flat-card-tagline">Unlock the value in what you already own.</p>
@@ -393,6 +460,7 @@
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/initiatives.svg" alt="">
                     <div>
                         <h3>Initiatives</h3>
                         <p class="flat-card-tagline">Your reserve stays yours. The reach goes further.</p>
@@ -401,6 +469,7 @@
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <img class="flat-card-icon" src="../icons/member-reserve.svg" alt="">
                     <div>
                         <h3>Member Marketplace</h3>
                         <p class="flat-card-tagline">Buy from each other. Build with each other.</p>
@@ -417,12 +486,17 @@
          ══════════════════════════════════════════════ -->
     <section class="guidance dark-section" data-flow="ember">
         <div class="container">
-            <div class="guidance-content prose">
-                <p class="eyebrow reveal">Guidance That Goes Where You Go</p>
-                <h2 class="section-headline reveal">More than financial advice.<br>A real person in your corner.</h2>
-                <p class="reveal">CoSpark offers workshops and programs on budgeting, the Member Reserve Program, and how the broader system works. That's table stakes.</p>
-                <p class="reveal">The part that surprises people is the coaching. Someone sits with you and asks, "What are you actually trying to build?" Not just financially. You might be thinking about starting a side business and need someone to help you think through the first three moves. You might be navigating a career shift with financial implications you can't fully see yet. The conversation goes wherever you need it to go.</p>
-                <p class="reveal">The people doing this work are practitioners and mentors at local Centers and online. They've built businesses, navigated hard seasons, figured things out when the path wasn't clear. It's a relationship, not a curriculum.</p>
+            <div class="guidance-grid">
+                <div class="guidance-content prose">
+                    <p class="eyebrow reveal">Guidance That Goes Where You Go</p>
+                    <h2 class="section-headline reveal">More than financial advice.<br>A real person in your corner.</h2>
+                    <p class="reveal">CoSpark offers workshops and programs on budgeting, the Member Reserve Program, and how the broader system works. That's table stakes.</p>
+                    <p class="reveal">The part that surprises people is the coaching. Someone sits with you and asks, "What are you actually trying to build?" Not just financially. You might be thinking about starting a side business and need someone to help you think through the first three moves. You might be navigating a career shift with financial implications you can't fully see yet. The conversation goes wherever you need it to go.</p>
+                    <p class="reveal">The people doing this work are practitioners and mentors at local Centers and online. They've built businesses, navigated hard seasons, figured things out when the path wasn't clear. It's a relationship, not a curriculum.</p>
+                </div>
+                <div class="guidance-photo reveal">
+                    <img src="../images/mentoring-conversation.png" alt="A CoSpark mentor and member in conversation" loading="lazy">
+                </div>
             </div>
             <div class="btn-row reveal">
                 <a href="#" class="btn btn--outline-light">Explore education &amp; coaching</a>
@@ -746,6 +820,25 @@
                 });
             });
         }
+
+        // ── Doors-open tile parallax ──
+        (function() {
+            var tiles = document.querySelectorAll('.doors-open-tiles .tile');
+            if (!tiles.length) return;
+            var speeds = [-160, -280, -100, -220];
+            tiles.forEach(function(tile, i) {
+                gsap.to(tile, {
+                    y: speeds[i % speeds.length],
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: '.doors-open',
+                        start: 'top bottom',
+                        end: 'bottom top',
+                        scrub: true
+                    }
+                });
+            });
+        })();
 
         // ── FAQ accordion ──
         document.querySelectorAll('.faq-question').forEach(function(btn) {

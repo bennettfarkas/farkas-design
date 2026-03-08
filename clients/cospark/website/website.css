@@ -430,21 +430,25 @@ section { padding: clamp(4rem, 8vw, 7rem) 0; background: var(--slate-50); }
 .color-flow .dark-section p:not(.eyebrow):not(.testimonial-attr),
 .color-flow .dark-section .section-sub,
 .color-flow .dark-section .flat-card-link { color: var(--slate-100); }
+.color-flow .dark-section .flat-card + .flat-card::after { background: var(--slate-300); opacity: 0.2; }
 
 /* Sections that transition to copper/brown (#6B3410) */
 .color-flow [data-flow="copper"] p:not(.eyebrow):not(.testimonial-attr),
 .color-flow [data-flow="copper"] .section-sub,
 .color-flow [data-flow="copper"] .flat-card-link { color: var(--copper-100); }
+.color-flow [data-flow="copper"] .flat-card + .flat-card::after { background: var(--copper-200); opacity: 0.25; }
 
 /* Sections that transition to patina/teal (#063C30) */
 .color-flow [data-flow="patina"] p:not(.eyebrow):not(.testimonial-attr),
 .color-flow [data-flow="patina"] .section-sub,
 .color-flow [data-flow="patina"] .flat-card-link { color: var(--patina-100); }
+.color-flow [data-flow="patina"] .flat-card + .flat-card::after { background: var(--patina-200); opacity: 0.25; }
 
 /* Sections that transition to ember/red (#5D1E1E) */
 .color-flow [data-flow="ember"] p:not(.eyebrow):not(.testimonial-attr),
 .color-flow [data-flow="ember"] .section-sub,
 .color-flow [data-flow="ember"] .flat-card-link { color: var(--ember-100); }
+.color-flow [data-flow="ember"] .flat-card + .flat-card::after { background: var(--ember-200); opacity: 0.25; }
 
 /* ══════════════════════════════════════════════
    Two-Column Content Layout
@@ -552,24 +556,54 @@ section { padding: clamp(4rem, 8vw, 7rem) 0; background: var(--slate-50); }
     flex-direction: column;
     gap: 0;
     margin-top: 0;
+    position: relative;
+    padding-left: 56px;
+}
+/* Vertical rail — single continuous line from first node center to last */
+.process-panels::before {
+    content: '';
+    position: absolute;
+    left: 19px; /* center of 40px node: 56px padding - 56px offset + 19px */
+    top: 20px; /* center of first node */
+    bottom: 20px; /* center of last node */
+    width: 2px;
+    background: var(--copper);
+    opacity: 0.3;
 }
 .process-panel {
     background: none;
-    padding: clamp(1.25rem, 2vw, 1.75rem) 0;
+    padding: 0 0 clamp(2rem, 3vw, 2.5rem);
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.35rem;
     position: relative;
 }
-.process-panel + .process-panel::after {
-    content: '';
+.process-panel:last-child { padding-bottom: 0; }
+/* Timeline node — numbered circle pinned to the rail */
+.process-panel-node {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--copper);
+    background: var(--slate-950);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-size: var(--text-small);
+    font-weight: var(--weight-bold);
+    color: var(--copper);
+    flex-shrink: 0;
     position: absolute;
+    left: -56px;
     top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(255,255,255,0.1);
+    z-index: 1;
 }
+/* Color-flow: node bg must match the GSAP-animated background */
+.color-flow .dark-section .process-panel-node { background: var(--slate-950); }
+.color-flow [data-flow="copper"] .process-panel-node { background: #6B3410; }
+.color-flow [data-flow="patina"] .process-panel-node { background: #063C30; }
+.color-flow [data-flow="ember"] .process-panel-node { background: #5D1E1E; }
 .process-panel-step {
     font-family: var(--font-sans);
     font-size: var(--text-caption);
@@ -584,12 +618,13 @@ section { padding: clamp(4rem, 8vw, 7rem) 0; background: var(--slate-50); }
     font-weight: var(--weight-bold);
     color: #fff;
     letter-spacing: -0.01em;
+    margin: 0;
 }
 .process-panel p {
     font-family: var(--font-serif);
     font-size: 1rem;
     line-height: var(--leading-body);
-    color: var(--slate-300);
+    margin: 0;
 }
 
 /* ══════════════════════════════════════════════

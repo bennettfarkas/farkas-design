@@ -8,7 +8,7 @@
     <meta name="description" content="CoSpark Centers are physical community hubs where members gather, learn, collaborate, and see the model working in practice.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=3">
+    <link rel="stylesheet" href="../website.css?v=4">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -146,20 +146,6 @@
             line-height: var(--leading-body);
         }
 
-        /* Card images */
-        .flat-card-img {
-            width: 100%;
-            aspect-ratio: 16 / 10;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        .flat-card-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
         /* ── Trust ── */
         .trust-section {
             padding: clamp(4rem, 8vw, 7rem) 0;
@@ -189,16 +175,6 @@
         .colorado-section {
             padding: clamp(4rem, 8vw, 7rem) 0;
         }
-        .colorado-header {
-            max-width: 720px;
-            margin-bottom: clamp(2rem, 4vw, 3rem);
-        }
-        .colorado-images {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(1rem, 2vw, 2rem);
-            margin-bottom: clamp(2rem, 4vw, 3rem);
-        }
         .colorado-photo {
             width: 100%;
             aspect-ratio: 4 / 3;
@@ -209,9 +185,6 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-        @media (max-width: 640px) {
-            .colorado-images { grid-template-columns: 1fr; }
         }
 
         /* ── Final CTA ── */
@@ -307,7 +280,7 @@
                         <div class="tile tile--spark fill-copper-100"></div>
                     </div>
                     <div class="hero-photo">
-                        <img src="../images/center-interior.png" alt="CoSpark Center interior with warm lighting and people in conversation">
+                        <img src="../images/brighteyed-hero.png" alt="Couple sharing breakfast at The BrightEyed Society, cognac leather booths and wildflower planters in warm morning light">
                     </div>
                 </div>
             </div>
@@ -328,37 +301,29 @@
 
             <div class="card-list card-list--two-col">
                 <div class="flat-card reveal">
+                    <svg class="flat-card-icon" viewBox="0 0 23 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.495 7.01064C17.495 3.69519 14.8019 1.00749 11.4797 1.00749C8.15759 1.00749 5.46445 3.69519 5.46445 7.01064V16.5036C5.46445 19.819 8.15759 22.5067 11.4797 22.5067C14.8019 22.5067 17.495 19.819 17.495 16.5036V7.01064Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/><path d="M21.9342 15.8888C21.9342 21.5664 17.3321 26.1592 11.643 26.1592H11.2987C5.60955 26.1592 1.00749 21.5664 1.00749 15.8888" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/><path d="M21.934 14.0987C19.4881 11.6577 15.502 11.6577 13.056 14.0987C15.502 11.6577 15.502 7.67969 13.056 5.23865C15.502 7.67969 19.4881 7.67969 21.934 5.23865C19.4881 7.67969 19.4881 11.6577 21.934 14.0987Z" fill="currentColor" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M11.2986 26.1592V29.9925" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/></svg>
                     <div>
-                        <div class="flat-card-img">
-                            <img src="../images/workshop-activity.png" alt="A workshop in progress with engaged participants">
-                        </div>
                         <h3>Workshops and education</h3>
                         <p>Financial literacy, business coaching, and community programming led by practitioners who have built what they teach. Sessions are designed for meaningful conversation across industries, experience levels, and business stages.</p>
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <svg class="flat-card-icon" viewBox="0 0 43 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24.3314 20.7522C21.2097 17.6368 16.1278 17.6368 13.0061 20.7522C16.1278 17.6368 16.1278 12.5652 13.0061 9.44978C16.1278 12.5652 21.2097 12.5652 24.3314 9.44978C21.2097 12.5652 21.2097 17.6368 24.3314 20.7522Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M29.994 26.4217C28.4331 24.864 25.8922 24.864 24.3313 26.4217C25.8922 24.864 25.8922 22.3281 24.3313 20.7704C25.8922 22.3281 28.4331 22.3281 29.994 20.7704C28.4331 22.3281 28.4331 24.864 29.994 26.4217Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M40.3756 1.00923H2.60639C1.7243 1.00923 1.00923 1.72285 1.00923 2.60316V29.1205C1.00923 30.0008 1.7243 30.7144 2.60639 30.7144H40.3756C41.2577 30.7144 41.9728 30.0008 41.9728 29.1205V2.60316C41.9728 1.72285 41.2577 1.00923 40.3756 1.00923Z" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/><path d="M15.6014 1.00923H20.538C21.6452 1.00923 22.5345 1.62506 22.5345 2.40391V4.03408C22.5345 4.9035 23.5327 5.60991 24.7669 5.60991H39.7221C40.9744 5.60991 41.9908 6.31631 41.9908 7.20384V9.79398" stroke="currentColor" stroke-width="2" stroke-miterlimit="10"/><path d="M33.0614 17.7092L29.9941 20.7522" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M33.0614 20.7522L29.9941 17.7092" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/></svg>
                     <div>
-                        <div class="flat-card-img">
-                            <img src="../images/mentoring-conversation.png" alt="People working together at a shared table">
-                        </div>
                         <h3>Collaboration and workspace</h3>
                         <p>A place to work alongside other members, find partners for Initiatives, connect with local businesses in the network, and build the relationships that make the commonwealth more than a concept.</p>
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <svg class="flat-card-icon" viewBox="0 0 38 31" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M36.9293 20.4327C31.4853 14.9998 31.4853 6.16893 36.9293 0.717797C31.4853 6.15076 22.6366 6.15076 17.1745 0.717797C22.6184 6.15076 22.6184 14.9816 17.1745 20.4327C22.6184 14.9998 31.4671 14.9998 36.9293 20.4327Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M7.30608 20.4326C5.48536 18.6156 5.48536 15.672 7.30608 13.8549C5.48536 15.672 2.5358 15.672 0.715078 13.8549C2.5358 15.672 2.5358 18.6156 0.715078 20.4326C2.5358 18.6156 5.48536 18.6156 7.30608 20.4326Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M17.1926 30.281C14.4615 27.5554 14.4615 23.14 17.1926 20.4326C14.4615 23.1582 10.0372 23.1582 7.3243 20.4326C10.0554 23.1582 10.0554 27.5736 7.3243 30.281C10.0554 27.5554 14.4797 27.5554 17.1926 30.281Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/></svg>
                     <div>
-                        <div class="flat-card-img">
-                            <img src="../images/community-event.png" alt="A community gathering with energy and warmth">
-                        </div>
                         <h3>Community events</h3>
                         <p>Regular gatherings that bring members and neighbors together. Some are educational. Some are social. All of them exist because trust is built in person, not on a screen.</p>
                     </div>
                 </div>
                 <div class="flat-card reveal">
+                    <svg class="flat-card-icon" viewBox="0 0 39 39" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M25.3219 28.2903C22.0449 25.0199 16.722 25.0199 13.445 28.2903C16.722 25.0199 16.722 19.7077 13.445 16.4373C16.722 19.7077 22.0449 19.7077 25.3219 16.4373C22.0449 19.7077 22.0449 25.0199 25.3219 28.2903Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M31.2423 34.2168C29.6129 32.5906 26.9514 32.5906 25.3038 34.2168C26.9333 32.5906 26.9333 29.9346 25.3038 28.2903C26.9333 29.9165 29.5948 29.9165 31.2423 28.2903C29.6129 29.9165 29.6129 32.5726 31.2423 34.2168Z" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M37.7602 37.9932V19.762L19.3835 1.42239L1.00676 19.762V37.9932" stroke="currentColor" stroke-width="2" stroke-miterlimit="10" stroke-linecap="round"/><path d="M11.8336 29.6455L8.62895 32.8436" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/><path d="M11.8336 32.8436L8.62895 29.6455" stroke="var(--copper)" stroke-width="2" stroke-miterlimit="10"/></svg>
                     <div>
-                        <div class="flat-card-img">
-                            <img src="../images/brighteyed-restaurant.png" alt="The BrightEyed Society restaurant with natural light and people eating together">
-                        </div>
                         <h3>The BrightEyed Society</h3>
                         <p>A breakfast-forward restaurant integrated into the Center. Good food and shared tables. The restaurant operates as part of the community rhythm — a place where members and visitors cross paths naturally.</p>
                     </div>
@@ -398,25 +363,22 @@
          ══════════════════════════════════════════════ -->
     <section class="colorado-section dark-section" data-flow="patina">
         <div class="container">
-            <div class="colorado-header">
-                <p class="eyebrow reveal">The First Center</p>
-                <h2 class="section-headline reveal">Colorado Springs. The prototype.</h2>
-                <p class="section-sub reveal">The first CoSpark Center is in Colorado Springs, Colorado where CoSpark was born. It is the working prototype for every Center that will follow.</p>
-                <p class="section-sub reveal">The Colorado Springs Center houses the BrightEyed Society restaurant, workshop and event space, collaborative work areas, and the local team that supports members in the region. It is open to both members and visitors. You do not need to be a member to walk in, attend an event, or have a meal.</p>
-            </div>
-
-            <div class="colorado-images reveal">
-                <div class="colorado-photo">
-                    <img src="../images/center-exterior.png" alt="Exterior of the Colorado Springs CoSpark Center">
+            <div class="content-grid">
+                <div>
+                    <p class="eyebrow reveal">The First Center</p>
+                    <h2 class="section-headline reveal">Colorado Springs. The prototype.</h2>
+                    <p class="section-sub reveal">The first CoSpark Center is in Colorado Springs, Colorado where CoSpark was born. It is the working prototype for every Center that will follow.</p>
+                    <p class="section-sub reveal">The Colorado Springs Center houses the BrightEyed Society restaurant, workshop and event space, collaborative work areas, and the local team that supports members in the region. It is open to both members and visitors. You do not need to be a member to walk in, attend an event, or have a meal.</p>
+                    <div class="btn-row reveal">
+                        <a href="#" class="btn btn--primary">Get directions</a>
+                        <a href="#" class="btn btn--outline-light">View hours and programming</a>
+                    </div>
                 </div>
-                <div class="colorado-photo">
-                    <img src="../images/cospark-building-v2.jpg" alt="Interior wide shot of the Colorado Springs Center">
+                <div class="reveal">
+                    <div class="colorado-photo">
+                        <img src="../images/cospark-building-v2.jpg" alt="The Colorado Springs CoSpark Center" loading="lazy">
+                    </div>
                 </div>
-            </div>
-
-            <div class="btn-row reveal">
-                <a href="#" class="btn btn--primary">Get directions</a>
-                <a href="#" class="btn btn--outline-light">View hours and programming</a>
             </div>
         </div>
     </section>

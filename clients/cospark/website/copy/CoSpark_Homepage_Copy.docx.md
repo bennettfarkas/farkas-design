@@ -53,7 +53,7 @@ The system you trust with your money puts it to work the moment you hand it over
 
 The system wasn’t built for you. CoSpark is.
 
-CoSpark was created for those who are ready for a better answer. It isn’t a bank. It’s not an app. It’s a member-driven community where people build the kind of financial resilience that creates confidence and secures futures.
+CoSpark was created for those who are ready for a better answer. It’s different than a bank or an app. It’s a member-driven community where people build the kind of financial resilience that creates confidence and secures futures.
 
 What you put in stays yours and really grows\! — and your participation generates tangible benefit for you and the people around you. Over time, the foundation you create opens doors to growth, lending, ownership, and opportunities you can’t access alone.
 
@@ -67,11 +67,11 @@ What you put in stays yours and really grows\! — and your participation genera
 
 **Connect. Belong. Grow. Own. — Together.**
 
-*CoSpark isn’t a single program. It’s a connected system of pathways designed to let people, families, and organizations build real financial strength — together.*
+*CoSpark is a connected system of pathways designed to let people, families, and organizations build real financial strength — together.*
 
 It starts with the foundation: The CoSpark Member Reserve where what you put in stays yours and your commitment generates real benefits. From there, doors open. Lending pathways reward your history. Acquisition Circles let you build toward ownership alongside others. Initiatives pool member participation toward goals no one could reach alone. A member marketplace keeps value circulating inside the community. And local CoSpark Centers make the whole model tangible — a place to learn, connect, collaborate, and see it working in real life.
 
-**You start where you are. The system grows with you.**
+**You start where you are. CoSpark grows with you.**
 
 **THREE ELEMENT CARDS:**
 
@@ -97,7 +97,7 @@ Nine pathways. Three layers. From your personal reserve to shared ownership, fro
 
 **SECTION 5 — EMBER BACKGROUND**
 
-**THERE’S A PATH FOR WHERE YOU ARE RIGHT NOW**
+**THE PATH STARTS WHERE YOU ARE RIGHT NOW**
 
 *Whether you’re managing a household, running a business, leading a church, or just starting to figure out what building real financial strength looks like — there’s a way in that meets you where you are.*
 
@@ -127,7 +127,7 @@ Your supporters save for their own future. Your organization receives ongoing, p
 
 **SECTION 6**
 
-**TESTIMONIALS**
+**WHAT MEMBERS SAY**
 
 *“We were skeptical. We’d heard the pitch before — put your money here, trust us. But when we walked into the Center and sat down with real people who could answer every question, something clicked. Eighteen months in, our reserve is intact, the Boost Payments hit our Boost Card, and for the first time we feel like we’re building something instead of just treading water.”*
 
@@ -155,7 +155,7 @@ Community Life Church enrolled 34 supporters in a CoSpark Initiative generating 
 
 **Come Explore\!**
 
-CoSpark is for people, families, and organizations who are ready to stop funding someone else’s balance sheet. You don’t need to take a risk. You need a system actually designed to put your interests first. We’re working together to create a better way.
+CoSpark is for people, families, and organizations who are ready to build real financial strength and resilience. Come see what it looks like to be part of a community designed to put your interests first. We’re working together to create a better way.
 
 **CTA Buttons:**
 

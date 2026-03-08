@@ -210,10 +210,16 @@
         </a>
         <ul class="nav-links" id="nav-links">
             <li><a href="../">Home</a></li>
-            <li><a href="../individuals/">Individuals</a></li>
-            <li><a href="./">Businesses</a></li>
-            <li><a href="../churches/">Non-Profits &amp; Churches</a></li>
+            <li class="nav-dropdown">
+                <a href="#" class="nav-dropdown-toggle">Who Can Join <svg class="nav-chevron" viewBox="0 0 10 6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 1l4 4 4-4"/></svg></a>
+                <ul class="nav-dropdown-menu">
+                    <li><a href="../individuals/">Individuals &amp; Families</a></li>
+                    <li><a href="./">Businesses</a></li>
+                    <li><a href="../churches/">Non-Profits &amp; Churches</a></li>
+                </ul>
+            </li>
             <li><a href="../centers/">CoSpark Centers</a></li>
+            <li><a href="#">Magazine</a></li>
             <li><a href="../about/">About</a></li>
             <li class="nav-mobile-cta"><a href="../join/" class="nav-cta">Become a Member</a></li>
         </ul>
@@ -565,12 +571,47 @@
             navToggle.setAttribute('aria-expanded', open);
         });
         navLinks.addEventListener('click', function(e) {
-            if (e.target.tagName === 'A') {
+            if (e.target.tagName === 'A' && !e.target.classList.contains('nav-dropdown-toggle')) {
                 navLinks.classList.remove('open');
                 navToggle.classList.remove('active');
                 navToggle.setAttribute('aria-expanded', 'false');
             }
         });
+
+        // ── Dropdown menu ──
+        (function() {
+            var dropdown = document.querySelector('.nav-dropdown');
+            var toggle = document.querySelector('.nav-dropdown-toggle');
+            if (!dropdown || !toggle) return;
+
+            var closeTimer = null;
+            var isMobile = function() { return window.innerWidth <= 1024; };
+
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (isMobile()) {
+                    dropdown.classList.toggle('open');
+                }
+            });
+
+            dropdown.addEventListener('mouseenter', function() {
+                if (isMobile()) return;
+                clearTimeout(closeTimer);
+                dropdown.classList.add('open');
+            });
+            dropdown.addEventListener('mouseleave', function() {
+                if (isMobile()) return;
+                closeTimer = setTimeout(function() {
+                    dropdown.classList.remove('open');
+                }, 150);
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.classList.remove('open');
+                }
+            });
+        })();
 
         // ── Show/hide nav on scroll direction ──
         var nav = document.getElementById('nav');

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoSpark Homepage — Design Directions</title>
+    <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../brand.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-sans);
+            background: var(--slate-950);
+            color: var(--slate-200);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+        }
+
+        .header {
+            margin-bottom: clamp(3rem, 6vw, 5rem);
+        }
+        .header__logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .header__logo svg { width: 24px; height: 24px; }
+        .header__logo span {
+            font-size: 1.25rem;
+            font-weight: var(--weight-bold);
+            color: var(--slate-50);
+        }
+        .header h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: var(--weight-bold);
+            color: var(--slate-50);
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
+        }
+        .header p {
+            font-size: var(--text-body);
+            color: var(--slate-400);
+            max-width: 52ch;
+            line-height: 1.6;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--slate-900);
+            border: 1px solid var(--slate-800);
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover {
+            border-color: var(--copper);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+        }
+
+        .card__preview {
+            aspect-ratio: 16 / 10;
+            overflow: hidden;
+            position: relative;
+            background: var(--slate-800);
+        }
+        .card__preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top;
+            display: block;
+        }
+        .card__preview-label {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            font-size: 0.6875rem;
+            font-weight: var(--weight-semibold);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            background: rgba(11, 21, 32, 0.8);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            color: var(--copper);
+            padding: 5px 10px;
+            border-radius: 4px;
+            z-index: 2;
+        }
+        .card__preview-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--copper);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card:hover .card__preview-bar { transform: scaleX(1); }
+
+        /* Color-coded accent bars per direction */
+        .card[data-accent="copper"] .card__preview-bar { background: var(--copper); }
+        .card[data-accent="slate"] .card__preview-bar { background: var(--slate-400); }
+        .card[data-accent="patina"] .card__preview-bar { background: var(--patina); }
+        .card[data-accent="ember"] .card__preview-bar { background: var(--ember); }
+
+        .card__body {
+            padding: 1.25rem 1.5rem 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card__title {
+            font-size: 1.125rem;
+            font-weight: var(--weight-bold);
+            color: var(--slate-50);
+            margin-bottom: 0.35rem;
+        }
+        .card__subtitle {
+            font-family: var(--font-serif);
+            font-size: var(--text-small);
+            font-style: italic;
+            color: var(--copper);
+            margin-bottom: 0.75rem;
+        }
+        .card__desc {
+            font-size: var(--text-small);
+            color: var(--slate-400);
+            line-height: 1.55;
+            flex: 1;
+        }
+        .card__tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 1rem;
+        }
+        .tag {
+            font-size: 0.6875rem;
+            font-weight: var(--weight-medium);
+            letter-spacing: 0.04em;
+            padding: 3px 8px;
+            border-radius: 3px;
+            background: var(--slate-800);
+            color: var(--slate-400);
+        }
+
+        .footer {
+            margin-top: clamp(3rem, 6vw, 5rem);
+            padding-top: 2rem;
+            border-top: 1px solid var(--slate-800);
+            font-size: var(--text-caption);
+            color: var(--slate-600);
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .footer a {
+            color: var(--copper);
+            text-decoration: none;
+        }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 480px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+    <header class="header">
+        <div class="header__logo">
+            <svg viewBox="0 0 4.16 4.16" fill="var(--copper)"><path d="M4.10583 0.105469C3.02088 1.19054 3.02088 2.95008 4.10583 4.03516L4.03552 4.10547L3.82458 3.91504C2.73326 3.02473 1.12319 3.08813 0.105835 4.10547L0.0355225 4.03516C1.12052 2.95007 1.12052 1.19055 0.0355225 0.105469L0.105835 0.0351562C1.19094 1.12024 2.95043 1.12025 4.03552 0.0351562L4.10583 0.105469Z"/></svg>
+            <span>CoSpark</span>
+        </div>
+        <h1>Homepage Design Directions</h1>
+        <p>Six explorations for the CoSpark homepage. Each takes a different approach to scroll behavior, visual density, and brand expression.</p>
+    </header>
+
+    <div class="grid">
+
+        <a href="direction-a.html" class="card" data-accent="copper">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction A</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-a.png" alt="Direction A preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Editorial Scroll Cinema</h2>
+                <p class="card__subtitle">Long-form storytelling with cinematic pacing</p>
+                <p class="card__desc">Full-viewport hero with layered imagery. Content reveals on scroll with instant triggers. Photography-forward with atmospheric depth. The most editorial of the six.</p>
+                <div class="card__tags">
+                    <span class="tag">Photography</span>
+                    <span class="tag">Scroll Reveals</span>
+                    <span class="tag">Editorial</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="direction-b.html" class="card" data-accent="slate">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction B</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-b.png" alt="Direction B preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Kinetic Grid</h2>
+                <p class="card__subtitle">Construction-line energy with structural precision</p>
+                <p class="card__desc">12-column overlay grid, DM Mono section numbers, clip-reveal animations. Feels like the blueprints of a financial system being assembled in real time.</p>
+                <div class="card__tags">
+                    <span class="tag">Grid System</span>
+                    <span class="tag">Monospace</span>
+                    <span class="tag">Clip Reveals</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="direction-c.html" class="card" data-accent="patina">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction C</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-c.png" alt="Direction C preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Immersive Storytelling</h2>
+                <p class="card__subtitle">Full-viewport scenes with frosted glass overlays</p>
+                <p class="card__desc">Ken Burns parallax on full-bleed photography. Frosted glass content panels. Progress indicator dots. The most immersive, cinematic experience.</p>
+                <div class="card__tags">
+                    <span class="tag">Full Bleed</span>
+                    <span class="tag">Ken Burns</span>
+                    <span class="tag">Frosted Glass</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="direction-d.html" class="card" data-accent="slate">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction D</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-d.png" alt="Direction D preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Systematic Precision</h2>
+                <p class="card__subtitle">Jony Ive-inspired clarity with tile system integration</p>
+                <p class="card__desc">White space dominance, typography as hero. CSS-rendered tile shapes as mathematical compositions. Color enters progressively through the scroll. The most refined and restrained.</p>
+                <div class="card__tags">
+                    <span class="tag">Tile System</span>
+                    <span class="tag">Minimalist</span>
+                    <span class="tag">Type-Forward</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="direction-e.html" class="card" data-accent="ember">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction E</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-e.png" alt="Direction E preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Chain Reaction</h2>
+                <p class="card__subtitle">Dark kinetic energy with fuse-line connections</p>
+                <p class="card__desc">Slate-950 canvas. Animated spark constellation hero. Vertical fuse lines draw between sections. Color stages from slate to copper to ember to patina as the "reaction" spreads.</p>
+                <div class="card__tags">
+                    <span class="tag">Dark Mode</span>
+                    <span class="tag">Fuse Animation</span>
+                    <span class="tag">Color Stages</span>
+                </div>
+            </div>
+        </a>
+
+        <a href="direction-f.html" class="card" data-accent="copper">
+            <div class="card__preview">
+                <span class="card__preview-label">Direction F</span>
+                <div class="card__preview-bar"></div>
+                <img src="previews/direction-f.png" alt="Direction F preview">
+            </div>
+            <div class="card__body">
+                <h2 class="card__title">Living Mosaic</h2>
+                <p class="card__subtitle">The tile grid IS the page layout</p>
+                <p class="card__desc">Photography masked in tile shapes. Mural strips between sections with progressive color palette expansion. Brand tile vocabulary woven throughout as the structural DNA of the page.</p>
+                <div class="card__tags">
+                    <span class="tag">Tile System</span>
+                    <span class="tag">Mosaic Layout</span>
+                    <span class="tag">Photo Masks</span>
+                </div>
+            </div>
+        </a>
+
+    </div>
+
+    <footer class="footer">
+        <span>CoSpark Commonwealth &middot; Homepage Exploration &middot; March 2026</span>
+        <a href="https://farkas.design">farkas.design</a>
+    </footer>
+</div>
+
+</body>
+</html>

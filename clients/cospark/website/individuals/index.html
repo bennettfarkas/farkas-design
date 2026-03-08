@@ -8,7 +8,7 @@
     <meta name="description" content="A community where your commitment builds real financial strength — no matter where you're starting from. Keep what's yours, grow what you build.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=2">
+    <link rel="stylesheet" href="../website.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -17,29 +17,34 @@
            Individuals & Families — Page-Specific Styles
            ══════════════════════════════════════════════ */
 
-        /* ── Hero ── */
+        /* ── Hero — Warm Split ── */
         .hero {
             position: relative;
             min-height: 70vh;
             display: flex;
             align-items: center;
-            padding: clamp(4rem, 8vw, 7rem) 0;
             background: var(--slate-50) !important;
             overflow: hidden;
         }
         .hero-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: clamp(2rem, 5vw, 5rem);
-            align-items: center;
+            align-items: stretch;
+            min-height: 70vh;
+        }
+        .hero-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: clamp(4rem, 8vw, 7rem) clamp(2rem, 5vw, 4rem) clamp(4rem, 8vw, 7rem) 0;
         }
         .hero-text .eyebrow { margin-bottom: 0.75rem; }
         .hero-headline {
             font-family: var(--font-sans);
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(3rem, 5.5vw, 4.5rem);
             font-weight: var(--weight-black);
-            line-height: 1.05;
-            letter-spacing: -0.02em;
+            line-height: 1.0;
+            letter-spacing: -0.03em;
             color: var(--color-heading);
             margin-bottom: 1.5rem;
         }
@@ -53,11 +58,13 @@
         .hero-sub + .hero-sub { margin-top: 1rem; }
         .hero-visual {
             position: relative;
+            overflow: hidden;
+            /* Bleed right edge to viewport */
+            margin-right: calc(-1 * clamp(24px, 4vw, 64px));
         }
         .hero-photo {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
+            position: absolute;
+            inset: 0;
             overflow: hidden;
         }
         .hero-photo img {
@@ -70,24 +77,44 @@
             z-index: 2;
         }
         .hero-accent--1 {
-            width: clamp(36px, 5vw, 56px);
-            top: -5%;
-            right: 8%;
+            width: clamp(40px, 5vw, 64px);
+            top: 6%;
+            left: -20px;
         }
         .hero-accent--2 {
-            width: clamp(28px, 3.5vw, 44px);
-            bottom: -4%;
-            left: 5%;
+            width: clamp(32px, 4vw, 48px);
+            bottom: 8%;
+            left: -16px;
         }
         .hero-accent--3 {
-            width: clamp(24px, 3vw, 40px);
-            bottom: 15%;
-            right: -3%;
+            width: clamp(28px, 3.5vw, 44px);
+            bottom: 20%;
+            right: 5%;
         }
         @media (max-width: 900px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { order: -1; max-width: 480px; margin: 0 auto; }
+            .hero-grid {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            .hero-text {
+                padding: clamp(4rem, 8vw, 7rem) 0 2rem;
+            }
+            .hero-visual {
+                order: -1;
+                height: 300px;
+                margin: 0 calc(-1 * clamp(24px, 4vw, 64px));
+            }
+            .hero-accent--1,
+            .hero-accent--2 { display: none; }
             .hero-sub { max-width: none; }
+        }
+
+        /* ── Color Flow ── */
+        .color-flow {
+            background: var(--slate-950);
+        }
+        .color-flow section {
+            background: transparent !important;
         }
 
         /* ── Foundation ── */
@@ -243,8 +270,6 @@
                     <h1 class="hero-headline reveal">You belong here.</h1>
                     <p class="hero-sub reveal">A community where your commitment builds real financial strength — no matter where you're starting from.</p>
                     <p class="hero-sub reveal">You've been doing the work, or you're ready to start. Either way, you already know that the places you put your money aren't working very hard for you.</p>
-                    <p class="hero-sub reveal">CoSpark is a community where your commitment actually builds something. You participate on your terms. Your money stays yours. And the value your participation creates comes back to you — through Boost Payments, through lending you can qualify for, through ownership you build alongside people doing the same thing.</p>
-                    <p class="hero-sub reveal">Wherever you are financially, this is a place where showing up and staying consistent leads somewhere.</p>
                     <div class="btn-row reveal">
                         <a href="#foundation" class="btn btn--primary">See how it works</a>
                         <a href="../centers/" class="btn btn--outline">Visit a Center</a>
@@ -265,6 +290,7 @@
     <!-- ══════════════════════════════════════════════
          2. The Foundation — Member Reserve Program
          ══════════════════════════════════════════════ -->
+    <div class="color-flow">
     <section class="foundation dark-section" id="foundation">
         <div class="container">
             <div class="foundation-header">
@@ -325,7 +351,7 @@
     <!-- ══════════════════════════════════════════════
          4. CoSpark Pathways
          ══════════════════════════════════════════════ -->
-    <section class="pathways dark-section dark-section--patina" id="pathways">
+    <section class="pathways dark-section" data-flow="patina" id="pathways">
         <div class="container">
             <div class="pathways-intro">
                 <p class="eyebrow reveal">Where Participation Takes You</p>
@@ -389,7 +415,7 @@
     <!-- ══════════════════════════════════════════════
          5. Guidance & Coaching
          ══════════════════════════════════════════════ -->
-    <section class="guidance dark-section dark-section--ember">
+    <section class="guidance dark-section" data-flow="ember">
         <div class="container">
             <div class="guidance-content prose">
                 <p class="eyebrow reveal">Guidance That Goes Where You Go</p>
@@ -407,7 +433,7 @@
     <!-- ══════════════════════════════════════════════
          6. Testimonial
          ══════════════════════════════════════════════ -->
-    <section class="testimonial-section dark-section dark-section--patina">
+    <section class="testimonial-section dark-section" data-flow="copper">
         <div class="container">
             <p class="eyebrow reveal">From the Community</p>
             <div class="testimonial-single reveal">
@@ -415,13 +441,17 @@
                 <p class="testimonial-context">They started with the Member Reserve Program. A contribution they could handle. Within a few months, the Boost Payments were showing up on their Boost Cards. David used his for work boots. Maria covered a week of groceries. Their reserve kept growing, untouched.</p>
                 <p class="testimonial-context">Eighteen months in, David's participation history qualified him for equipment financing on terms his bank had never come close to offering. He bought a second service van and hired his first part-time crew member that spring. Maria signed up for coaching and started building a tutoring idea she'd had for years.</p>
                 <p class="testimonial-context">They didn't need a windfall. They needed a system that recognized what they were already willing to do.</p>
-                <div>
-                    <p class="testimonial-attr">Maria &amp; David Chen</p>
-                    <p class="testimonial-role">Member Reserve participants since 2024</p>
+                <div class="testimonial-footer">
+                    <img class="testimonial-avatar" src="../images/headshots/maria-david-chen.png" alt="Maria and David Chen" loading="lazy">
+                    <div class="testimonial-footer-text">
+                        <p class="testimonial-attr">Maria &amp; David Chen</p>
+                        <p class="testimonial-role">Member Reserve participants since 2024</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+    </div><!-- /.color-flow -->
 
     <!-- ══════════════════════════════════════════════
          7. FAQ
@@ -642,20 +672,28 @@
             lastScroll = current;
 
             // ── Nav dark mode sync ──
-            var sections = document.querySelectorAll('section');
+            var colorFlowEl = document.querySelector('.color-flow');
             var navRect = nav.getBoundingClientRect();
             var navMid = navRect.top + navRect.height / 2;
             var isDark = false;
-            sections.forEach(function(sec) {
-                var r = sec.getBoundingClientRect();
-                if (r.top <= navMid && r.bottom > navMid) {
-                    isDark = sec.classList.contains('dark-section');
-                    if (isDark) {
-                        var bg = getComputedStyle(sec).backgroundColor;
-                        nav.style.backgroundColor = bg;
-                    }
+            if (colorFlowEl) {
+                var cfRect = colorFlowEl.getBoundingClientRect();
+                if (cfRect.top <= navMid && cfRect.bottom > navMid) {
+                    isDark = true;
+                    var bg = getComputedStyle(colorFlowEl).backgroundColor;
+                    nav.style.backgroundColor = bg;
                 }
-            });
+            }
+            if (!isDark) {
+                // Check non-color-flow dark sections
+                document.querySelectorAll('section').forEach(function(sec) {
+                    var r = sec.getBoundingClientRect();
+                    if (r.top <= navMid && r.bottom > navMid && sec.classList.contains('dark-section')) {
+                        isDark = true;
+                        nav.style.backgroundColor = getComputedStyle(sec).backgroundColor;
+                    }
+                });
+            }
             if (isDark) {
                 nav.classList.add('site-nav--dark');
                 nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
@@ -685,6 +723,29 @@
                 }
             });
         });
+
+        // ── Color-flow background transitions ──
+        var colorFlow = document.querySelector('.color-flow');
+        if (colorFlow) {
+            var flowColors = [
+                { el: '.pathways',           color: '#063C30' },
+                { el: '.guidance',           color: '#5D1E1E' },
+                { el: '.testimonial-section', color: '#6B3410' }
+            ];
+            flowColors.forEach(function(sec) {
+                gsap.to(colorFlow, {
+                    backgroundColor: sec.color,
+                    immediateRender: false,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: sec.el,
+                        start: 'top 60%',
+                        end: 'top 20%',
+                        scrub: true
+                    }
+                });
+            });
+        }
 
         // ── FAQ accordion ──
         document.querySelectorAll('.faq-question').forEach(function(btn) {

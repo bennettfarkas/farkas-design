@@ -8,7 +8,7 @@
     <meta name="description" content="Sustainable support, organizational reserves, and community — built around what you're already doing. A funding model that doesn't run on exhaustion.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=2">
+    <link rel="stylesheet" href="../website.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -17,7 +17,15 @@
            Churches & Charities — Page-Specific Styles
            ══════════════════════════════════════════════ */
 
-        /* ── Hero ── */
+        /* ── Color Flow ── */
+        .color-flow {
+            background: var(--slate-950);
+        }
+        .color-flow section {
+            background: transparent !important;
+        }
+
+        /* ── Hero — Oversized Photo + Narrow Text ── */
         .hero {
             position: relative;
             min-height: 70vh;
@@ -29,16 +37,16 @@
         }
         .hero-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(2rem, 5vw, 5rem);
+            grid-template-columns: 0.9fr 1.1fr;
+            gap: clamp(2rem, 4vw, 4rem);
             align-items: center;
         }
         .hero-text .eyebrow { margin-bottom: 0.75rem; }
         .hero-headline {
             font-family: var(--font-sans);
-            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-size: clamp(2.25rem, 4.5vw, 3.5rem);
             font-weight: var(--weight-black);
-            line-height: 1.05;
+            line-height: 1.08;
             letter-spacing: -0.02em;
             color: var(--color-heading);
             margin-bottom: 1.5rem;
@@ -56,37 +64,38 @@
         }
         .hero-photo {
             width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
+            aspect-ratio: 1;
+            border-radius: 50% 50% 50% 0;
             overflow: hidden;
         }
         .hero-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center 30%;
         }
         .hero-accent {
             position: absolute;
             z-index: 2;
         }
         .hero-accent--1 {
-            width: clamp(36px, 5vw, 56px);
-            top: -5%;
-            right: 8%;
+            width: clamp(40px, 5vw, 64px);
+            top: -4%;
+            left: 10%;
         }
         .hero-accent--2 {
-            width: clamp(28px, 3.5vw, 44px);
-            bottom: -4%;
-            left: 5%;
+            width: clamp(28px, 3.5vw, 48px);
+            bottom: 5%;
+            right: -3%;
         }
         .hero-accent--3 {
             width: clamp(24px, 3vw, 40px);
-            bottom: 15%;
-            right: -3%;
+            bottom: 20%;
+            left: -4%;
         }
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { order: -1; max-width: 480px; margin: 0 auto; }
+            .hero-visual { order: -1; max-width: 400px; margin: 0 auto; }
             .hero-sub { max-width: none; }
         }
 
@@ -212,8 +221,6 @@
                     <h1 class="hero-headline reveal">Your mission deserves a funding model that doesn't run on exhaustion.</h1>
                     <p class="hero-sub reveal"><em>Sustainable support, organizational reserves, and community — built around what you're already doing.</em></p>
                     <p class="hero-sub reveal">You started this work because the need was there. A community needed feeding. A congregation needed shepherding. A cause needed someone willing to show up, year after year, whether the budget cooperated or not.</p>
-                    <p class="hero-sub reveal">Your mission is strong, the challenge is the funding model. Campaigns that peak and fade. Donors who give generously until they can't. Revenue that moves with the calendar, the economy, and circumstances you can't predict. And somewhere in the middle of all that, your team spends more time raising money than doing the work the money is for.</p>
-                    <p class="hero-sub reveal">CoSpark helps you change that equation by allowing your supporters to build their own financial strength and direct ongoing resources to your organization at the same time. Their reserves stay theirs. Your organization receives CoSpark-funded support tied to their participation. The giving doesn't stop. It gets a foundation underneath it.</p>
                     <div class="btn-row reveal">
                         <a href="#structure" class="btn btn--primary">Learn how it works</a>
                         <a href="#" class="btn btn--outline">Talk to a CoSpark Team Member</a>
@@ -224,13 +231,14 @@
                     <div class="hero-accent hero-accent--2 tile tile--circle fill-patina" aria-hidden="true"></div>
                     <div class="hero-accent hero-accent--3 tile tile--diamond fill-ember" aria-hidden="true"></div>
                     <div class="hero-photo">
-                        <img src="../images/church-community.png" alt="Church community gathering together" loading="lazy">
+                        <img src="../images/church-community.png" alt="Church community gathering together">
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <div class="color-flow">
     <!-- ══════════════════════════════════════════════
          2. The Structure
          ══════════════════════════════════════════════ -->
@@ -282,7 +290,7 @@
     <!-- ══════════════════════════════════════════════
          3. Your Foundation
          ══════════════════════════════════════════════ -->
-    <section class="your-foundation dark-section dark-section--warm" id="foundation">
+    <section class="your-foundation dark-section" data-flow="copper" id="foundation">
         <div class="container">
             <div class="your-foundation-header">
                 <p class="eyebrow reveal">Your Foundation</p>
@@ -328,7 +336,7 @@
     <!-- ══════════════════════════════════════════════
          4. CoSpark Pathways
          ══════════════════════════════════════════════ -->
-    <section class="pathways dark-section dark-section--patina" id="pathways">
+    <section class="pathways dark-section" data-flow="ember" id="pathways">
         <div class="container">
             <div class="pathways-intro">
                 <p class="eyebrow reveal">Where Participation Takes Your Organization</p>
@@ -384,7 +392,7 @@
     <!-- ══════════════════════════════════════════════
          5. Testimonial
          ══════════════════════════════════════════════ -->
-    <section class="testimonial-section dark-section dark-section--ember">
+    <section class="testimonial-section dark-section" data-flow="patina">
         <div class="container">
             <p class="eyebrow reveal">From the Community</p>
             <div class="testimonial-single reveal">
@@ -394,13 +402,17 @@
                 <p class="testimonial-context">Within a year, that monthly stream had become the most predictable line in the budget. Elaine used it to hire a part-time coordinator for the recovery program — a position she'd wanted to fund for three years. The congregation didn't feel tapped out. The supporters' money was still theirs.</p>
                 <p class="testimonial-context">Grace Community also enrolled directly in the Member Reserve Program. For the first time in Elaine's tenure, the church had both a predictable support stream and a growing organizational reserve.</p>
                 <p class="testimonial-context">She put it simply: "Our community was always willing. CoSpark gave that willingness a structure we never had. Now their participation funds us every month without costing them a thing."</p>
-                <div>
-                    <p class="testimonial-attr">Pastor Elaine Williams</p>
-                    <p class="testimonial-role">Grace Community Church</p>
+                <div class="testimonial-footer">
+                    <img class="testimonial-avatar" src="../images/headshots/elaine-williams.png" alt="Pastor Elaine Williams" loading="lazy">
+                    <div class="testimonial-footer-text">
+                        <p class="testimonial-attr">Pastor Elaine Williams</p>
+                        <p class="testimonial-role">Grace Community Church</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+    </div><!-- /.color-flow -->
 
     <!-- ══════════════════════════════════════════════
          6. FAQ
@@ -643,20 +655,27 @@
             lastScroll = current;
 
             // ── Nav dark mode sync ──
-            var sections = document.querySelectorAll('section');
+            var colorFlowEl = document.querySelector('.color-flow');
             var navRect = nav.getBoundingClientRect();
             var navMid = navRect.top + navRect.height / 2;
             var isDark = false;
-            sections.forEach(function(sec) {
-                var r = sec.getBoundingClientRect();
-                if (r.top <= navMid && r.bottom > navMid) {
-                    isDark = sec.classList.contains('dark-section');
-                    if (isDark) {
-                        var bg = getComputedStyle(sec).backgroundColor;
-                        nav.style.backgroundColor = bg;
-                    }
+            if (colorFlowEl) {
+                var cfRect = colorFlowEl.getBoundingClientRect();
+                if (cfRect.top <= navMid && cfRect.bottom > navMid) {
+                    isDark = true;
+                    var bg = getComputedStyle(colorFlowEl).backgroundColor;
+                    nav.style.backgroundColor = bg;
                 }
-            });
+            }
+            if (!isDark) {
+                document.querySelectorAll('section').forEach(function(sec) {
+                    var r = sec.getBoundingClientRect();
+                    if (r.top <= navMid && r.bottom > navMid && sec.classList.contains('dark-section')) {
+                        isDark = true;
+                        nav.style.backgroundColor = getComputedStyle(sec).backgroundColor;
+                    }
+                });
+            }
             if (isDark) {
                 nav.classList.add('site-nav--dark');
                 nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
@@ -686,6 +705,29 @@
                 }
             });
         });
+
+        // ── Color-flow background transitions ──
+        var colorFlow = document.querySelector('.color-flow');
+        if (colorFlow) {
+            var flowColors = [
+                { el: '.your-foundation',     color: '#6B3410' },
+                { el: '.pathways',            color: '#5D1E1E' },
+                { el: '.testimonial-section', color: '#063C30' }
+            ];
+            flowColors.forEach(function(sec) {
+                gsap.to(colorFlow, {
+                    backgroundColor: sec.color,
+                    immediateRender: false,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: sec.el,
+                        start: 'top 60%',
+                        end: 'top 20%',
+                        scrub: true
+                    }
+                });
+            });
+        }
 
         // ── FAQ accordion ──
         document.querySelectorAll('.faq-question').forEach(function(btn) {

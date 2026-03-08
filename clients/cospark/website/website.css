@@ -421,6 +421,31 @@ section { padding: clamp(4rem, 8vw, 7rem) 0; background: var(--slate-50); }
 .dark-section--ember p:not(.eyebrow),
 .dark-section--ember .section-sub { color: rgba(240, 210, 210, 0.7); }
 
+/* Color-flow overrides — per-section tinted body text matching background hue */
+.color-flow .section-headline { color: #fff; }
+.color-flow .eyebrow { color: var(--copper); }
+.color-flow .testimonial-attr { color: #fff; }
+
+/* Slate (default first section in flow) */
+.color-flow .dark-section p:not(.eyebrow):not(.testimonial-attr),
+.color-flow .dark-section .section-sub,
+.color-flow .dark-section .flat-card-link { color: var(--slate-100); }
+
+/* Sections that transition to copper/brown (#6B3410) */
+.color-flow [data-flow="copper"] p:not(.eyebrow):not(.testimonial-attr),
+.color-flow [data-flow="copper"] .section-sub,
+.color-flow [data-flow="copper"] .flat-card-link { color: var(--copper-100); }
+
+/* Sections that transition to patina/teal (#063C30) */
+.color-flow [data-flow="patina"] p:not(.eyebrow):not(.testimonial-attr),
+.color-flow [data-flow="patina"] .section-sub,
+.color-flow [data-flow="patina"] .flat-card-link { color: var(--patina-100); }
+
+/* Sections that transition to ember/red (#5D1E1E) */
+.color-flow [data-flow="ember"] p:not(.eyebrow):not(.testimonial-attr),
+.color-flow [data-flow="ember"] .section-sub,
+.color-flow [data-flow="ember"] .flat-card-link { color: var(--ember-100); }
+
 /* ══════════════════════════════════════════════
    Two-Column Content Layout
    ══════════════════════════════════════════════ */
@@ -673,10 +698,30 @@ section { padding: clamp(4rem, 8vw, 7rem) 0; background: var(--slate-50); }
     font-family: var(--font-serif);
     font-size: 1.0625rem;
     line-height: var(--leading-body);
+    color: rgba(255, 235, 220, 0.8);
     margin-bottom: 1.25rem;
 }
 .testimonial-single .testimonial-context:last-of-type {
     margin-bottom: 2rem;
+}
+.testimonial-single .testimonial-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+}
+.testimonial-single .testimonial-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.1);
+}
+.testimonial-single .testimonial-footer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
 }
 .testimonial-single .testimonial-attr {
     font-family: var(--font-sans);

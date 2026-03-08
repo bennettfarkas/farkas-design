@@ -8,7 +8,7 @@
     <meta name="description" content="Financial resilience, growth capital, and community for business owners. Your participation builds financial strength for your business, on your terms.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=2">
+    <link rel="stylesheet" href="../website.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -17,7 +17,15 @@
            Businesses — Page-Specific Styles
            ══════════════════════════════════════════════ */
 
-        /* ── Hero ── */
+        /* ── Color Flow ── */
+        .color-flow {
+            background: var(--slate-950);
+        }
+        .color-flow section {
+            background: transparent !important;
+        }
+
+        /* ── Hero — Text-heavy + Portrait Inset ── */
         .hero {
             position: relative;
             min-height: 70vh;
@@ -29,8 +37,8 @@
         }
         .hero-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(2rem, 5vw, 5rem);
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: clamp(2.5rem, 5vw, 5rem);
             align-items: center;
         }
         .hero-text .eyebrow { margin-bottom: 0.75rem; }
@@ -39,16 +47,20 @@
             font-size: clamp(2.5rem, 5vw, 4rem);
             font-weight: var(--weight-black);
             line-height: 1.05;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
             color: var(--color-heading);
             margin-bottom: 1.5rem;
+        }
+        .hero-headline em {
+            font-style: normal;
+            color: var(--copper);
         }
         .hero-sub {
             font-family: var(--font-serif);
             font-size: 1.125rem;
             line-height: var(--leading-body);
             color: var(--slate-500);
-            max-width: 520px;
+            max-width: 560px;
         }
         .hero-sub + .hero-sub { margin-top: 1rem; }
         .hero-visual {
@@ -56,8 +68,8 @@
         }
         .hero-photo {
             width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
+            aspect-ratio: 3 / 4;
+            border-radius: 8px;
             overflow: hidden;
         }
         .hero-photo img {
@@ -70,23 +82,23 @@
             z-index: 2;
         }
         .hero-accent--1 {
-            width: clamp(36px, 5vw, 56px);
-            top: -5%;
-            right: 8%;
+            width: clamp(44px, 5.5vw, 68px);
+            top: -6%;
+            right: -5%;
         }
         .hero-accent--2 {
-            width: clamp(28px, 3.5vw, 44px);
-            bottom: -4%;
-            left: 5%;
+            width: clamp(32px, 4vw, 52px);
+            bottom: -5%;
+            left: -3%;
         }
         .hero-accent--3 {
             width: clamp(24px, 3vw, 40px);
-            bottom: 15%;
-            right: -3%;
+            top: 18%;
+            left: -6%;
         }
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { order: -1; max-width: 480px; margin: 0 auto; }
+            .hero-visual { order: -1; max-width: 320px; margin: 0 auto; }
             .hero-sub { max-width: none; }
         }
 
@@ -240,10 +252,9 @@
             <div class="hero-grid">
                 <div class="hero-text">
                     <p class="eyebrow reveal">For Businesses</p>
-                    <h1 class="hero-headline reveal">You built it. CoSpark was built to help you grow and protect it.</h1>
+                    <h1 class="hero-headline reveal"><em>You built it.</em> CoSpark was built to help you grow and protect it.</h1>
                     <p class="hero-sub reveal"><em>Financial resilience, growth capital, and community — and everything stays yours.</em></p>
-                    <p class="hero-sub reveal">You built a business that creates real value — and you should be the one who benefits from it. Right now, your bank holds your money and keeps the margin. Your lender wants collateral and guarantees. Growth capital comes with strings that cost you equity, control, or both.</p>
-                    <p class="hero-sub reveal">CoSpark was designed to afford a better outcome. This is a member-driven community where your participation builds financial strength for your business, on your terms. You keep full ownership. You control the pace. And the value your participation creates flows back to you.</p>
+                    <p class="hero-sub reveal">You built a business that creates real value — and you should be the one who benefits from it. Right now, your bank holds your money and keeps the margin. Growth capital comes with strings that cost you equity, control, or both.</p>
                     <div class="btn-row reveal">
                         <a href="../join/" class="btn btn--primary">Become a Member</a>
                         <a href="#" class="btn btn--outline">Talk to a CoSpark Team Member</a>
@@ -261,6 +272,7 @@
         </div>
     </section>
 
+    <div class="color-flow">
     <!-- ══════════════════════════════════════════════
          2. The Foundation — Member Reserve Program
          ══════════════════════════════════════════════ -->
@@ -325,7 +337,7 @@
     <!-- ══════════════════════════════════════════════
          3. Growth Without Compromise
          ══════════════════════════════════════════════ -->
-    <section class="growth dark-section dark-section--warm">
+    <section class="growth dark-section" data-flow="copper">
         <div class="container">
             <div class="growth-content prose">
                 <p class="eyebrow reveal">Growth Without Compromise</p>
@@ -345,7 +357,7 @@
     <!-- ══════════════════════════════════════════════
          4. CoSpark Pathways
          ══════════════════════════════════════════════ -->
-    <section class="pathways dark-section dark-section--patina" id="pathways">
+    <section class="pathways dark-section" data-flow="patina" id="pathways">
         <div class="container">
             <div class="pathways-intro">
                 <p class="eyebrow reveal">Where Participation Takes Your Business</p>
@@ -409,7 +421,7 @@
     <!-- ══════════════════════════════════════════════
          5. Testimonial
          ══════════════════════════════════════════════ -->
-    <section class="testimonial-section dark-section dark-section--ember">
+    <section class="testimonial-section dark-section" data-flow="ember">
         <div class="container">
             <p class="eyebrow reveal">From the Community</p>
             <div class="testimonial-single reveal">
@@ -418,13 +430,17 @@
                 <p class="testimonial-context">He started with the Member Reserve Program — contributions via ACH at an amount that made sense for the business. Boost Payments started hitting his account within weeks. Real money. Predictable money. He used it to cover a slow month's fuel costs, then a parts order he'd been putting off.</p>
                 <p class="testimonial-context">At eighteen months, his participation history qualified him for equipment financing at 4% — terms his bank never came close to offering. He bought a second service van, hired his first full-time helper, kept full ownership, and slept through the night for the first time in years. He found subcontractors through the member network and started exploring an Acquisition Circle with three other trades owners eyeing a shared commercial property.</p>
                 <p class="testimonial-context">Eleven years in, his business has a financial foundation that actually holds. Built on a system designed for people who build things.</p>
-                <div>
-                    <p class="testimonial-attr">James, Whitfield Electric</p>
-                    <p class="testimonial-role">CoSpark Business Member</p>
+                <div class="testimonial-footer">
+                    <img class="testimonial-avatar" src="../images/headshots/james-whitfield.png" alt="James Whitfield" loading="lazy">
+                    <div class="testimonial-footer-text">
+                        <p class="testimonial-attr">James, Whitfield Electric</p>
+                        <p class="testimonial-role">CoSpark Business Member</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
+    </div><!-- /.color-flow -->
 
     <!-- ══════════════════════════════════════════════
          6. FAQ
@@ -645,20 +661,27 @@
             lastScroll = current;
 
             // ── Nav dark mode sync ──
-            var sections = document.querySelectorAll('section');
+            var colorFlowEl = document.querySelector('.color-flow');
             var navRect = nav.getBoundingClientRect();
             var navMid = navRect.top + navRect.height / 2;
             var isDark = false;
-            sections.forEach(function(sec) {
-                var r = sec.getBoundingClientRect();
-                if (r.top <= navMid && r.bottom > navMid) {
-                    isDark = sec.classList.contains('dark-section');
-                    if (isDark) {
-                        var bg = getComputedStyle(sec).backgroundColor;
-                        nav.style.backgroundColor = bg;
-                    }
+            if (colorFlowEl) {
+                var cfRect = colorFlowEl.getBoundingClientRect();
+                if (cfRect.top <= navMid && cfRect.bottom > navMid) {
+                    isDark = true;
+                    var bg = getComputedStyle(colorFlowEl).backgroundColor;
+                    nav.style.backgroundColor = bg;
                 }
-            });
+            }
+            if (!isDark) {
+                document.querySelectorAll('section').forEach(function(sec) {
+                    var r = sec.getBoundingClientRect();
+                    if (r.top <= navMid && r.bottom > navMid && sec.classList.contains('dark-section')) {
+                        isDark = true;
+                        nav.style.backgroundColor = getComputedStyle(sec).backgroundColor;
+                    }
+                });
+            }
             if (isDark) {
                 nav.classList.add('site-nav--dark');
                 nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
@@ -688,6 +711,29 @@
                 }
             });
         });
+
+        // ── Color-flow background transitions ──
+        var colorFlow = document.querySelector('.color-flow');
+        if (colorFlow) {
+            var flowColors = [
+                { el: '.growth',              color: '#6B3410' },
+                { el: '.pathways',            color: '#063C30' },
+                { el: '.testimonial-section',  color: '#5D1E1E' }
+            ];
+            flowColors.forEach(function(sec) {
+                gsap.to(colorFlow, {
+                    backgroundColor: sec.color,
+                    immediateRender: false,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: sec.el,
+                        start: 'top 60%',
+                        end: 'top 20%',
+                        scrub: true
+                    }
+                });
+            });
+        }
 
         // ── FAQ accordion ──
         document.querySelectorAll('.faq-question').forEach(function(btn) {

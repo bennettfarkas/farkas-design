@@ -8,7 +8,7 @@
     <meta name="description" content="CoSpark Centers are physical community hubs where members gather, learn, collaborate, and see the model working in practice.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=2">
+    <link rel="stylesheet" href="../website.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -17,7 +17,15 @@
            Centers — Page-Specific Styles
            ══════════════════════════════════════════════ */
 
-        /* ── Hero ── */
+        /* ── Color Flow ── */
+        .color-flow {
+            background: var(--slate-950);
+        }
+        .color-flow section {
+            background: transparent !important;
+        }
+
+        /* ── Hero — Photo-dominant Magazine ── */
         .hero {
             position: relative;
             min-height: 70vh;
@@ -29,9 +37,15 @@
         }
         .hero-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(2rem, 5vw, 5rem);
-            align-items: center;
+            grid-template-columns: 0.85fr 1.15fr;
+            gap: 0;
+            align-items: stretch;
+        }
+        .hero-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: clamp(2rem, 4vw, 4rem);
         }
         .hero-text .eyebrow { margin-bottom: 0.75rem; }
         .hero-headline {
@@ -56,37 +70,65 @@
         }
         .hero-photo {
             width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
+            height: 100%;
+            min-height: 420px;
             overflow: hidden;
+            /* Bleed right edge to viewport */
+            margin-right: calc(-1 * clamp(24px, 4vw, 64px));
+            border-radius: 12px 0 0 12px;
         }
         .hero-photo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
+        /* Tile mosaic strip along photo inner edge */
+        .hero-tile-strip {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 3;
+        }
+        .hero-tile-strip .tile {
+            width: 40px;
+        }
         .hero-accent {
             position: absolute;
             z-index: 2;
         }
         .hero-accent--1 {
-            width: clamp(36px, 5vw, 56px);
-            top: -5%;
-            right: 8%;
+            width: clamp(36px, 4.5vw, 52px);
+            top: 6%;
+            left: -12px;
         }
         .hero-accent--2 {
             width: clamp(28px, 3.5vw, 44px);
-            bottom: -4%;
-            left: 5%;
+            bottom: 6%;
+            left: -8px;
         }
         .hero-accent--3 {
             width: clamp(24px, 3vw, 40px);
-            bottom: 15%;
-            right: -3%;
+            top: 15%;
+            right: 5%;
         }
         @media (max-width: 900px) {
             .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { order: -1; max-width: 480px; margin: 0 auto; }
+            .hero-text { padding-right: 0; padding-bottom: 2rem; }
+            .hero-visual { order: -1; }
+            .hero-photo {
+                margin-right: calc(-1 * clamp(24px, 4vw, 64px));
+                margin-left: calc(-1 * clamp(24px, 4vw, 64px));
+                border-radius: 0;
+                min-height: 280px;
+                height: 280px;
+            }
+            .hero-tile-strip { display: none; }
+            .hero-accent--1,
+            .hero-accent--2 { display: none; }
             .hero-sub { max-width: none; }
         }
 
@@ -248,7 +290,7 @@
                 <div class="hero-text">
                     <p class="eyebrow reveal">CoSpark Centers</p>
                     <h1 class="hero-headline reveal">Where community is enlivened.</h1>
-                    <p class="hero-sub reveal"><strong><em>CoSpark Centers are physical community hubs where members gather, learn, collaborate, and see the model working in practice. The best way to understand CoSpark is to experience it in person.</em></strong></p>
+                    <p class="hero-sub reveal"><em>CoSpark Centers are physical community hubs where members gather, learn, collaborate, and see the model working in practice. The best way to understand CoSpark is to experience it in person.</em></p>
                     <div class="btn-row reveal">
                         <a href="#" class="btn btn--primary">Visit the Colorado Springs Center</a>
                         <a href="#" class="btn btn--outline">View upcoming events</a>
@@ -258,6 +300,12 @@
                     <div class="hero-accent hero-accent--1 tile tile--spark fill-copper" aria-hidden="true"></div>
                     <div class="hero-accent hero-accent--2 tile tile--circle fill-patina" aria-hidden="true"></div>
                     <div class="hero-accent hero-accent--3 tile tile--diamond fill-ember" aria-hidden="true"></div>
+                    <div class="hero-tile-strip" aria-hidden="true">
+                        <div class="tile tile--quarter-tl fill-copper"></div>
+                        <div class="tile tile--circle fill-patina"></div>
+                        <div class="tile tile--diamond fill-ember"></div>
+                        <div class="tile tile--spark fill-copper-100"></div>
+                    </div>
                     <div class="hero-photo">
                         <img src="../images/center-interior.png" alt="CoSpark Center interior with warm lighting and people in conversation">
                     </div>
@@ -269,6 +317,7 @@
     <!-- ══════════════════════════════════════════════
          2. What You'll Find
          ══════════════════════════════════════════════ -->
+    <div class="color-flow">
     <section class="find-section dark-section">
         <div class="container">
             <div class="find-header">
@@ -325,7 +374,7 @@
     <!-- ══════════════════════════════════════════════
          3. Trust
          ══════════════════════════════════════════════ -->
-    <section class="trust-section dark-section dark-section--warm">
+    <section class="trust-section dark-section" data-flow="copper">
         <div class="container">
             <p class="eyebrow reveal">Trust You Can Walk Into</p>
             <h2 class="section-headline reveal">Trust is built in person.</h2>
@@ -347,7 +396,7 @@
     <!-- ══════════════════════════════════════════════
          4. Colorado Springs
          ══════════════════════════════════════════════ -->
-    <section class="colorado-section dark-section dark-section--patina">
+    <section class="colorado-section dark-section" data-flow="patina">
         <div class="container">
             <div class="colorado-header">
                 <p class="eyebrow reveal">The First Center</p>
@@ -371,6 +420,7 @@
             </div>
         </div>
     </section>
+    </div><!-- /.color-flow -->
 
     <!-- ══════════════════════════════════════════════
          5. Final CTA
@@ -536,20 +586,27 @@
             lastScroll = current;
 
             // ── Nav dark mode sync ──
-            var sections = document.querySelectorAll('section');
+            var colorFlowEl = document.querySelector('.color-flow');
             var navRect = nav.getBoundingClientRect();
             var navMid = navRect.top + navRect.height / 2;
             var isDark = false;
-            sections.forEach(function(sec) {
-                var r = sec.getBoundingClientRect();
-                if (r.top <= navMid && r.bottom > navMid) {
-                    isDark = sec.classList.contains('dark-section');
-                    if (isDark) {
-                        var bg = getComputedStyle(sec).backgroundColor;
-                        nav.style.backgroundColor = bg;
-                    }
+            if (colorFlowEl) {
+                var cfRect = colorFlowEl.getBoundingClientRect();
+                if (cfRect.top <= navMid && cfRect.bottom > navMid) {
+                    isDark = true;
+                    var bg = getComputedStyle(colorFlowEl).backgroundColor;
+                    nav.style.backgroundColor = bg;
                 }
-            });
+            }
+            if (!isDark) {
+                document.querySelectorAll('section').forEach(function(sec) {
+                    var r = sec.getBoundingClientRect();
+                    if (r.top <= navMid && r.bottom > navMid && sec.classList.contains('dark-section')) {
+                        isDark = true;
+                        nav.style.backgroundColor = getComputedStyle(sec).backgroundColor;
+                    }
+                });
+            }
             if (isDark) {
                 nav.classList.add('site-nav--dark');
                 nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
@@ -579,6 +636,28 @@
                 }
             });
         });
+
+        // ── Color-flow background transitions ──
+        var colorFlow = document.querySelector('.color-flow');
+        if (colorFlow) {
+            var flowColors = [
+                { el: '.trust-section',     color: '#6B3410' },
+                { el: '.colorado-section',  color: '#063C30' }
+            ];
+            flowColors.forEach(function(sec) {
+                gsap.to(colorFlow, {
+                    backgroundColor: sec.color,
+                    immediateRender: false,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: sec.el,
+                        start: 'top 60%',
+                        end: 'top 20%',
+                        scrub: true
+                    }
+                });
+            });
+        }
 
         // ── Footer tile shuffle ──
         (function() {

@@ -8,7 +8,7 @@
     <meta name="description" content="CoSpark exists because a group of entrepreneurs, families, and practitioners decided that understanding how wealth creation works came with an obligation: make it accessible to everyone.">
     <link rel="icon" type="image/svg+xml" href="../../favicon.svg">
     <link rel="stylesheet" href="../../brand.css">
-    <link rel="stylesheet" href="../website.css?v=2">
+    <link rel="stylesheet" href="../website.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
@@ -17,31 +17,45 @@
            About — Page-Specific Styles
            ══════════════════════════════════════════════ */
 
-        /* ── Hero ── */
+        /* ── Color Flow ── */
+        .color-flow {
+            background: var(--slate-950);
+        }
+        .color-flow section {
+            background: transparent !important;
+        }
+
+        /* ── Hero — Text-dominant Editorial ── */
         .hero {
             position: relative;
             min-height: 70vh;
             display: flex;
             align-items: center;
-            padding: clamp(4rem, 8vw, 7rem) 0;
+            padding: clamp(5rem, 10vw, 9rem) 0 clamp(4rem, 8vw, 7rem);
             background: var(--slate-50) !important;
             overflow: hidden;
         }
-        .hero-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: clamp(2rem, 5vw, 5rem);
-            align-items: center;
+        .hero-layout {
+            max-width: 880px;
         }
-        .hero-text .eyebrow { margin-bottom: 0.75rem; }
+        .hero-layout .eyebrow { margin-bottom: 1rem; }
         .hero-headline {
             font-family: var(--font-sans);
-            font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+            font-size: clamp(2.5rem, 5.5vw, 4.25rem);
             font-weight: var(--weight-black);
-            line-height: 1.08;
-            letter-spacing: -0.02em;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
             color: var(--color-heading);
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .hero-body {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: clamp(2.5rem, 5vw, 4rem);
+            align-items: start;
+        }
+        .hero-body-text {
+            max-width: 560px;
         }
         .hero-italic {
             font-family: var(--font-serif);
@@ -56,16 +70,16 @@
             font-size: 1.125rem;
             line-height: var(--leading-body);
             color: var(--slate-500);
-            max-width: 560px;
         }
         .hero-sub + .hero-sub { margin-top: 1rem; }
-        .hero-visual {
+        /* Circular photo inset */
+        .hero-photo-inset {
             position: relative;
         }
         .hero-photo {
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: 12px;
+            width: clamp(160px, 18vw, 240px);
+            aspect-ratio: 1;
+            border-radius: 50%;
             overflow: hidden;
         }
         .hero-photo img {
@@ -78,23 +92,26 @@
             z-index: 2;
         }
         .hero-accent--1 {
-            width: clamp(36px, 5vw, 56px);
-            top: -5%;
-            right: 8%;
+            width: clamp(28px, 3.5vw, 44px);
+            top: -8px;
+            right: -8px;
         }
         .hero-accent--2 {
-            width: clamp(28px, 3.5vw, 44px);
-            bottom: -4%;
-            left: 5%;
+            width: clamp(24px, 3vw, 36px);
+            bottom: -4px;
+            left: -12px;
         }
         .hero-accent--3 {
-            width: clamp(24px, 3vw, 40px);
-            bottom: 15%;
-            right: -3%;
+            width: clamp(20px, 2.5vw, 32px);
+            bottom: 30%;
+            right: -16px;
         }
         @media (max-width: 900px) {
-            .hero-grid { grid-template-columns: 1fr; }
-            .hero-visual { order: -1; max-width: 480px; margin: 0 auto; }
+            .hero-body { grid-template-columns: 1fr; }
+            .hero-photo-inset { order: -1; }
+            .hero-photo {
+                width: 120px;
+            }
             .hero-sub { max-width: none; }
         }
 
@@ -305,24 +322,25 @@
          ══════════════════════════════════════════════ -->
     <section class="hero">
         <div class="container">
-            <div class="hero-grid">
-                <div class="hero-text">
-                    <p class="eyebrow reveal">About CoSpark</p>
-                    <h1 class="hero-headline reveal">Built by people who understood the system well enough to build a better one.</h1>
-                    <p class="hero-italic reveal">CoSpark exists because a group of entrepreneurs, families, and practitioners decided that understanding how wealth creation works at the highest levels came with an obligation: make it accessible to everyone.</p>
-                    <p class="hero-sub reveal">The deposits you make fund loans to other people. The interest on those loans generates profit for the institution. What you receive in return is a fraction of what your money helped create. This is how banking has worked for over a century, and it is extraordinarily profitable for the institution.</p>
-                    <p class="hero-sub reveal">CoSpark's founders understood this architecture from the inside. They had built businesses, managed assets, and watched the 2008 financial crisis confirm what many already suspected: the system that holds your money was never structured to build your wealth. So they spent six years building a member-driven commonwealth where participation creates value, reserves stay with the people who contributed them, and the benefits flow back to the members who made it possible. It started with a handful of families and one question nobody in the financial industry had much incentive to answer: what if the model worked for the members first?</p>
-                    <div class="btn-row reveal">
-                        <a href="#how-it-works" class="btn btn--primary">See how it works</a>
-                        <a href="#" class="btn btn--outline">Talk to a CoSpark team member</a>
+            <div class="hero-layout">
+                <p class="eyebrow reveal">About CoSpark</p>
+                <h1 class="hero-headline reveal">Built by people who understood the system well enough to build a better one.</h1>
+                <div class="hero-body">
+                    <div class="hero-body-text">
+                        <p class="hero-italic reveal">CoSpark exists because a group of entrepreneurs, families, and practitioners decided that understanding how wealth creation works at the highest levels came with an obligation: make it accessible to everyone.</p>
+                        <p class="hero-sub reveal">The deposits you make fund loans to other people. The interest on those loans generates profit for the institution. What you receive in return is a fraction of what your money helped create. This is how banking has worked for over a century, and it is extraordinarily profitable for the institution.</p>
+                        <div class="btn-row reveal">
+                            <a href="#how-it-works" class="btn btn--primary">See how it works</a>
+                            <a href="#" class="btn btn--outline">Talk to a CoSpark team member</a>
+                        </div>
                     </div>
-                </div>
-                <div class="hero-visual reveal">
-                    <div class="hero-accent hero-accent--1 tile tile--spark fill-copper" aria-hidden="true"></div>
-                    <div class="hero-accent hero-accent--2 tile tile--circle fill-patina" aria-hidden="true"></div>
-                    <div class="hero-accent hero-accent--3 tile tile--diamond fill-ember" aria-hidden="true"></div>
-                    <div class="hero-photo">
-                        <img src="../images/hero-community.png" alt="CoSpark community gathering">
+                    <div class="hero-photo-inset reveal">
+                        <div class="hero-accent hero-accent--1 tile tile--spark fill-copper" aria-hidden="true"></div>
+                        <div class="hero-accent hero-accent--2 tile tile--circle fill-patina" aria-hidden="true"></div>
+                        <div class="hero-accent hero-accent--3 tile tile--diamond fill-ember" aria-hidden="true"></div>
+                        <div class="hero-photo">
+                            <img src="../images/hero-community.png" alt="CoSpark community gathering">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -332,6 +350,7 @@
     <!-- ══════════════════════════════════════════════
          2. Origin Story
          ══════════════════════════════════════════════ -->
+    <div class="color-flow">
     <section class="origin dark-section" id="origin">
         <div class="container">
             <div class="origin-header">
@@ -360,7 +379,7 @@
     <!-- ══════════════════════════════════════════════
          3. How It Works
          ══════════════════════════════════════════════ -->
-    <section class="how-it-works dark-section dark-section--warm" id="how-it-works">
+    <section class="how-it-works dark-section" data-flow="copper" id="how-it-works">
         <div class="container">
             <div class="how-header">
                 <p class="eyebrow reveal">How It Works</p>
@@ -401,7 +420,7 @@
     <!-- ══════════════════════════════════════════════
          4. Leadership
          ══════════════════════════════════════════════ -->
-    <section class="leadership dark-section dark-section--patina" id="leadership">
+    <section class="leadership dark-section" data-flow="patina" id="leadership">
         <div class="container">
             <div class="leadership-header">
                 <p class="eyebrow reveal">The People Behind It</p>
@@ -434,6 +453,7 @@
             </div>
         </div>
     </section>
+    </div><!-- /.color-flow -->
 
     <!-- ══════════════════════════════════════════════
          5. Final CTA
@@ -599,20 +619,27 @@
             lastScroll = current;
 
             // ── Nav dark mode sync ──
-            var sections = document.querySelectorAll('section');
+            var colorFlowEl = document.querySelector('.color-flow');
             var navRect = nav.getBoundingClientRect();
             var navMid = navRect.top + navRect.height / 2;
             var isDark = false;
-            sections.forEach(function(sec) {
-                var r = sec.getBoundingClientRect();
-                if (r.top <= navMid && r.bottom > navMid) {
-                    isDark = sec.classList.contains('dark-section');
-                    if (isDark) {
-                        var bg = getComputedStyle(sec).backgroundColor;
-                        nav.style.backgroundColor = bg;
-                    }
+            if (colorFlowEl) {
+                var cfRect = colorFlowEl.getBoundingClientRect();
+                if (cfRect.top <= navMid && cfRect.bottom > navMid) {
+                    isDark = true;
+                    var bg = getComputedStyle(colorFlowEl).backgroundColor;
+                    nav.style.backgroundColor = bg;
                 }
-            });
+            }
+            if (!isDark) {
+                document.querySelectorAll('section').forEach(function(sec) {
+                    var r = sec.getBoundingClientRect();
+                    if (r.top <= navMid && r.bottom > navMid && sec.classList.contains('dark-section')) {
+                        isDark = true;
+                        nav.style.backgroundColor = getComputedStyle(sec).backgroundColor;
+                    }
+                });
+            }
             if (isDark) {
                 nav.classList.add('site-nav--dark');
                 nav.style.borderBottomColor = 'rgba(255,255,255,0.08)';
@@ -642,6 +669,28 @@
                 }
             });
         });
+
+        // ── Color-flow background transitions ──
+        var colorFlow = document.querySelector('.color-flow');
+        if (colorFlow) {
+            var flowColors = [
+                { el: '.how-it-works', color: '#6B3410' },
+                { el: '.leadership',   color: '#063C30' }
+            ];
+            flowColors.forEach(function(sec) {
+                gsap.to(colorFlow, {
+                    backgroundColor: sec.color,
+                    immediateRender: false,
+                    ease: 'none',
+                    scrollTrigger: {
+                        trigger: sec.el,
+                        start: 'top 60%',
+                        end: 'top 20%',
+                        scrub: true
+                    }
+                });
+            });
+        }
 
         // ── Footer tile shuffle ──
         (function() {

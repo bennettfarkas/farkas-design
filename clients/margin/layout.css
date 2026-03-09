@@ -20,7 +20,7 @@ body::before {
     left: 0;
     right: 0;
     height: 2px;
-    background: var(--spring);
+    background: var(--violet);
     z-index: 100;
 }
 
@@ -67,7 +67,7 @@ body::before {
 }
 
 [data-theme="dark"] .header-logo {
-    color: var(--spring);
+    color: var(--violet);
 }
 
 .header-logo svg {

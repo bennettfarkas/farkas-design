@@ -39,15 +39,15 @@
 
         .swatch-card:hover,
         .swatch-card:focus {
-            box-shadow: 0 4px 16px rgba(11, 40, 26, 0.1);
+            box-shadow: 0 4px 16px rgba(26, 21, 37, 0.12);
         }
 
         .swatch-card:active {
-            box-shadow: 0 2px 8px rgba(11, 40, 26, 0.08);
+            box-shadow: 0 2px 8px rgba(26, 21, 37, 0.08);
         }
 
         .swatch-card:focus {
-            outline: 2px solid var(--spring);
+            outline: 2px solid var(--violet);
             outline-offset: 2px;
         }
 
@@ -165,7 +165,7 @@
 
         /* Light text for dark swatches, dark text for light swatches */
         .scale-step.light-text .scale-step-info { color: var(--white); }
-        .scale-step.dark-text .scale-step-info { color: var(--pine-900); }
+        .scale-step.dark-text .scale-step-info { color: var(--ink-800); }
 
         /* Anchor indicator */
         .scale-step.anchor::after {
@@ -181,7 +181,7 @@
         }
 
         .scale-step.anchor.light-text::after { border-color: var(--white); }
-        .scale-step.anchor.dark-text::after { border-color: var(--pine-900); }
+        .scale-step.anchor.dark-text::after { border-color: var(--ink-800); }
 
         /* Toast */
         .toast {
@@ -189,8 +189,8 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%) translateY(100%);
-            background: var(--pine-900);
-            color: var(--pine-50);
+            background: var(--ink-900);
+            color: var(--ink-50);
             padding: 0.6rem 1.25rem;
             border-radius: 8px;
             font-size: var(--text-caption);
@@ -209,8 +209,8 @@
         }
 
         [data-theme="dark"] .toast {
-            background: var(--pine-50);
-            color: var(--pine-900);
+            background: var(--ink-50);
+            color: var(--ink-900);
         }
         [data-theme="dark"] .swatch-fill {
             box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -252,22 +252,22 @@
         <div class="color-section">
             <div class="section-header">
                 <h2>Core Palette</h2>
-                <p>Two primary colors define the Margin brand. Pine is the deep, grounding dark. Spring is the bright, energizing accent. Together they create a bold contrast between depth and vitality.</p>
+                <p>Two primary colors define the Margin brand. Ink is the deep, grounding dark — a purple-black that signals premium craft. Violet is the bright, confident accent. Together they create a palette that feels both trustworthy and forward-looking.</p>
             </div>
 
             <div class="swatch-grid">
-                <div class="swatch-card" tabindex="0" role="button" data-hex="#0B281A" onclick="copyHex(this)">
-                    <div class="swatch-fill" style="background: var(--pine-900);"></div>
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#1A1525" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--ink-900);"></div>
                     <div class="swatch-info">
-                        <div class="swatch-name">Pine</div>
-                        <div class="swatch-hex">#0B281A</div>
+                        <div class="swatch-name">Ink</div>
+                        <div class="swatch-hex">#1A1525</div>
                     </div>
                 </div>
-                <div class="swatch-card" tabindex="0" role="button" data-hex="#C4FDA4" onclick="copyHex(this)">
-                    <div class="swatch-fill" style="background: var(--spring-200);"></div>
+                <div class="swatch-card" tabindex="0" role="button" data-hex="#8B5CF6" onclick="copyHex(this)">
+                    <div class="swatch-fill" style="background: var(--violet-500);"></div>
                     <div class="swatch-info">
-                        <div class="swatch-name">Spring</div>
-                        <div class="swatch-hex">#C4FDA4</div>
+                        <div class="swatch-name">Violet</div>
+                        <div class="swatch-hex">#8B5CF6</div>
                     </div>
                 </div>
             </div>
@@ -277,7 +277,7 @@
         <div class="color-section">
             <div class="section-header">
                 <h2>Utility</h2>
-                <p>Amber and Scarlet form the warm utility pair — split-complementary to Pine's green anchor. In a financial context, Amber signals caution and pending states; Scarlet signals errors and losses. Together they balance the primary pair with deliberate warmth.</p>
+                <p>Amber and Scarlet form the warm utility pair — chromatically distinct from the purple primaries. In a financial context, Amber signals caution and pending states; Scarlet signals errors and losses. Their warmth provides clear semantic contrast against the cool purple system.</p>
             </div>
 
             <div class="swatch-grid">
@@ -305,45 +305,45 @@
                 <p>Each color extends into an 11-step scale from tint to shade. The dot marks the brand anchor — the step that represents the color at full strength. Click any step to copy its hex value.</p>
             </div>
 
-            <!-- Pine Scale -->
+            <!-- Ink Scale -->
             <div class="scale-block">
                 <div class="scale-header">
-                    <span class="scale-name">Pine</span>
-                    <span class="scale-desc">Deep greens that stay rich through the full range</span>
+                    <span class="scale-name">Ink</span>
+                    <span class="scale-desc">Purple-grays that form the neutral foundation</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-50);" data-hex="#EBF5F0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#EBF5F0</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-100);" data-hex="#D1E6DB" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#D1E6DB</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-200);" data-hex="#A6CEBA" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#A6CEBA</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-300);" data-hex="#78B596" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#78B596</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--pine-400);" data-hex="#4BA075" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#4BA075</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-500);" data-hex="#2A7E54" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#2A7E54</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-600);" data-hex="#1F6542" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#1F6542</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-700);" data-hex="#164B31" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#164B31</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-800);" data-hex="#0F3421" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#0F3421</span></div></div>
-                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--pine-900);" data-hex="#0B281A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#0B281A</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--pine-950);" data-hex="#06180F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#06180F</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ink-50);" data-hex="#F5F3F7" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#F5F3F7</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ink-100);" data-hex="#E8E4EE" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#E8E4EE</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ink-200);" data-hex="#CFC8DB" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#CFC8DB</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ink-300);" data-hex="#B0A6C4" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#B0A6C4</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--ink-400);" data-hex="#8E82A9" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#8E82A9</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ink-500);" data-hex="#6E6290" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#6E6290</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ink-600);" data-hex="#574D76" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#574D76</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ink-700);" data-hex="#41395A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#41395A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ink-800);" data-hex="#2D2640" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#2D2640</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--ink-900);" data-hex="#1A1525" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#1A1525</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--ink-950);" data-hex="#0E0B16" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#0E0B16</span></div></div>
                 </div>
             </div>
 
-            <!-- Spring Scale -->
+            <!-- Violet Scale -->
             <div class="scale-block">
                 <div class="scale-header">
-                    <span class="scale-name">Spring</span>
-                    <span class="scale-desc">Bright yellow-greens that bring energy and life</span>
+                    <span class="scale-name">Violet</span>
+                    <span class="scale-desc">Warm purples from soft lavender to deep plum</span>
                 </div>
                 <div class="scale-strip">
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-50);" data-hex="#F7FFEE" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#F7FFEE</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-100);" data-hex="#EAFED2" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#EAFED2</span></div></div>
-                    <div class="scale-step anchor dark-text" tabindex="0" role="button" style="background: var(--spring-200);" data-hex="#C4FDA4" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#C4FDA4</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-300);" data-hex="#9BEE72" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#9BEE72</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-400);" data-hex="#79DC49" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#79DC49</span></div></div>
-                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--spring-500);" data-hex="#5DBF27" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#5DBF27</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-600);" data-hex="#4A9A1F" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#4A9A1F</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-700);" data-hex="#387518" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#387518</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-800);" data-hex="#285211" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#285211</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-900);" data-hex="#1A360B" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#1A360B</span></div></div>
-                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--spring-950);" data-hex="#102108" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#102108</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--violet-50);" data-hex="#F5F0FF" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">50</span><span class="scale-step-hex">#F5F0FF</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--violet-100);" data-hex="#EDE5FF" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">100</span><span class="scale-step-hex">#EDE5FF</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--violet-200);" data-hex="#D4BBFF" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">200</span><span class="scale-step-hex">#D4BBFF</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--violet-300);" data-hex="#BC94FF" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">300</span><span class="scale-step-hex">#BC94FF</span></div></div>
+                    <div class="scale-step dark-text" tabindex="0" role="button" style="background: var(--violet-400);" data-hex="#A375FC" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">400</span><span class="scale-step-hex">#A375FC</span></div></div>
+                    <div class="scale-step anchor light-text" tabindex="0" role="button" style="background: var(--violet-500);" data-hex="#8B5CF6" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">500</span><span class="scale-step-hex">#8B5CF6</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--violet-600);" data-hex="#7340E0" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">600</span><span class="scale-step-hex">#7340E0</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--violet-700);" data-hex="#5C2DBF" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">700</span><span class="scale-step-hex">#5C2DBF</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--violet-800);" data-hex="#46219A" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">800</span><span class="scale-step-hex">#46219A</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--violet-900);" data-hex="#311770" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">900</span><span class="scale-step-hex">#311770</span></div></div>
+                    <div class="scale-step light-text" tabindex="0" role="button" style="background: var(--violet-950);" data-hex="#1E0D45" onclick="copyHex(this)"><div class="scale-step-info"><span class="scale-step-num">950</span><span class="scale-step-hex">#1E0D45</span></div></div>
                 </div>
             </div>
 
@@ -399,12 +399,12 @@
 
             <div class="guidelines-grid">
                 <div class="guideline-item">
-                    <h3>Pine as Foundation</h3>
-                    <p>Pine is the default text and background color. It grounds the page and provides the deep, quiet canvas that lets Spring stand out.</p>
+                    <h3>Ink as Foundation</h3>
+                    <p>Ink is the default text and background color. Its purple-gray tones ground the page and provide a quiet canvas that lets Violet stand out.</p>
                 </div>
                 <div class="guideline-item">
-                    <h3>Spring as Accent</h3>
-                    <p>Spring is for energy, action, and emphasis. Use it for CTAs, highlights, and moments that need to pop. Never set body text in Spring on a light background.</p>
+                    <h3>Violet as Accent</h3>
+                    <p>Violet is for energy, action, and emphasis. Use it for CTAs, highlights, and moments that need to pop. Never set body text in Violet on a light background.</p>
                 </div>
                 <div class="guideline-item">
                     <h3>Amber for Caution</h3>
@@ -416,7 +416,7 @@
                 </div>
                 <div class="guideline-item">
                     <h3>Temperature Balance</h3>
-                    <p>Pine and Spring are the cool primary pair. Amber and Scarlet are the warm utility pair. Let the cool pair dominate — warm colors should appear only where their meaning is needed.</p>
+                    <p>Ink and Violet are the cool primary pair. Amber and Scarlet are the warm utility pair. Let the cool pair dominate — warm colors should appear only where their meaning is needed.</p>
                 </div>
                 <div class="guideline-item">
                     <h3>Accessibility</h3>
